@@ -27,7 +27,7 @@ function calcEMI(principal: number, rate: number, months: number): number {
   return (principal * r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1);
 }
 
-export default function EmiCalculatorPage() {
+export const EmiCalculator = () => {
   const [carPrice, setCarPrice] = useState(3000000);
   const [carPriceInput, setCarPriceInput] = useState("3000000");
   const [downPct, setDownPct] = useState(10);
@@ -419,117 +419,206 @@ export default function EmiCalculatorPage() {
 
       {/* BANK RATES SECTION */}
       <div style={{ background: "#f5f5f7", padding: "60px 24px" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <h2
-            style={{ fontSize: 32, fontWeight: 600, textAlign: "center", margin: 0 }}
-          >
-            Compare Bank Loan Rates
-          </h2>
-          <p
-            style={{
-              fontSize: 16, color: "#6e6e73", textAlign: "center",
-              marginTop: 8, marginBottom: 40,
-            }}
-          >
-            Click any rate to use it in the calculator above
-          </p>
+        <div style={{ maxWidth: 1100, margin: "0 auto<dyad-write path="src/pages/Showrooms.tsx" description="Creating Showrooms page with city filters, brand dropdown, and Google Maps integration">
+"use client";
 
-          <div
-            style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}
+import { useState } from 'react';
+import { MapPin, Phone, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+const Showrooms = () => {
+  const [selectedCity, setSelectedCity] = useState<string>('All');
+  const [selectedBrand, setSelectedBrand] = useState<string>('All');
+
+  // Sample showroom data
+  const showrooms = [
+    {
+      id: '1',
+      name: 'Suzuki Nepal Pvt. Ltd.',
+      brand: 'Suzuki',
+      city: 'Kathmandu',
+      address: 'Naxal, Kathmandu',
+      phone: '01-4413071',
+      hours: 'Sun-Fri 9:00am - 6:00pm',
+      mapsUrl: 'https://maps.google.com/?q=Suzuki+Nepal+Naxal'
+    },
+    {
+      id: '2',
+      name: 'United Traders Syndicate (Toyota)',
+      brand: 'Toyota',
+      city: 'Kathmandu',
+      address: 'Naxal, Kathmandu',
+      phone: '01-4413100',
+      hours: 'Sun-Fri 9:00am - 6:00pm',
+      mapsUrl: 'https://maps.google.com/?q=United+Traders+Syndicate+Naxal'
+    },
+    {
+      id: '3',
+      name: 'Laxmi Intercontinental (Hyundai)',
+      brand: 'Hyundai',
+      city: 'Lalitpur',
+      address: 'Jawalakhel, Lalitpur',
+      phone: '01-5522480',
+      hours: 'Sun-Fri 9:00am - 6:00pm',
+      mapsUrl: 'https://maps.google.com/?q=Laxmi+Intercontinental+Jawalakhel'
+    },
+    {
+      id: '4',
+      name: 'Sipradi Trading (Kia)',
+      brand: 'Kia',
+      city: 'Kathmandu',
+      address: 'Naxal, Kathmandu',
+      phone: '01-4422100',
+      hours: 'Sun-Fri 9:00am - 6:00pm',
+      mapsUrl: 'https://maps.google.com/?q=Sipradi+Trading+Naxal'
+    },
+    {
+      id: '5',
+      name: 'Syakar Trading (MG)',
+      brand: 'MG',
+      city: 'Kathmandu',
+      address: 'Gairidhara, Kathmandu',
+      phone: '01-4002555',
+      hours: 'Sun-Fri 9:00am - 6:00pm',
+      mapsUrl: 'https://maps.google.com/?q=Syakar+Trading+Gairidhara'
+    },
+    {
+      id: '6',
+      name: 'Sharma Transport (Honda)',
+      brand: 'Honda',
+      city: 'Kathmandu',
+      address: 'Tripureshwor, Kathmandu',
+      phone: '01-4260388',
+      hours: 'Sun-Fri 9:00am - 6:00pm',
+      mapsUrl: 'https://maps.google.com/?q=Sharma+Transport+Tripureshwor'
+    }
+  ];
+
+  const cities = ['All', 'Kathmandu', 'Lalitpur', 'Bhaktapur', 'Pokhara', 'Biratnagar', 'Butwal', 'Chitwan', 'Dharan'];
+  const brands = ['All', 'Suzuki', 'Toyota', 'Hyundai', 'Kia', 'MG', 'Honda', 'Nissan', 'BYD'];
+
+  // Filter showrooms based on selected city and brand
+  const filteredShowrooms = showrooms.filter(showroom => {
+    const cityMatch = selectedCity === 'All' || showroom.city === selectedCity;
+    const brandMatch = selectedBrand === 'All' || showroom.brand === selectedBrand;
+    return cityMatch && brandMatch;
+  });
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-12 text-center">
+        <h1 className="text-3xl font-semibold mb-2">Car Showrooms in Nepal</h1>
+        <p className="text-[#6e6e73]">Find authorized dealers near you</p>
+      </div>
+
+      {/* City Filter Tabs */}
+      <div className="flex overflow-x-auto gap-2 mb-6 pb-2">
+        {cities.map((city) => (
+          <button
+            key={city}
+            onClick={() => setSelectedCity(city)}
+            className={`px-4 py-2 text-sm whitespace-nowrap ${
+              selectedCity === city
+                ? 'bg-[#1d1d1f] text-white rounded-full'
+                : 'bg-white border border-[#d2d2d7] text-[#1d1d1f] rounded-full'
+            }`}
           >
-            {BANKS.map((bank) => (
-              <div
-                key={bank.name}
-                onClick={() => {
-                  setRate(bank.rate);
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-                style={{
-                  background: "#fff",
-                  border: bank.best ? "2px solid #e8531a" : "1px solid #d2d2d7",
-                  borderRadius: 16, padding: 24, cursor: "pointer",
-                  transition: "all 0.2s",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.transform = "translateY(-4px)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.transform = "translateY(0)")
-                }
+            {city}
+          </button>
+        ))}
+      </div>
+
+      {/* Brand Filter */}
+      <div className="mb-8">
+        <Select value={selectedBrand} onValueChange={setSelectedBrand}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="All Brands" />
+          </SelectTrigger>
+          <SelectContent>
+            {brands.map((brand) => (
+              <SelectItem key={brand} value={brand}>
+                {brand}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Google Maps Embed */}
+        <div className="lg:order-2">
+          <div className="border border-[#d2d2d7] rounded-xl overflow-hidden">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d56516.27776862953!2d85.29111453057422!3d27.708968424465493!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb198a307baabf%3A0xb5137c1bf18db1ea!2sKathmandu%2C%20Nepal!5e0!3m2!1sen!2snp!4v1234567890"
+              width="100%"
+              height="500"
+              style={{ border: 0, borderRadius: '16px' }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
+        </div>
+
+        {/* Showroom List */}
+        <div className="lg:order-1">
+          <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+            {filteredShowrooms.map((showroom) => (
+              <div 
+                key={showroom.id} 
+                className="border border-[#d2d2d7] rounded-xl p-5 bg-white"
               >
-                <div
-                  style={{
-                    display: "flex", alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <span style={{ fontSize: 17, fontWeight: 600, color: "#1d1d1f" }}>
-                    {bank.name}
-                  </span>
-                  {bank.best && (
-                    <span
-                      style={{
-                        fontSize: 10, fontWeight: 600, color: "#fff",
-                        background: "#e8531a", borderRadius: 100,
-                        padding: "3px 10px", letterSpacing: 0.5,
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      Lowest
-                    </span>
-                  )}
-                </div>
-
-                <div
-                  style={{
-                    fontSize: 38, fontWeight: 700,
-                    color: "#e8531a", margin: "12px 0 4px",
-                  }}
-                >
-                  {bank.rate}%
-                </div>
-                <div style={{ fontSize: 12, color: "#6e6e73" }}>per annum</div>
-
-                <div style={{ height: 1, background: "#d2d2d7", margin: "16px 0" }} />
-
-                {(
-                  [
-                    ["Max Tenure", `${bank.tenure} years`],
-                    ["Max Financing", `${bank.finance}%`],
-                    ["Processing Fee", `${bank.fee}%`],
-                  ] as [string, string][]
-                ).map(([label, value]) => (
-                  <div
-                    key={label}
-                    style={{ display: "flex", justifyContent: "space-between", padding: "4px 0" }}
-                  >
-                    <span style={{ fontSize: 12, color: "#6e6e73" }}>{label}</span>
-                    <span style={{ fontSize: 13, fontWeight: 500, color: "#1d1d1f" }}>
-                      {value}
+                <div className="flex items-start">
+                  <div className="bg-[#f5f5f7] w-10 h-10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <span className="font-bold text-[#1d1d1f]">
+                      {showroom.brand.charAt(0)}
                     </span>
                   </div>
-                ))}
-
-                <div style={{ height: 1, background: "#d2d2d7", margin: "16px 0" }} />
-
-                <span style={{ fontSize: 13, color: "#e8531a", fontWeight: 500 }}>
-                  Use this rate →
-                </span>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-[#1d1d1f] text-base">
+                      {showroom.name}
+                    </h3>
+                    <p className="text-[#6e6e73] text-sm mb-2">
+                      {showroom.brand}
+                    </p>
+                    <div className="flex items-center text-[#6e6e73] text-sm mb-1">
+                      <MapPin className="h-4 w-4 mr-1" />
+                      <span>{showroom.address}, {showroom.city}</span>
+                    </div>
+                    <div className="flex items-center text-[#1d1d1f] text-sm mb-1">
+                      <Phone className="h-4 w-4 mr-1" />
+                      <a href={`tel:${showroom.phone}`} className="hover:text-[#e8531a]">
+                        {showroom.phone}
+                      </a>
+                    </div>
+                    <div className="flex items-center text-[#6e6e73] text-sm mb-3">
+                      <Clock className="h-4 w-4 mr-1" />
+                      <span>{showroom.hours}</span>
+                    </div>
+                    <a 
+                      href={showroom.mapsUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[#e8531a] text-sm flex items-center hover:underline"
+                    >
+                      Get Directions
+                    </a>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
-
-          <p
-            style={{
-              fontSize: 13, color: "#6e6e73",
-              textAlign: "center", marginTop: 28,
-            }}
-          >
-            Rates are indicative and subject to change. Contact banks directly for
-            latest rates and offers.
-          </p>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default Showrooms;
