@@ -8,23 +8,12 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 
 const EmiCalculatorPage = () => {
-  const [carPrice, setCarPrice] = useState<number>(4000000);
-  const [downPaymentAmount, setDownPaymentAmount] = useState<number>(800000);
-  const [downPaymentPercent, setDownPaymentPercent] = useState<number>(20);
+  const [carPrice, setCarPrice] = useState<number>(3000000);
+  const [downPaymentAmount, setDownPaymentAmount] = useState<number>(300000);
+  const [downPaymentPercent, setDownPaymentPercent] = useState<number>(10);
   const [loanTenure, setLoanTenure] = useState<number>(5);
   const [interestRate, setInterestRate] = useState<number>(10.5);
   const [showAmortization, setShowAmortization] = useState<boolean>(false);
-  const [selectedCar, setSelectedCar] = useState<string>('');
-  const [searchQuery, setSearchQuery] = useState<string>('');
-
-  // Sample car data
-  const cars = [
-    { id: '1', name: 'Suzuki Swift', price: 2650000 },
-    { id: '2', name: 'Hyundai Creta', price: 5200000 },
-    { id: '3', name: 'Toyota Fortuner', price: 11500000 },
-    { id: '4', name: 'Kia Sonet', price: 4100000 },
-    { id: '5', name: 'Honda City', price: 3850000 },
-  ];
 
   // Calculate EMI
   const calculateEMI = () => {
@@ -47,7 +36,7 @@ const EmiCalculatorPage = () => {
     const emi = calculateEMI();
     const totalPayment = emi * loanTenure * 12;
     const loanAmount = carPrice - downPaymentAmount;
-    return totalPayment - loanAmount;
+    return Math.round(totalPayment - loanAmount);
   };
 
   // Calculate total payment
@@ -72,13 +61,13 @@ const EmiCalculatorPage = () => {
 
   // Format price in Nepali format
   const formatPrice = (price: number) => {
-    return `Rs.${price.toLocaleString('en-IN')}`;
+    return `Rs. ${price.toLocaleString('en-IN')}`;
   };
 
   // Format price in lakh format
   const formatLakh = (price: number) => {
     const lakh = price / 100000;
-    return `Rs.${lakh.toFixed(2)} Lakh`;
+    return `Rs. ${lakh.toFixed(2)} Lakh`;
   };
 
   // Calculate amortization schedule
@@ -104,11 +93,11 @@ const EmiCalculatorPage = () => {
 
       schedule.push({
         year,
-        openingBalance: openingBalance,
-        emiPaid: emi * 12,
-        interest: yearlyInterest,
-        principal: yearlyPrincipal,
-        closingBalance: balance > 0 ? balance : 0
+        openingBalance: Math.round(openingBalance),
+        emiPaid: Math.round(emi * 12),
+        interest: Math.round(yearlyInterest),
+        principal: Math.round(yearlyPrincipal),
+        closingBalance: balance > 0 ? Math.round(balance) : 0
       });
     }
 
@@ -126,7 +115,7 @@ const EmiCalculatorPage = () => {
     { name: 'Nabil Bank', rate: 10.75, tenure: 7, financing: 85, fee: 0.5 },
     { name: 'Everest Bank', rate: 10.25, tenure: 7, financing: 80, fee: 0.5 },
     { name: 'Sanima Bank', rate: 10.5, tenure: 6, financing: 80, fee: 0.5 },
-    { name: 'Global IME Bank', rate: 11.0, tenure: 7, financing: 85, fee: 1.0 },
+    { name: 'Global IME', rate: 11.0, tenure: 7, financing: 85, fee: 1.0 },
     { name: 'Laxmi Sunrise', rate: 10.5, tenure: 7, financing: 80, fee: 0.5 }
   ];
 
@@ -159,57 +148,13 @@ EMI: ${formatPrice(emi)}/month for ${loanTenure} years at ${interestRate}%`;
             <Label className="block text-xs uppercase tracking-wider text-[#6e6e73] mb-3">
               Car Price
             </Label>
-            <div className="space-y-4">
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Search and select a car..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full"
-                />
-                {searchQuery && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-[#d2d2d7] rounded-lg shadow-lg">
-                    {cars
-                      .filter(car => car.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                      .map(car => (
-                        <div
-                          key={car.id}
-                          className="p-3 hover:bg-[#f5f5f7] cursor-pointer"
-                          onClick={() => {
-                            setCarPrice(car.price);
-                            setSelectedCar(car.name);
-                            setSearchQuery('');
-                          }}
-                        >
-                          <div className="font-medium">{car.name}</div>
-                          <div className="text-sm text-[#6e6e73]">{formatPrice(car.price)}</div>
-                        </div>
-                      ))}
-                  </div>
-                )}
-              </div>
-              
-              {selectedCar && (
-                <div className="flex items-center justify-between bg-[#f5f5f7] rounded-lg p-3">
-                  <span className="font-medium">{selectedCar}</span>
-                  <button 
-                    onClick={() => setSelectedCar('')}
-                    className="text-[#6e6e73] hover:text-[#1d1d1f]"
-                  >
-                    ×
-                  </button>
-                </div>
-              )}
-              
-              <Input
-                type="number"
-                placeholder="Or enter price manually"
-                value={carPrice}
-                onChange={(e) => setCarPrice(Number(e.target.value))}
-                className="w-full"
-              />
-            </div>
+            <Input
+              type="number"
+              placeholder="Rs. 0"
+              value={carPrice}
+              onChange={(e) => setCarPrice(Number(e.target.value))}
+              className="w-full"
+            />
           </div>
 
           {/* Down Payment Section */}
@@ -221,6 +166,7 @@ EMI: ${formatPrice(emi)}/month for ${loanTenure} years at ${interestRate}%`;
               <div>
                 <Input
                   type="number"
+                  placeholder="Rs. 0"
                   value={downPaymentAmount}
                   onChange={(e) => setDownPaymentAmount(Number(e.target.value))}
                   className="w-full"
@@ -229,10 +175,10 @@ EMI: ${formatPrice(emi)}/month for ${loanTenure} years at ${interestRate}%`;
               <div>
                 <Input
                   type="number"
+                  placeholder="%"
                   value={downPaymentPercent}
                   onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
                   className="w-full"
-                  suffix="%"
                 />
               </div>
             </div>
@@ -285,7 +231,7 @@ EMI: ${formatPrice(emi)}/month for ${loanTenure} years at ${interestRate}%`;
                 variant="outline"
                 size="icon"
                 onClick={() => setInterestRate(prev => Math.max(8, prev - 0.25))}
-                className="border-[#d2d2d7]"
+                className="border-[#d2d2d7] w-9 h-9"
               >
                 -
               </Button>
@@ -302,7 +248,7 @@ EMI: ${formatPrice(emi)}/month for ${loanTenure} years at ${interestRate}%`;
                 variant="outline"
                 size="icon"
                 onClick={() => setInterestRate(prev => Math.min(18, prev + 0.25))}
-                className="border-[#d2d2d7]"
+                className="border-[#d2d2d7] w-9 h-9"
               >
                 +
               </Button>
@@ -419,8 +365,7 @@ EMI: ${formatPrice(emi)}/month for ${loanTenure} years at ${interestRate}%`;
 
       {/* Bank Comparison Section */}
       <div className="mt-16">
-        <h2 className="text-2xl font-semibold mb-2">Compare Car Loan Rates</h2>
-        <p className="text-[#6e6e73] mb-6">Nepal banks offering car loans</p>
+        <h2 className="text-2xl font-semibold mb-6">Compare Car Loan Rates</h2>
 
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
@@ -437,7 +382,7 @@ EMI: ${formatPrice(emi)}/month for ${loanTenure} years at ${interestRate}%`;
               {banks.map((bank, index) => (
                 <tr 
                   key={bank.name} 
-                  className={index % 2 === 0 ? 'bg-white' : 'bg-[#f5f5f7]'}
+                  className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#f5f5f7]'} ${bank.rate === 10.25 ? 'border-l-4 border-l-[#e8531a]' : ''}`}
                   onClick={() => handleBankSelect(bank.rate)}
                 >
                   <td className="p-4 border-t border-[#d2d2d7]">
@@ -461,7 +406,7 @@ EMI: ${formatPrice(emi)}/month for ${loanTenure} years at ${interestRate}%`;
         </div>
 
         <p className="text-[#6e6e73] text-sm text-center mt-4">
-          Rates are indicative and subject to change. Contact banks directly for current rates.
+          Rates are indicative. Contact banks directly for current rates.
         </p>
       </div>
     </div>
