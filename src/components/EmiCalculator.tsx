@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const BANKS = [
   { name: "NMB Bank", rate: 10.5, tenure: 7, finance: 80, fee: 0.5, best: false },
@@ -27,7 +27,7 @@ function calcEMI(principal: number, rate: number, months: number): number {
   return (principal * r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1);
 }
 
-export const EmiCalculator = () => {
+export default function EmiCalculatorPage() {
   const [carPrice, setCarPrice] = useState(3000000);
   const [carPriceInput, setCarPriceInput] = useState("3000000");
   const [downPct, setDownPct] = useState(10);
@@ -35,7 +35,7 @@ export const EmiCalculator = () => {
   const [rate, setRate] = useState(10.5);
   const [showAmort, setShowAmort] = useState(false);
 
-  const downPayment = Math.round(carPrice * downPct / 100);
+  const downPayment = Math.round((carPrice * downPct) / 100);
   const loanAmount = carPrice - downPayment;
   const months = tenure * 12;
   const emi = calcEMI(loanAmount, rate, months);
@@ -68,7 +68,7 @@ export const EmiCalculator = () => {
   }
 
   const copyResult = () => {
-    const text = `EMI Rs.${Math.round(emi).toLocaleString()}/month | Car ${formatNPR(carPrice)} | Down ${formatNPR(downPayment)} | ${tenure}yr @ ${rate}% — carkinne.com`;
+    const text = `EMI ${formatNPR(Math.round(emi))}/month | Car ${formatNPR(carPrice)} | Down ${formatNPR(downPayment)} | ${tenure}yr @ ${rate}% — carkinne.com`;
     navigator.clipboard.writeText(text);
     alert("Copied to clipboard!");
   };
@@ -87,28 +87,34 @@ export const EmiCalculator = () => {
       </div>
 
       {/* CALCULATOR — TWO COLUMNS */}
-      <div style={{
-        maxWidth: 1100,
-        margin: "0 auto",
-        padding: "0 24px 60px",
-        display: "grid",
-        gridTemplateColumns: "55% 43%",
-        gap: 32,
-        alignItems: "start",
-      }}>
-
+      <div
+        style={{
+          maxWidth: 1100,
+          margin: "0 auto",
+          padding: "0 24px 60px",
+          display: "grid",
+          gridTemplateColumns: "55% 43%",
+          gap: 32,
+          alignItems: "start",
+        }}
+      >
         {/* LEFT — INPUTS */}
         <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
 
           {/* Car Price */}
           <div>
-            <label style={{ fontSize: 12, fontWeight: 500, color: "#6e6e73", letterSpacing: 1, textTransform: "uppercase" }}>
+            <label
+              style={{
+                fontSize: 12, fontWeight: 500, color: "#6e6e73",
+                letterSpacing: 1, textTransform: "uppercase",
+              }}
+            >
               Car Price
             </label>
             <input
               type="number"
               value={carPriceInput}
-              onChange={e => {
+              onChange={(e) => {
                 setCarPriceInput(e.target.value);
                 const v = parseInt(e.target.value);
                 if (!isNaN(v)) setCarPrice(v);
@@ -128,50 +134,83 @@ export const EmiCalculator = () => {
 
           {/* Down Payment */}
           <div>
-            <label style={{ fontSize: 12, fontWeight: 500, color: "#6e6e73", letterSpacing: 1, textTransform: "uppercase" }}>
+            <label
+              style={{
+                fontSize: 12, fontWeight: 500, color: "#6e6e73",
+                letterSpacing: 1, textTransform: "uppercase",
+              }}
+            >
               Down Payment
             </label>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 8 }}>
+            <div
+              style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 8 }}
+            >
               <input
                 type="number"
                 value={downPayment}
-                onChange={e => {
+                onChange={(e) => {
                   const v = parseInt(e.target.value);
-                  if (!isNaN(v) && carPrice > 0) setDownPct(Math.round(v / carPrice * 100));
+                  if (!isNaN(v) && carPrice > 0)
+                    setDownPct(Math.round((v / carPrice) * 100));
                 }}
                 placeholder="Amount"
-                style={{ padding: "12px 16px", fontSize: 15, border: "1px solid #d2d2d7", borderRadius: 12, outline: "none" }}
+                style={{
+                  padding: "12px 16px", fontSize: 15,
+                  border: "1px solid #d2d2d7", borderRadius: 12, outline: "none",
+                }}
               />
               <div style={{ position: "relative" }}>
                 <input
                   type="number"
                   value={downPct}
-                  onChange={e => {
+                  onChange={(e) => {
                     const v = parseInt(e.target.value);
                     if (!isNaN(v)) setDownPct(Math.min(50, Math.max(10, v)));
                   }}
-                  style={{ padding: "12px 16px", fontSize: 15, border: "1px solid #d2d2d7", borderRadius: 12, outline: "none", width: "100%", boxSizing: "border-box" }}
+                  style={{
+                    padding: "12px 16px", fontSize: 15,
+                    border: "1px solid #d2d2d7", borderRadius: 12,
+                    outline: "none", width: "100%", boxSizing: "border-box",
+                  }}
                 />
-                <span style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", color: "#6e6e73", fontSize: 15 }}>%</span>
+                <span
+                  style={{
+                    position: "absolute", right: 14, top: "50%",
+                    transform: "translateY(-50%)", color: "#6e6e73", fontSize: 15,
+                  }}
+                >
+                  %
+                </span>
               </div>
             </div>
             <input
-              type="range" min={10} max={50} value={downPct}
-              onChange={e => setDownPct(parseInt(e.target.value))}
+              type="range"
+              min={10}
+              max={50}
+              value={downPct}
+              onChange={(e) => setDownPct(parseInt(e.target.value))}
               style={{ width: "100%", marginTop: 12, accentColor: "#e8531a" }}
             />
-            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#6e6e73" }}>
-              <span>10%</span><span>50%</span>
+            <div
+              style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#6e6e73" }}
+            >
+              <span>10%</span>
+              <span>50%</span>
             </div>
           </div>
 
           {/* Loan Tenure */}
           <div>
-            <label style={{ fontSize: 12, fontWeight: 500, color: "#6e6e73", letterSpacing: 1, textTransform: "uppercase" }}>
+            <label
+              style={{
+                fontSize: 12, fontWeight: 500, color: "#6e6e73",
+                letterSpacing: 1, textTransform: "uppercase",
+              }}
+            >
               Loan Tenure
             </label>
             <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
-              {[1, 2, 3, 4, 5, 6, 7].map(yr => (
+              {[1, 2, 3, 4, 5, 6, 7].map((yr) => (
                 <button
                   key={yr}
                   onClick={() => setTenure(yr)}
@@ -183,40 +222,57 @@ export const EmiCalculator = () => {
                     color: tenure === yr ? "#fff" : "#1d1d1f",
                     transition: "all 0.2s",
                   }}
-                >{yr}yr</button>
+                >
+                  {yr}yr
+                </button>
               ))}
             </div>
           </div>
 
           {/* Interest Rate */}
           <div>
-            <label style={{ fontSize: 12, fontWeight: 500, color: "#6e6e73", letterSpacing: 1, textTransform: "uppercase" }}>
+            <label
+              style={{
+                fontSize: 12, fontWeight: 500, color: "#6e6e73",
+                letterSpacing: 1, textTransform: "uppercase",
+              }}
+            >
               Interest Rate
             </label>
-            <div style={{ display: "flex", alignItems: "center", gap: 0, marginTop: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", marginTop: 8 }}>
               <button
-                onClick={() => setRate(r => Math.max(8, Math.round((r - 0.25) * 100) / 100))}
+                onClick={() =>
+                  setRate((r) => Math.max(8, Math.round((r - 0.25) * 100) / 100))
+                }
                 style={{
                   width: 40, height: 44, border: "1px solid #d2d2d7",
                   borderRadius: "8px 0 0 8px", background: "#fff",
                   fontSize: 18, cursor: "pointer", color: "#1d1d1f",
                 }}
-              >−</button>
-              <div style={{
-                padding: "10px 24px", border: "1px solid #d2d2d7",
-                borderLeft: "none", borderRight: "none",
-                fontSize: 16, fontWeight: 500, minWidth: 80, textAlign: "center",
-              }}>
+              >
+                −
+              </button>
+              <div
+                style={{
+                  padding: "10px 24px", border: "1px solid #d2d2d7",
+                  borderLeft: "none", borderRight: "none",
+                  fontSize: 16, fontWeight: 500, minWidth: 80, textAlign: "center",
+                }}
+              >
                 {rate}%
               </div>
               <button
-                onClick={() => setRate(r => Math.min(18, Math.round((r + 0.25) * 100) / 100))}
+                onClick={() =>
+                  setRate((r) => Math.min(18, Math.round((r + 0.25) * 100) / 100))
+                }
                 style={{
                   width: 40, height: 44, border: "1px solid #d2d2d7",
                   borderRadius: "0 8px 8px 0", background: "#fff",
                   fontSize: 18, cursor: "pointer", color: "#1d1d1f",
                 }}
-              >+</button>
+              >
+                +
+              </button>
             </div>
             <p style={{ fontSize: 13, color: "#6e6e73", marginTop: 6 }}>
               Average Nepal bank car loan rate: 10–11%
@@ -225,15 +281,24 @@ export const EmiCalculator = () => {
         </div>
 
         {/* RIGHT — RESULTS CARD */}
-        <div style={{
-          position: "sticky", top: 24,
-          background: "#fff", border: "1px solid #d2d2d7",
-          borderRadius: 16, padding: 28,
-        }}>
-          <p style={{ fontSize: 12, fontWeight: 500, color: "#6e6e73", letterSpacing: 1, textTransform: "uppercase", margin: 0 }}>
+        <div
+          style={{
+            position: "sticky", top: 24,
+            background: "#fff", border: "1px solid #d2d2d7",
+            borderRadius: 16, padding: 28,
+          }}
+        >
+          <p
+            style={{
+              fontSize: 12, fontWeight: 500, color: "#6e6e73",
+              letterSpacing: 1, textTransform: "uppercase", margin: 0,
+            }}
+          >
             Monthly Installment
           </p>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 8 }}>
+          <div
+            style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 8 }}
+          >
             <span style={{ fontSize: 36, fontWeight: 700, color: "#e8531a" }}>
               {formatNPR(Math.round(emi))}
             </span>
@@ -242,16 +307,21 @@ export const EmiCalculator = () => {
 
           <div style={{ height: 1, background: "#d2d2d7", margin: "20px 0" }} />
 
-          {/* Breakdown */}
-          {[
-            ["Car Price", formatNPR(carPrice)],
-            ["Down Payment", formatNPR(downPayment)],
-            ["Loan Amount", formatNPR(loanAmount)],
-            ["Interest Rate", `${rate}%`],
-            ["Loan Tenure", `${tenure} years`],
-            ["Total Interest", formatNPR(Math.round(totalInterest))],
-          ].map(([label, value]) => (
-            <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0" }}>
+          {/* Breakdown rows */}
+          {(
+            [
+              ["Car Price", formatNPR(carPrice)],
+              ["Down Payment", formatNPR(downPayment)],
+              ["Loan Amount", formatNPR(loanAmount)],
+              ["Interest Rate", `${rate}%`],
+              ["Loan Tenure", `${tenure} years`],
+              ["Total Interest", formatNPR(Math.round(totalInterest))],
+            ] as [string, string][]
+          ).map(([label, value]) => (
+            <div
+              key={label}
+              style={{ display: "flex", justifyContent: "space-between", padding: "6px 0" }}
+            >
               <span style={{ fontSize: 14, color: "#6e6e73" }}>{label}</span>
               <span style={{ fontSize: 14, color: "#1d1d1f" }}>{value}</span>
             </div>
@@ -259,9 +329,15 @@ export const EmiCalculator = () => {
 
           <div style={{ height: 1, background: "#1d1d1f", margin: "8px 0" }} />
 
-          <div style={{ display: "flex", justifyContent: "space-between", padding: "6px 0" }}>
-            <span style={{ fontSize: 14, fontWeight: 600, color: "#1d1d1f" }}>Total Payment</span>
-            <span style={{ fontSize: 14, fontWeight: 600, color: "#1d1d1f" }}>{formatNPR(Math.round(totalPayment))}</span>
+          <div
+            style={{ display: "flex", justifyContent: "space-between", padding: "6px 0" }}
+          >
+            <span style={{ fontSize: 14, fontWeight: 600, color: "#1d1d1f" }}>
+              Total Payment
+            </span>
+            <span style={{ fontSize: 14, fontWeight: 600, color: "#1d1d1f" }}>
+              {formatNPR(Math.round(totalPayment))}
+            </span>
           </div>
 
           <div style={{ height: 1, background: "#d2d2d7", margin: "20px 0" }} />
@@ -269,7 +345,11 @@ export const EmiCalculator = () => {
           {/* Amortization toggle */}
           <button
             onClick={() => setShowAmort(!showAmort)}
-            style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, color: "#e8531a", padding: 0, display: "flex", alignItems: "center", gap: 4 }}
+            style={{
+              background: "none", border: "none", cursor: "pointer",
+              fontSize: 14, color: "#e8531a", padding: 0,
+              display: "flex", alignItems: "center", gap: 4,
+            }}
           >
             {showAmort ? "▲" : "▼"} View year-by-year breakdown
           </button>
@@ -279,20 +359,43 @@ export const EmiCalculator = () => {
               <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
                 <thead>
                   <tr style={{ background: "#f5f5f7" }}>
-                    {["Year", "Opening", "EMI", "Interest", "Principal", "Closing"].map(h => (
-                      <th key={h} style={{ padding: "8px 6px", textAlign: "right", color: "#6e6e73", fontWeight: 500 }}>{h}</th>
-                    ))}
+                    {["Year", "Opening", "EMI", "Interest", "Principal", "Closing"].map(
+                      (h) => (
+                        <th
+                          key={h}
+                          style={{
+                            padding: "8px 6px", textAlign: "right",
+                            color: "#6e6e73", fontWeight: 500,
+                          }}
+                        >
+                          {h}
+                        </th>
+                      )
+                    )}
                   </tr>
                 </thead>
                 <tbody>
                   {amortRows.map((row, i) => (
-                    <tr key={row.year} style={{ background: i % 2 === 0 ? "#fff" : "#f5f5f7" }}>
+                    <tr
+                      key={row.year}
+                      style={{ background: i % 2 === 0 ? "#fff" : "#f5f5f7" }}
+                    >
                       <td style={{ padding: "6px", textAlign: "right" }}>{row.year}</td>
-                      <td style={{ padding: "6px", textAlign: "right" }}>{formatNPR(Math.round(row.opening))}</td>
-                      <td style={{ padding: "6px", textAlign: "right" }}>{formatNPR(Math.round(row.emiPaid))}</td>
-                      <td style={{ padding: "6px", textAlign: "right", color: "#e8531a" }}>{formatNPR(Math.round(row.interest))}</td>
-                      <td style={{ padding: "6px", textAlign: "right" }}>{formatNPR(Math.round(row.principal))}</td>
-                      <td style={{ padding: "6px", textAlign: "right" }}>{formatNPR(Math.round(row.closing))}</td>
+                      <td style={{ padding: "6px", textAlign: "right" }}>
+                        {formatNPR(Math.round(row.opening))}
+                      </td>
+                      <td style={{ padding: "6px", textAlign: "right" }}>
+                        {formatNPR(Math.round(row.emiPaid))}
+                      </td>
+                      <td style={{ padding: "6px", textAlign: "right", color: "#e8531a" }}>
+                        {formatNPR(Math.round(row.interest))}
+                      </td>
+                      <td style={{ padding: "6px", textAlign: "right" }}>
+                        {formatNPR(Math.round(row.principal))}
+                      </td>
+                      <td style={{ padding: "6px", textAlign: "right" }}>
+                        {formatNPR(Math.round(row.closing))}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -304,7 +407,10 @@ export const EmiCalculator = () => {
 
           <button
             onClick={copyResult}
-            style={{ background: "none", border: "none", cursor: "pointer", fontSize: 13, color: "#6e6e73", padding: 0 }}
+            style={{
+              background: "none", border: "none", cursor: "pointer",
+              fontSize: 13, color: "#6e6e73", padding: 0,
+            }}
           >
             Copy Result
           </button>
@@ -314,54 +420,93 @@ export const EmiCalculator = () => {
       {/* BANK RATES SECTION */}
       <div style={{ background: "#f5f5f7", padding: "60px 24px" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <h2 style={{ fontSize: 32, fontWeight: 600, textAlign: "center", margin: 0 }}>
+          <h2
+            style={{ fontSize: 32, fontWeight: 600, textAlign: "center", margin: 0 }}
+          >
             Compare Bank Loan Rates
           </h2>
-          <p style={{ fontSize: 16, color: "#6e6e73", textAlign: "center", marginTop: 8, marginBottom: 40 }}>
+          <p
+            style={{
+              fontSize: 16, color: "#6e6e73", textAlign: "center",
+              marginTop: 8, marginBottom: 40,
+            }}
+          >
             Click any rate to use it in the calculator above
           </p>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
-            {BANKS.map(bank => (
+          <div
+            style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}
+          >
+            {BANKS.map((bank) => (
               <div
                 key={bank.name}
-                onClick={() => { setRate(bank.rate); window.scrollTo({ top: 0, behavior: "smooth" }); }}
+                onClick={() => {
+                  setRate(bank.rate);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
                 style={{
                   background: "#fff",
                   border: bank.best ? "2px solid #e8531a" : "1px solid #d2d2d7",
                   borderRadius: 16, padding: 24, cursor: "pointer",
                   transition: "all 0.2s",
                 }}
-                onMouseEnter={e => (e.currentTarget.style.transform = "translateY(-4px)")}
-                onMouseLeave={e => (e.currentTarget.style.transform = "translateY(0)")}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.transform = "translateY(-4px)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.transform = "translateY(0)")
+                }
               >
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <span style={{ fontSize: 17, fontWeight: 600, color: "#1d1d1f" }}>{bank.name}</span>
+                <div
+                  style={{
+                    display: "flex", alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span style={{ fontSize: 17, fontWeight: 600, color: "#1d1d1f" }}>
+                    {bank.name}
+                  </span>
                   {bank.best && (
-                    <span style={{
-                      fontSize: 10, fontWeight: 600, color: "#fff",
-                      background: "#e8531a", borderRadius: 100,
-                      padding: "3px 10px", letterSpacing: 0.5,
-                      textTransform: "uppercase",
-                    }}>Lowest</span>
+                    <span
+                      style={{
+                        fontSize: 10, fontWeight: 600, color: "#fff",
+                        background: "#e8531a", borderRadius: 100,
+                        padding: "3px 10px", letterSpacing: 0.5,
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Lowest
+                    </span>
                   )}
                 </div>
 
-                <div style={{ fontSize: 38, fontWeight: 700, color: "#e8531a", margin: "12px 0 4px" }}>
+                <div
+                  style={{
+                    fontSize: 38, fontWeight: 700,
+                    color: "#e8531a", margin: "12px 0 4px",
+                  }}
+                >
                   {bank.rate}%
                 </div>
                 <div style={{ fontSize: 12, color: "#6e6e73" }}>per annum</div>
 
                 <div style={{ height: 1, background: "#d2d2d7", margin: "16px 0" }} />
 
-                {[
-                  ["Max Tenure", `${bank.tenure} years`],
-                  ["Max Financing", `${bank.finance}%`],
-                  ["Processing Fee", `${bank.fee}%`],
-                ].map(([label, value]) => (
-                  <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "4px 0" }}>
+                {(
+                  [
+                    ["Max Tenure", `${bank.tenure} years`],
+                    ["Max Financing", `${bank.finance}%`],
+                    ["Processing Fee", `${bank.fee}%`],
+                  ] as [string, string][]
+                ).map(([label, value]) => (
+                  <div
+                    key={label}
+                    style={{ display: "flex", justifyContent: "space-between", padding: "4px 0" }}
+                  >
                     <span style={{ fontSize: 12, color: "#6e6e73" }}>{label}</span>
-                    <span style={{ fontSize: 13, fontWeight: 500, color: "#1d1d1f" }}>{value}</span>
+                    <span style={{ fontSize: 13, fontWeight: 500, color: "#1d1d1f" }}>
+                      {value}
+                    </span>
                   </div>
                 ))}
 
@@ -374,11 +519,17 @@ export const EmiCalculator = () => {
             ))}
           </div>
 
-          <p style={{ fontSize: 13, color: "#6e6e73", textAlign: "center", marginTop: 28 }}>
-            Rates are indicative and subject to change. Contact banks directly for latest rates and offers.
+          <p
+            style={{
+              fontSize: 13, color: "#6e6e73",
+              textAlign: "center", marginTop: 28,
+            }}
+          >
+            Rates are indicative and subject to change. Contact banks directly for
+            latest rates and offers.
           </p>
         </div>
       </div>
     </div>
   );
-};
+}
