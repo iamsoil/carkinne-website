@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { 
   MapPin, 
   Navigation, 
@@ -23,15 +23,17 @@ const BudgetFinder = () => {
   const [fuelType, setFuelType] = useState<string>('No preference');
   const [transmission, setTransmission] = useState<string>('No preference');
   const [features, setFeatures] = useState<string[]>([]);
-  const [priorities, setPriorities] = useState<string[]>([
-    'Low purchase price',
-    'Low running cost',
-    'Brand reputation',
-    'Good resale value',
-    'Features and comfort',
-    'Easy to maintain'
+  const [items, setItems] = useState([
+    { id: '1', label: 'Low purchase price' },
+    { id: '2', label: 'Low running cost' },
+    { id: '3', label: 'Brand reputation' },
+    { id: '4', label: 'Good resale value' },
+    { id: '5', label: 'Features and comfort' },
+    { id: '6', label: 'Easy to maintain' },
   ]);
   const [results, setResults] = useState<any[]>([]);
+  const dragItem = useRef<number | null>(null);
+  const dragOverItem = useRef<number | null>(null);
 
   // Quick select budget ranges
   const budgetRanges = [
@@ -80,18 +82,38 @@ const BudgetFinder = () => {
     );
   };
 
-  // Handle drag end for priorities
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      setPriorities(items => {
-        const oldIndex = items.indexOf(active.id);
-        const newIndex = items.indexOf(over.id);
-        const newItems = [...items];
-        newItems.splice(oldIndex, 1);
-        newItems.splice(newIndex, 0, active.id);
-        return newItems;
-      });
+  // Drag and drop handlers
+  const handleDragStart = (index: number) => {
+    dragItem.current = index;
+  };
+
+  const handleDragEnter = (index: number) => {
+    dragOverItem.current = index;
+    const newItems = [...items];
+    const draggedItem = newItems[dragItem.current!];
+    newItems.splice(dragItem.current!, 1);
+    newItems.splice(dragOverItem.current!, 0, draggedItem);
+    dragItem.current = dragOverItem.current;
+    dragOverItem.current = null;
+    setItems(newItems);
+  };
+
+  const handleDragEnd = () => {
+    dragItem.current = null;
+    dragOverItem.current = null;
+  };
+
+  const handleTouchStart = (e: React.TouchEvent, index: number) => {
+    dragItem.current = index;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+    const itemIndex = element?.getAttribute('data-index');
+    if (itemIndex !== null && itemIndex !== undefined) {
+      handleDragEnter(parseInt(itemIndex));
     }
   };
 
@@ -247,27 +269,21 @@ const BudgetFinder = () => {
     'ABS & Airbags', 'Reverse Camera', 'Keyless Entry'
   ];
 
-  // Priority items
-  const priorityItems = [
-    'Low purchase price',
-    'Low running cost',
-    'Brand reputation',
-    'Good resale value',
-    'Features and comfort',
-    'Easy to maintain'
-  ];
-
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-2xl mx-auto px-4 py-8">
-        {/* Progress bar */}
-        <div className="w-full bg-[#d2d2d7] h-1 rounded-full mb-2">
-          <div 
-            className="bg-[#e8531a] h-1 rounded-full transition-all duration-500"
-            style={{ width: `${(step / 4) * 100}%` }}
-          ></div>
-        </div>
-        <p className="text-[#6e6e73] text-sm mb-6">Step {step} of 4</p>
+        {/* Progress bar - only show for steps 1-4 */}
+        {step <= 4 && (
+          <>
+            <div className="w-full bg-[#d2d2d7] h-1 rounded-full mb-2">
+              <div 
+                className="bg-[#e8531a] h-1 rounded-full transition-all duration-500"
+                style={{ width: `${(step / 4) * 100}%` }}
+              ></div>
+            </div>
+            <p className="text-[#6e6e73] text-sm mb-6">Step {step} of 4</p>
+          </>
+        )}
 
         {step === 1 && (
           <div className="space-y-8">
@@ -469,10 +485,26 @@ const BudgetFinder = () => {
             </div>
             
             <div className="space-y-3">
-              {priorities.map((priority, index) => (
-                <Card key={priority} className="border border-[#d2d2d7] rounded-xl p-4 flex items-center">
+              {items.map((item, index) => (
+                <Card 
+                  key={item.id}
+                  className="border border-[#d2d2d7] rounded-xl p-4 flex items-center"
+                  draggable
+                  onDragStart={() => handleDragStart(index)}
+                  onDragEnter={() => handleDragEnter(index)}
+                  onDragEnd={handleDragEnd}
+                  onDragOver={(e) => e.preventDefault()}
+                  onTouchStart={(e) => handleTouchStart(e, index)}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleDragEnd}
+                  data-index={index}
+                  style={{
+                    cursor: 'grab',
+                    userSelect: 'none',
+                  }}
+                >
                   <GripVertical className="text-[#d2d2d7] mr-3" size={20} />
-                  <span className="text-[#1d1d1f] flex-1">{priority}</span>
+                  <span className="text-[#1d1d1f] flex-1">{item.label}</span>
                   <div className="bg-[#f5f5f7] w-5 h-5 rounded-full flex items-center justify-center text-[#6e6e73] text-xs">
                     {index + 1}
                   </div>
@@ -595,11 +627,30 @@ const BudgetFinder = () => {
                 {/* Other cars you might like */}
                 <div>
                   <h3 className="text-xl font-semibold mb-4">Other cars you might like</h3>
-                  <div className="flex gap-4 overflow-x-auto pb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {mockCars.slice(0, 4).map((car) => (
-                      <div key={car.id} className="flex-shrink-0 w-64">
-                        <CarCard {...car} />
-                      </div>
+                      <Card key={car.id} className="border border-[#d2d2d7] rounded-xl overflow-hidden hover:translate-y-[-2px] transition-transform">
+                        <CardContent className="p-0 flex">
+                          <div className="w-32">
+                            <img 
+                              src={car.images[0]} 
+                              alt={car.name} 
+                              className="w-full h-full object-cover rounded-l-xl"
+                            />
+                          </div>
+                          <div className="p-4 flex-1">
+                            <p className="text-xs uppercase text-[#6e6e73] tracking-wider mb-1">{car.brand}</p>
+                            <h4 className="font-semibold text-[#1d1d1f] mb-1">{car.name}</h4>
+                            <p className="text-[#e8531a] font-semibold text-sm mb-1">
+                              {formatPrice(car.ex_showroom_price)}
+                            </p>
+                            <p className="text-[#6e6e73] text-xs mb-2">88% match</p>
+                            <a href="#" className="text-[#e8531a] text-xs hover:underline">
+                              View Details
+                            </a>
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                 </div>
