@@ -50,7 +50,9 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center">
             <h1 className="text-2xl font-bold">
-              Car<span className="text-accent">Kinne</span>
+              <a href="/" className="text-foreground hover:text-accent transition-colors">
+                Car<span className="text-accent">Kinne</span>
+              </a>
             </h1>
           </div>
 
