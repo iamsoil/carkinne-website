@@ -46,11 +46,13 @@ const BudgetFinder = () => {
   // Format price in Nepali format
   const formatPrice = (price: number) => {
     if (price >= 10000000) {
-      return `Rs.${(price / 10000000).toFixed(2)} Crore`;
+      const crore = price / 10000000;
+      return `Rs. ${crore % 1 === 0 ? crore.toFixed(0) : crore.toFixed(1)} Crore`;
     } else if (price >= 100000) {
-      return `Rs.${(price / 100000).toFixed(1)} Lakh`;
+      const lakh = price / 100000;
+      return `Rs. ${lakh % 1 === 0 ? lakh.toFixed(0) : lakh.toFixed(1)} Lakh`;
     } else {
-      return `Rs.${price.toLocaleString('en-IN')}`;
+      return `Rs. ${price.toLocaleString('en-IN')}`;
     }
   };
 
@@ -262,10 +264,10 @@ const BudgetFinder = () => {
         <div className="w-full bg-[#d2d2d7] h-1 rounded-full mb-2">
           <div 
             className="bg-[#e8531a] h-1 rounded-full transition-all duration-500"
-            style={{ width: `${(step / 5) * 100}%` }}
+            style={{ width: `${(step / 4) * 100}%` }}
           ></div>
         </div>
-        <p className="text-[#6e6e73] text-sm mb-8">Step {step} of 5</p>
+        <p className="text-[#6e6e73] text-sm mb-6">Step {step} of 4</p>
 
         {step === 1 && (
           <div className="space-y-8">
@@ -279,28 +281,29 @@ const BudgetFinder = () => {
                 {formatPrice(budget)}
               </p>
               
-              <input
-                type="range"
-                min="500000"
-                max="20000000"
-                step="100000"
-                value={budget}
-                onChange={(e) => setBudget(Number(e.target.value))}
-                className="w-full h-2 bg-[#d2d2d7] rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#e8531a]"
-              />
-              
-              <div className="flex justify-between text-sm text-[#6e6e73] mt-2">
-                <span>Rs. 5 Lakh</span>
-                <span>Rs. 2 Crore</span>
+              <div className="relative mb-8">
+                <input
+                  type="range"
+                  min="500000"
+                  max="20000000"
+                  step="100000"
+                  value={budget}
+                  onChange={(e) => setBudget(Number(e.target.value))}
+                  className="w-full h-2 bg-[#d2d2d7] rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[#e8531a] [&::-webkit-slider-thumb]:shadow"
+                />
+                <div className="flex justify-between text-sm text-[#6e6e73] mt-2">
+                  <span>Rs. 5 Lakh</span>
+                  <span>Rs. 2 Crore</span>
+                </div>
               </div>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
               {budgetRanges.map((range) => (
                 <button
                   key={range.label}
                   onClick={() => handleBudgetSelect(range.min, range.max)}
-                  className="border border-[#d2d2d7] rounded-full py-2.5 px-4 text-sm hover:bg-[#f5f5f7] transition-colors"
+                  className="border border-[#d2d2d7] rounded-full py-2.5 px-3 text-xs sm:text-sm hover:bg-[#f5f5f7] transition-colors whitespace-nowrap"
                 >
                   {range.label}
                 </button>
