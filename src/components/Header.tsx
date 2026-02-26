@@ -9,6 +9,7 @@ const Header = () => {
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showAnnouncement, setShowAnnouncement] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,15 +35,20 @@ const Header = () => {
   return (
     <header className={`sticky top-0 z-50 backdrop-blur-xl transition-all duration-300 ${isScrolled ? 'bg-white/85 border-b border-border' : 'bg-white/85'}`}>
       {/* Announcement Bar */}
-      <div className="bg-foreground text-white text-center py-2 text-xs tracking-wide">
-        <div className="container mx-auto px-4 flex justify-between items-center">
-          <div></div>
-          <span>Dashain Special — Up to Rs. 2 Lakh off on selected cars</span>
-          <button className="hover:opacity-70 transition-opacity">
-            <X className="h-4 w-4" />
-          </button>
+      {showAnnouncement && (
+        <div className="bg-foreground text-white text-center py-2 text-xs tracking-wide">
+          <div className="container mx-auto px-4 flex justify-between items-center">
+            <div></div>
+            <span>Dashain Special — Up to Rs. 2 Lakh off on selected cars</span>
+            <button 
+              className="hover:opacity-70 transition-opacity"
+              onClick={() => setShowAnnouncement(false)}
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Main Navigation */}
       <div className="container mx-auto px-4">
