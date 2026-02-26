@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { Search, ChevronRight } from 'lucide-react';
+import { Search, ChevronRight, Car } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import CarCard from '@/components/CarCard';
@@ -231,30 +231,52 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="py-12 md:py-20 bg-gradient-to-br from-primary to-primary/90 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-3xl md:text-5xl font-bold mb-4">
+      <section className="py-12 md:py-20 relative overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900"></div>
+        
+        {/* Decorative car silhouette */}
+        <div className="absolute right-0 top-1/2 transform -translate-y-1/2 w-1/3 h-full opacity-15 hidden lg:block">
+          <svg viewBox="0 0 500 300" className="w-full h-full text-orange-500">
+            <path 
+              d="M50,200 L100,150 L200,150 L250,100 L350,100 L400,150 L450,150 L450,200 L400,200 L350,200 L300,200 L250,200 L200,200 L150,200 L100,200 L50,200 Z" 
+              fill="currentColor" 
+              stroke="currentColor" 
+              strokeWidth="2"
+            />
+            <circle cx="120" cy="220" r="20" fill="currentColor" />
+            <circle cx="380" cy="220" r="20" fill="currentColor" />
+          </svg>
+        </div>
+        
+        <div className="container mx-auto px-4 relative z-10 text-center">
+          <h1 className="text-3xl md:text-5xl font-bold mb-4 text-white">
             Find Your Perfect Car in Nepal
           </h1>
-          <p className="text-xl md:text-2xl mb-8 text-primary-foreground/90">
+          <p className="text-xl md:text-2xl mb-8 text-white/90">
             Compare prices, calculate EMI, find showrooms — all in one place
           </p>
           
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto mb-8">
-            <div className="relative">
+            <div className="relative shadow-lg">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Search Toyota, Suzuki, Budget..."
-                className="pl-10 py-6 text-base rounded-full bg-white/10 border-white/20 text-white placeholder:text-white/70 focus-visible:ring-white"
+                className="pl-10 py-6 text-base rounded-full bg-white/100 border-white/20 text-slate-900 placeholder:text-slate-500 focus-visible:ring-white"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full bg-orange-500 hover:bg-orange-600">
+              <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-full bg-orange-500 hover:bg-orange-600 text-slate-900">
                 Search
               </Button>
             </div>
+          </div>
+          
+          {/* Quick Stats */}
+          <div className="text-white/80 text-sm mb-6">
+            🚗 150+ Cars Listed | 🏢 50+ Showrooms | ⭐ Updated Monthly
           </div>
           
           {/* Quick Filters */}
@@ -263,7 +285,7 @@ const Index = () => {
               <Button
                 key={index}
                 variant="secondary"
-                className="rounded-full bg-white/10 hover:bg-white/20 text-white border-white/20"
+                className="rounded-full bg-white/20 hover:bg-orange-500 text-white border-white/30 hover:text-slate-900"
               >
                 {filter}
               </Button>
@@ -273,20 +295,25 @@ const Index = () => {
       </section>
 
       {/* Popular Brands */}
-      <section className="py-12">
+      <section className="py-12 bg-slate-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-8 text-center">Popular Brands</h2>
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">Popular Brands</h2>
+            <div className="w-10 h-1 bg-orange-500 mx-auto"></div>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-4">
             {popularBrands.map((brand, index) => (
               <div 
                 key={index} 
-                className="bg-white dark:bg-gray-800 rounded-lg p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                className="bg-white rounded-lg p-4 flex flex-col items-center justify-center shadow-sm hover:shadow-md transition-all hover:-translate-y-1 cursor-pointer border-t-4 border-transparent hover:border-orange-500"
               >
+                <Car className="h-8 w-8 text-orange-500 mb-2" />
                 <img 
                   src={brand.logo} 
                   alt={brand.name} 
-                  className="max-h-10 object-contain"
+                  className="max-h-8 object-contain mb-2"
                 />
+                <p className="font-bold text-slate-900 text-sm">{brand.name}</p>
               </div>
             ))}
           </div>
@@ -294,11 +321,14 @@ const Index = () => {
       </section>
 
       {/* Featured Cars */}
-      <section className="py-12 bg-gray-50 dark:bg-gray-900">
+      <section className="py-12 bg-slate-900">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl font-bold">Featured Cars</h2>
-            <a href="/cars" className="text-orange-500 hover:text-orange-600 flex items-center">
+            <div>
+              <h2 className="text-2xl font-bold text-white">Featured Cars</h2>
+              <div className="w-10 h-1 bg-orange-500 mt-1"></div>
+            </div>
+            <a href="/cars" className="text-orange-500 hover:text-orange-400 flex items-center">
               View All <ChevronRight className="ml-1 h-4 w-4" />
             </a>
           </div>
@@ -330,34 +360,37 @@ const Index = () => {
       </section>
 
       {/* EMI Calculator Widget */}
-      <section className="py-12">
+      <section className="py-12 bg-slate-50">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:p-8">
-            <h2 className="text-2xl font-bold mb-6 text-center">EMI Calculator</h2>
+          <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 md:p-8">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-slate-900">EMI Calculator</h2>
+              <div className="w-10 h-1 bg-orange-500 mx-auto mt-1"></div>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label className="block text-sm font-medium mb-2">Car Price (Rs.)</label>
+                <label className="block text-sm font-medium mb-2 text-slate-700">Car Price (Rs.)</label>
                 <Input type="number" placeholder="e.g. 3000000" className="w-full" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Down Payment (%)</label>
+                <label className="block text-sm font-medium mb-2 text-slate-700">Down Payment (%)</label>
                 <Input type="number" placeholder="e.g. 10" defaultValue="10" className="w-full" />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">Loan Term (Years)</label>
+                <label className="block text-sm font-medium mb-2 text-slate-700">Loan Term (Years)</label>
                 <Input type="number" placeholder="e.g. 5" defaultValue="5" className="w-full" />
               </div>
             </div>
             <div className="mt-6 text-center">
-              <Button className="bg-orange-500 hover:bg-orange-600 rounded-full px-8">
+              <Button className="bg-orange-500 hover:bg-orange-600 rounded-full px-8 text-white">
                 Calculate EMI
               </Button>
             </div>
-            <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+            <div className="mt-6 p-4 bg-slate-100 rounded-lg">
               <p className="text-center text-lg">
                 Monthly EMI: <span className="font-bold text-orange-500">Rs.55,000</span>
               </p>
-              <p className="text-center text-sm text-muted-foreground mt-2">
+              <p className="text-center text-sm text-slate-600 mt-2">
                 Total Interest: Rs.300,000 | Total Amount: Rs.33,00,000
               </p>
             </div>
@@ -366,12 +399,15 @@ const Index = () => {
       </section>
 
       {/* Latest Offers */}
-      <section className="py-12 bg-gray-50 dark:bg-gray-900">
+      <section className="py-12 bg-slate-900">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-8">Latest Offers</h2>
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-white">Latest Offers</h2>
+            <div className="w-10 h-1 bg-orange-500 mx-auto mt-1"></div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {latestOffers.map((offer) => (
-              <div key={offer.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+              <div key={offer.id} className="bg-white rounded-xl shadow-md overflow-hidden">
                 <img 
                   src={offer.image_url} 
                   alt={offer.title} 
@@ -379,7 +415,7 @@ const Index = () => {
                 />
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2">{offer.title}</h3>
-                  <p className="text-muted-foreground mb-4">{offer.description}</p>
+                  <p className="text-slate-600 mb-4">{offer.description}</p>
                   <div className="flex justify-between items-center">
                     <span className="text-orange-500 font-semibold">
                       {offer.discount_amount > 0 ? `Save up to Rs.${offer.discount_amount.toLocaleString('en-IN')}` : 'Special Offer'}
@@ -396,17 +432,20 @@ const Index = () => {
       </section>
 
       {/* Top Showrooms */}
-      <section className="py-12">
+      <section className="py-12 bg-slate-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-bold mb-8">Top Showrooms</h2>
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-slate-900">Top Showrooms</h2>
+            <div className="w-10 h-1 bg-orange-500 mx-auto mt-1"></div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {topShowrooms.map((showroom) => (
-              <div key={showroom.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+              <div key={showroom.id} className="bg-white rounded-xl shadow-md p-6">
                 <div className="flex items-center mb-4">
                   <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
                   <div className="ml-4">
                     <h3 className="font-bold">{showroom.name}</h3>
-                    <p className="text-sm text-muted-foreground">{showroom.brand}</p>
+                    <p className="text-sm text-slate-600">{showroom.brand}</p>
                   </div>
                 </div>
                 <div className="space-y-2 text-sm">
@@ -423,17 +462,20 @@ const Index = () => {
       </section>
 
       {/* Latest from Blog */}
-      <section className="py-12 bg-gray-50 dark:bg-gray-900">
+      <section className="py-12 bg-slate-900">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl font-bold">Latest from Blog</h2>
-            <a href="/blog" className="text-orange-500 hover:text-orange-600 flex items-center">
+            <div>
+              <h2 className="text-2xl font-bold text-white">Latest from Blog</h2>
+              <div className="w-10 h-1 bg-orange-500 mt-1"></div>
+            </div>
+            <a href="/blog" className="text-orange-500 hover:text-orange-400 flex items-center">
               View All <ChevronRight className="ml-1 h-4 w-4" />
             </a>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {latestBlogPosts.map((post) => (
-              <div key={post.id} className="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden">
+              <div key={post.id} className="bg-white rounded-xl shadow-md overflow-hidden">
                 <img 
                   src={post.cover_image} 
                   alt={post.title} 
@@ -441,9 +483,9 @@ const Index = () => {
                 />
                 <div className="p-6">
                   <h3 className="text-xl font-bold mb-2">{post.title}</h3>
-                  <p className="text-muted-foreground mb-4">{post.excerpt}</p>
+                  <p className="text-slate-600 mb-4">{post.excerpt}</p>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-sm text-slate-500">
                       {new Date(post.published_at).toLocaleDateString('en-US', { 
                         year: 'numeric', 
                         month: 'short', 

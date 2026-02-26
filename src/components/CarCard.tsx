@@ -62,7 +62,7 @@ const CarCard = ({
   const emi = calculateEMI();
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+    <Card className="overflow-hidden hover:shadow-lg transition-shadow bg-white">
       <div className="relative">
         {/* Car Image */}
         <div className="aspect-video bg-gray-200 relative overflow-hidden">
@@ -101,7 +101,7 @@ const CarCard = ({
           <Button
             variant="secondary"
             size="icon"
-            className="absolute bottom-2 right-2 rounded-full"
+            className="absolute bottom-2 right-2 rounded-full bg-white hover:bg-orange-100"
             onClick={() => setIsSaved(!isSaved)}
           >
             <Heart className={`h-4 w-4 ${isSaved ? 'fill-red-500 text-red-500' : ''}`} />
@@ -118,7 +118,7 @@ const CarCard = ({
           <p className="text-orange-500 font-bold text-xl">
             {formatPrice(ex_showroom_price)}
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-slate-600">
             On-road: {formatPrice(on_road_price)}
           </p>
         </div>
@@ -126,31 +126,31 @@ const CarCard = ({
         {/* Specs */}
         <div className="grid grid-cols-4 gap-2 mb-4 text-xs">
           <div className="flex items-center">
-            <Fuel className="h-3 w-3 mr-1" />
+            <Fuel className="h-3 w-3 mr-1 text-orange-500" />
             <span>{fuel_type}</span>
           </div>
           <div className="flex items-center">
-            <Settings className="h-3 w-3 mr-1" />
+            <Settings className="h-3 w-3 mr-1 text-orange-500" />
             <span>{transmission}</span>
           </div>
           <div className="flex items-center">
-            <Users className="h-3 w-3 mr-1" />
+            <Users className="h-3 w-3 mr-1 text-orange-500" />
             <span>{seating} Seats</span>
           </div>
           <div className="flex items-center">
-            <Gauge className="h-3 w-3 mr-1" />
+            <Gauge className="h-3 w-3 mr-1 text-orange-500" />
             <span>{engine_cc}cc</span>
           </div>
         </div>
         
         <div className="mb-3">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-slate-600">
             EMI from <span className="font-semibold text-orange-500">Rs.{emi.toLocaleString('en-IN')}/month</span>
           </p>
         </div>
         
         <div className="flex space-x-2">
-          <Button className="flex-1" size="sm">
+          <Button className="flex-1 bg-orange-500 hover:bg-orange-600 text-white">
             View Details
           </Button>
           <Button variant="outline" size="sm">
