@@ -72,7 +72,7 @@ const Header = () => {
 
           {/* Right Icons */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" onClick={toggleTheme} className="text-foreground hover:text-accent">
+            <Button variant="ghost" size="icon" onClick={toggleTheme} className="text-foreground hover:text-white">
               {theme === 'dark' ? (
                 <Sun className="h-5 w-5" />
               ) : (
@@ -81,7 +81,7 @@ const Header = () => {
               <span className="sr-only">Toggle theme</span>
             </Button>
             
-            <Button variant="ghost" size="icon" className="text-foreground hover:text-accent">
+            <Button variant="ghost" size="icon" className="text-foreground hover:text-white">
               <Search className="h-5 w-5" />
               <span className="sr-only">Search</span>
             </Button>
@@ -90,7 +90,7 @@ const Header = () => {
             <Button 
               variant="ghost" 
               size="icon" 
-              className="md:hidden text-foreground hover:text-accent"
+              className="md:hidden text-foreground hover:text-white"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? (
