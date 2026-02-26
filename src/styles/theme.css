@@ -1,0 +1,100 @@
+/* Custom theme styles for CarKinne */
+:root {
+  --car-kine-primary: #0f172a; /* Deep Navy */
+  --car-kine-accent: #f59e0b; /* Saffron/Orange */
+  --car-kine-background: #f8fafc;
+  --car-kine-card: #ffffff;
+  --car-kine-text: #0f172a;
+  --car-kine-text-muted: #64748b;
+}
+
+.dark {
+  --car-kine-background: #0f172a;
+  --car-kine-card: #1e293b;
+  --car-kine-text: #f1f5f9;
+  --car-kine-text-muted: #94a3b8;
+}
+
+/* Custom button styles */
+.btn-primary {
+  background-color: var(--car-kine-accent);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: #d97706;
+  transform: translateY(-1px);
+}
+
+/* Card styles */
+.car-card {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.car-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Badge styles */
+.badge-new {
+  background-color: var(--car-kine-accent);
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+}
+
+.badge-featured {
+  background-color: #3b82f6;
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+}
+
+/* Price styles */
+.price {
+  color: var(--car-kine-accent);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+/* EMI styles */
+.emi-estimate {
+  font-size: 0.875rem;
+  color: var(--car-kine-text-muted);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .car-card {
+    margin-bottom: 1rem;
+  }
+  
+  .price {
+    font-size: 1.125rem;
+  }
+}
+
+/* Animation for loading states */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

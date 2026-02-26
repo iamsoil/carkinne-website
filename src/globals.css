@@ -49,6 +49,10 @@
     --sidebar-border: 220 13% 91%;
 
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* CarKinne custom colors */
+    --car-kine-primary: 222 47% 11%; /* Deep Navy #0f172a */
+    --car-kine-accent: 35 92% 49%; /* Saffron/Orange #f59e0b */
   }
 
   .dark {
@@ -87,6 +91,10 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* CarKinne custom colors in dark mode */
+    --car-kine-primary: 210 40% 98%; /* Light text for dark mode */
+    --car-kine-accent: 35 92% 49%; /* Keep accent consistent */
   }
 }
 
@@ -98,4 +106,27 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Custom CarKinne styles */
+.text-car-kine-accent {
+  color: hsl(var(--car-kine-accent));
+}
+
+.bg-car-kine-accent {
+  background-color: hsl(var(--car-kine-accent));
+}
+
+.border-car-kine-accent {
+  border-color: hsl(var(--car-kine-accent));
+}
+
+/* Button variants */
+.btn-car-kine {
+  @apply bg-car-kine-accent text-white hover:bg-orange-600;
+}
+
+/* Card hover effect */
+.hover-card {
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
 }
