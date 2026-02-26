@@ -8,12 +8,14 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Index from "./pages/Index";
 import Cars from "./pages/Cars";
+import CarDetail from "./pages/CarDetail";
 import EmiCalculator from "./pages/EmiCalculator";
 import BudgetFinder from "./pages/BudgetFinder";
 import ElectricCars from "./pages/ElectricCars";
 import Showrooms from "./pages/Showrooms";
 import Offers from "./pages/Offers";
 import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import Compare from "./pages/Compare";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
@@ -33,12 +35,14 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/cars" element={<Cars />} />
+                <Route path="/cars/:slug" element={<CarDetail />} />
                 <Route path="/emi-calculator" element={<EmiCalculator />} />
                 <Route path="/budget-finder" element={<BudgetFinder />} />
                 <Route path="/electric-cars" element={<ElectricCars />} />
                 <Route path="/showrooms" element={<Showrooms />} />
                 <Route path="/offers" element={<Offers />} />
                 <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/compare" element={<Compare />} />
                 <Route path="/admin" element={<Admin />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
