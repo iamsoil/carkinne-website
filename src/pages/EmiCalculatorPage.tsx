@@ -113,10 +113,10 @@ const EmiCalculatorPage = () => {
   const banks = [
     { name: 'NMB Bank', rate: 10.5, tenure: 7, financing: 80, fee: 0.5 },
     { name: 'Nabil Bank', rate: 10.75, tenure: 7, financing: 85, fee: 0.5 },
-    { name: 'Everest Bank', rate: 10.25, tenure: 7, financing: 80, fee: 0.5 },
+    { name: 'Everest Bank', rate: 10.25, tenure: 7, financing: 80, fee: 0.5, lowest: true },
     { name: 'Sanima Bank', rate: 10.5, tenure: 6, financing: 80, fee: 0.5 },
-    { name: 'Global IME', rate: 11.0, tenure: 7, financing: 85, fee: 1.0 },
-    { name: 'Laxmi Sunrise', rate: 10.5, tenure: 7, financing: 80, fee: 0.5 }
+    { name: 'Global IME Bank', rate: 11.0, tenure: 7, financing: 85, fee: 1.0 },
+    { name: 'Laxmi Sunrise Bank', rate: 10.5, tenure: 7, financing: 80, fee: 0.5 }
   ];
 
   // Handle bank selection
@@ -127,60 +127,55 @@ const EmiCalculatorPage = () => {
 
   // Copy result to clipboard
   const copyResult = () => {
-    const text = `Car EMI calculated on CarKinne.com
-Car Price: ${formatPrice(carPrice)} | Down Payment: ${formatPrice(downPaymentAmount)}
-EMI: ${formatPrice(emi)}/month for ${loanTenure} years at ${interestRate}%`;
+    const text = `EMI ${formatPrice(emi)}/month | Car ${formatPrice(carPrice)} | Down ${formatPrice(downPaymentAmount)} | ${loanTenure}yr @ ${interestRate}% — carkinne.com`;
     navigator.clipboard.writeText(text);
   };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
+      {/* Page Header */}
       <div className="text-center mb-12">
-        <h1 className="text-3xl font-semibold mb-2">Car Loan EMI Calculator</h1>
-        <p className="text-[#6e6e73]">Calculate your monthly installment with real Nepal bank rates</p>
+        <h1 className="text-3xl font-semibold text-[#1d1d1f]">Car Loan EMI Calculator</h1>
+        <p className="text-[#6e6e73] mt-2">Calculate your monthly installment with real Nepal bank rates</p>
       </div>
 
+      {/* Calculator */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Left Column - Inputs */}
         <div className="space-y-8">
-          {/* Car Price Section */}
+          {/* Car Price */}
           <div>
             <Label className="block text-xs uppercase tracking-wider text-[#6e6e73] mb-3">
-              Car Price
+              CAR PRICE
             </Label>
             <Input
               type="number"
-              placeholder="Rs. 0"
+              placeholder="Enter car price"
               value={carPrice}
               onChange={(e) => setCarPrice(Number(e.target.value))}
               className="w-full"
             />
+            <p className="text-xs text-[#6e6e73] mt-2">Or search a car above to auto-fill</p>
           </div>
 
-          {/* Down Payment Section */}
+          {/* Down Payment */}
           <div>
             <Label className="block text-xs uppercase tracking-wider text-[#6e6e73] mb-3">
-              Down Payment
+              DOWN PAYMENT
             </Label>
             <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <Input
-                  type="number"
-                  placeholder="Rs. 0"
-                  value={downPaymentAmount}
-                  onChange={(e) => setDownPaymentAmount(Number(e.target.value))}
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <Input
-                  type="number"
-                  placeholder="%"
-                  value={downPaymentPercent}
-                  onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
-                  className="w-full"
-                />
-              </div>
+              <Input
+                type="number"
+                value={downPaymentAmount}
+                onChange={(e) => setDownPaymentAmount(Number(e.target.value))}
+                className="w-full"
+              />
+              <Input
+                type="number"
+                value={downPaymentPercent}
+                onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
+                className="w-full"
+              />
             </div>
             <div className="relative">
               <input
@@ -199,10 +194,10 @@ EMI: ${formatPrice(emi)}/month for ${loanTenure} years at ${interestRate}%`;
             </div>
           </div>
 
-          {/* Loan Tenure Section */}
+          {/* Loan Tenure */}
           <div>
             <Label className="block text-xs uppercase tracking-wider text-[#6e6e73] mb-3">
-              Loan Tenure
+              LOAN TENURE
             </Label>
             <div className="flex flex-wrap gap-2">
               {[1, 2, 3, 4, 5, 6, 7].map((years) => (
@@ -221,10 +216,10 @@ EMI: ${formatPrice(emi)}/month for ${loanTenure} years at ${interestRate}%`;
             </div>
           </div>
 
-          {/* Interest Rate Section */}
+          {/* Interest Rate */}
           <div>
             <Label className="block text-xs uppercase tracking-wider text-[#6e6e73] mb-3">
-              Annual Interest Rate
+              INTEREST RATE
             </Label>
             <div className="flex items-center gap-4">
               <Button
@@ -254,7 +249,7 @@ EMI: ${formatPrice(emi)}/month for ${loanTenure} years at ${interestRate}%`;
               </Button>
             </div>
             <p className="text-xs text-[#6e6e73] mt-2">
-              Average Nepal bank car loan rate: 10-11%
+              Average Nepal bank rate: 10–11%
             </p>
           </div>
         </div>
@@ -267,10 +262,10 @@ EMI: ${formatPrice(emi)}/month for ${loanTenure} years at ${interestRate}%`;
                 <p className="text-xs uppercase tracking-wider text-[#6e6e73] mb-2">
                   Monthly Installment
                 </p>
-                <p className="text-4xl font-bold text-[#e8531a]">
+                <p className="text-4xl font-bold text-[#e8531a] inline">
                   {formatPrice(emi)}
-                  <span className="text-lg font-normal text-[#6e6e73] ml-2">per month</span>
                 </p>
+                <span className="text-lg text-[#6e6e73] ml-2">/ month</span>
               </div>
 
               <div className="border-t border-[#d2d2d7] my-6"></div>
@@ -356,58 +351,61 @@ EMI: ${formatPrice(emi)}/month for ${loanTenure} years at ${interestRate}%`;
                 onClick={copyResult}
                 className="text-[#6e6e73] text-sm hover:text-[#1d1d1f]"
               >
-                Copy result
+                Copy Result
               </button>
             </CardContent>
           </Card>
         </div>
       </div>
 
-      {/* Bank Comparison Section */}
-      <div className="mt-16">
-        <h2 className="text-2xl font-semibold mb-6">Compare Car Loan Rates</h2>
-
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-[#f5f5f7]">
-                <th className="text-left p-4 text-xs uppercase tracking-wider text-[#6e6e73]">Bank Name</th>
-                <th className="text-left p-4 text-xs uppercase tracking-wider text-[#6e6e73]">Interest Rate</th>
-                <th className="text-left p-4 text-xs uppercase tracking-wider text-[#6e6e73]">Max Tenure</th>
-                <th className="text-left p-4 text-xs uppercase tracking-wider text-[#6e6e73]">Max Financing</th>
-                <th className="text-left p-4 text-xs uppercase tracking-wider text-[#6e6e73]">Processing Fee</th>
-              </tr>
-            </thead>
-            <tbody>
-              {banks.map((bank, index) => (
-                <tr 
-                  key={bank.name} 
-                  className={`${index % 2 === 0 ? 'bg-white' : 'bg-[#f5f5f7]'} ${bank.rate === 10.25 ? 'border-l-4 border-l-[#e8531a]' : ''}`}
-                  onClick={() => handleBankSelect(bank.rate)}
-                >
-                  <td className="p-4 border-t border-[#d2d2d7]">
-                    <div className="flex items-center">
-                      {bank.rate === 10.25 && (
-                        <span className="bg-[#e8531a] text-white text-xs px-2 py-1 rounded mr-2">Best Rate</span>
-                      )}
-                      {bank.name}
-                    </div>
-                  </td>
-                  <td className="p-4 border-t border-[#d2d2d7] text-[#e8531a] font-medium cursor-pointer">
-                    {bank.rate}%
-                  </td>
-                  <td className="p-4 border-t border-[#d2d2d7]">{bank.tenure} years</td>
-                  <td className="p-4 border-t border-[#d2d2d7]">{bank.financing}%</td>
-                  <td className="p-4 border-t border-[#d2d2d7]">{bank.fee}%</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Bank Rates Section */}
+      <div className="bg-[#f5f5f7] mt-16 py-12 -mx-4 px-4">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-2xl font-semibold text-center text-[#1d1d1f]">Compare Bank Loan Rates</h2>
+          <p className="text-center text-[#6e6e73] mt-2 mb-10">Click any rate to use it in the calculator</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {banks.map((bank) => (
+              <Card 
+                key={bank.name}
+                className="border border-[#d2d2d7] rounded-xl p-6 cursor-pointer hover:border-[#1d1d1f] hover:-translate-y-0.5 transition-all"
+                onClick={() => handleBankSelect(bank.rate)}
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-lg font-semibold text-[#1d1d1f]">{bank.name}</h3>
+                  {bank.lowest && (
+                    <span className="bg-[#e8531a] text-white text-xs px-2 py-1 rounded-full">Lowest Rate</span>
+                  )}
+                </div>
+                <p className="text-3xl font-bold text-[#e8531a]">{bank.rate}%</p>
+                <p className="text-xs text-[#6e6e73]">per annum</p>
+                
+                <div className="border-t border-[#d2d2d7] my-4"></div>
+                
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-xs text-[#6e6e73]">Max Tenure</span>
+                    <span className="text-sm font-medium text-[#1d1d1f]">{bank.tenure} years</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-[#6e6e73]">Max Financing</span>
+                    <span className="text-sm font-medium text-[#1d1d1f]">{bank.financing}% of car value</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-xs text-[#6e6e73]">Processing Fee</span>
+                    <span className="text-sm font-medium text-[#1d1d1f]">{bank.fee}%</span>
+                  </div>
+                </div>
+                
+                <p className="text-[#e8531a] text-sm mt-4">Use this rate</p>
+              </Card>
+            ))}
+          </div>
+          
+          <p className="text-[#6e6e73] text-sm text-center mt-6">
+            Rates shown are indicative and subject to change. Contact banks directly for latest rates and offers.
+          </p>
         </div>
-
-        <p className="text-[#6e6e73] text-sm text-center mt-4">
-          Rates are indicative. Contact banks directly for current rates.
-        </p>
       </div>
     </div>
   );
