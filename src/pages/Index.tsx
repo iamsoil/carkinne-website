@@ -223,70 +223,93 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="py-20 bg-secondary">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row items-center">
-            {/* Text Content - Left Column */}
-            <div className="lg:w-1/2 lg:pr-12 text-center lg:text-left">
-              <h1 className="text-5xl md:text-6xl font-semibold text-foreground leading-tight tracking-tight">
-                Find Your Perfect Car in Nepal
-              </h1>
-              <p className="text-xl text-muted-foreground mt-3 max-w-2xl mx-auto lg:mx-0">
-                Compare prices, calculate EMI, find showrooms
-              </p>
-              
-              {/* Search Bar */}
-              <div className="max-w-2xl mx-auto lg:mx-0 mt-10">
-                <div className="relative">
-                  <Input
-                    type="text"
-                    placeholder="Search Toyota, Suzuki, Budget..."
-                    className="pl-6 pr-32 py-6 text-base rounded-xl bg-white border border-border text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-1 focus:ring-accent"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-lg bg-accent hover:bg-accent/90 text-white px-6">
-                    Search
-                  </Button>
-                </div>
-              </div>
-              
-              {/* Quick Stats */}
-              <div className="text-muted-foreground text-sm mt-6 flex flex-wrap justify-center lg:justify-start gap-4">
-                <span>150+ Cars</span>
-                <span className="hidden sm:block">•</span>
-                <span>50+ Showrooms</span>
-                <span className="hidden sm:block">•</span>
-                <span>Updated Monthly</span>
-              </div>
-              
-              {/* Quick Filters */}
-              <div className="flex flex-wrap justify-center lg:justify-start gap-3 mt-8">
-                {quickFilters.map((filter, index) => (
-                  <button
-                    key={index}
-                    className="px-5 py-2 text-sm font-medium text-foreground bg-white border border-border rounded-full hover:border-foreground transition-colors"
-                  >
-                    {filter}
-                  </button>
-                ))}
+      <section 
+        className="relative h-screen w-full flex items-center overflow-hidden"
+        style={{
+          backgroundImage: "url('https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=1600&q=80')",
+          backgroundSize: "cover",
+          backgroundPosition: "center"
+        }}
+      >
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-black/10"></div>
+        
+        {/* Content */}
+        <div className="relative z-10 w-full px-6 md:px-20 lg:pl-20">
+          <div className="max-w-2xl">
+            {/* Small label */}
+            <div className="flex items-center mb-4">
+              <div className="w-8 h-0.5 bg-[#e8531a] mr-3"></div>
+              <span className="text-white text-xs font-medium uppercase tracking-widest">
+                Nepal's Smartest Car Buying Guide
+              </span>
+            </div>
+            
+            {/* Main headline */}
+            <h1 className="text-white text-5xl md:text-7xl font-bold leading-tight tracking-tight">
+              Find Your Perfect Car in Nepal
+            </h1>
+            
+            {/* Subheadline */}
+            <p className="text-white/80 text-lg md:text-xl font-normal mt-4">
+              Compare prices, calculate EMI, find showrooms
+            </p>
+            
+            {/* Search bar */}
+            <div className="mt-8 max-w-2xl">
+              <div className="flex bg-white rounded-xl p-1.5">
+                <Input
+                  type="text"
+                  placeholder="Search Toyota, Suzuki..."
+                  className="border-0 focus-visible:ring-0 text-base text-[#1d1d1f] placeholder:text-gray-400 flex-grow px-4"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Button className="bg-[#e8531a] hover:bg-[#e8531a]/90 text-white font-medium rounded-lg px-6 py-4 whitespace-nowrap">
+                  Search
+                </Button>
               </div>
             </div>
             
-            {/* Hero Image - Right Column (Desktop Only) */}
-            <div className="hidden lg:block lg:w-1/2 mt-12 lg:mt-0 relative">
-              <div className="relative w-full">
-                <img
-                  src="https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=1200&q=80"
-                  alt="Luxury car"
-                  className="w-full h-auto rounded-2xl object-cover"
-                  style={{ borderRadius: '16px' }}
-                />
-                {/* Subtle fade on left edge */}
-                <div className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-secondary to-transparent rounded-l-2xl pointer-events-none"></div>
-              </div>
+            {/* Stats */}
+            <div className="mt-5 text-white/70 text-sm">
+              150+ Cars   |   50+ Showrooms   |   Updated Monthly
+            </div>
+            
+            {/* Filter pills */}
+            <div className="flex flex-wrap gap-2 mt-4">
+              {quickFilters.map((filter, index) => (
+                <button
+                  key={index}
+                  className="px-4 py-2 text-xs text-white bg-white/15 border border-white/30 rounded-full hover:bg-white hover:text-[#1d1d1f] transition-colors"
+                >
+                  {filter}
+                </button>
+              ))}
             </div>
           </div>
+        </div>
+        
+        {/* Social proof (desktop only) */}
+        <div className="absolute bottom-10 left-20 hidden md:block">
+          <p className="text-white text-sm font-normal mb-2">Trusted by Nepal's car buyers</p>
+          <div className="flex">
+            {[...Array(3)].map((_, i) => (
+              <div 
+                key={i} 
+                className="w-8 h-8 rounded-full bg-gray-400 border-2 border-white"
+                style={{ marginLeft: i === 0 ? 0 : -8 }}
+              ></div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Curved bottom edge */}
+        <div style={{ position: "absolute", bottom: -1, left: 0, width: "100%", overflow: "hidden", lineHeight: 0 }}>
+          <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none" style={{ width: "100%", height: 80, display: "block" }}>
+            <path d="M0,80 C360,0 1080,0 1440,80 L1440,80 L0,80 Z" fill="#ffffff" />
+          </svg>
         </div>
       </section>
 
