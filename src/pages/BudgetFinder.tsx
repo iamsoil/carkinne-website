@@ -104,20 +104,20 @@ const BudgetFinder = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-2">Find Your Perfect Car</h1>
-        <p className="text-muted-foreground">
+    <div className="container mx-auto px-4 py-12">
+      <div className="mb-12 text-center">
+        <h1 className="text-4xl font-semibold mb-3">Find Your Perfect Car</h1>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
           Answer a few questions and we'll recommend the best cars for your needs
         </p>
       </div>
 
       <div className="max-w-3xl mx-auto">
         {step < 6 ? (
-          <Card>
+          <Card className="border border-border rounded-2xl">
             <CardHeader>
               <div className="flex justify-between items-center">
-                <CardTitle>
+                <CardTitle className="text-2xl font-semibold">
                   {step === 1 && "What's your budget?"}
                   {step === 2 && "What type of car do you need?"}
                   {step === 3 && "Fuel preference?"}
@@ -130,9 +130,9 @@ const BudgetFinder = () => {
               </div>
               
               {/* Progress bar */}
-              <div className="w-full bg-gray-200 rounded-full h-2 mt-4">
+              <div className="w-full bg-secondary rounded-full h-2 mt-6">
                 <div 
-                  className="bg-orange-500 h-2 rounded-full" 
+                  className="bg-accent h-2 rounded-full" 
                   style={{ width: `${(step / 5) * 100}%` }}
                 ></div>
               </div>
@@ -140,9 +140,9 @@ const BudgetFinder = () => {
             
             <CardContent>
               {step === 1 && (
-                <div className="space-y-6">
+                <div className="space-y-8">
                   <div>
-                    <Label className="mb-4 block text-center">
+                    <Label className="mb-5 block text-center text-sm font-medium uppercase tracking-wider text-muted-foreground">
                       Budget Range: Rs.{budget[0].toLocaleString('en-IN')} - Rs.{budget[1].toLocaleString('en-IN')}
                     </Label>
                     <Slider
@@ -154,9 +154,9 @@ const BudgetFinder = () => {
                       minStepsBetweenThumbs={1}
                       className="mt-8"
                     />
-                    <div className="flex justify-between mt-2">
-                      <span>Rs.5L</span>
-                      <span>Rs.1.5Cr</span>
+                    <div className="flex justify-between mt-3">
+                      <span className="text-sm">Rs.5L</span>
+                      <span className="text-sm">Rs.1.5Cr</span>
                     </div>
                   </div>
                   
@@ -164,24 +164,28 @@ const BudgetFinder = () => {
                     <Button 
                       variant="outline" 
                       onClick={() => setBudget([500000, 2000000])}
+                      className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg"
                     >
                       Under 20L
                     </Button>
                     <Button 
                       variant="outline" 
                       onClick={() => setBudget([2000000, 4000000])}
+                      className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg"
                     >
                       20-40L
                     </Button>
                     <Button 
                       variant="outline" 
                       onClick={() => setBudget([4000000, 6000000])}
+                      className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg"
                     >
                       40-60L
                     </Button>
                     <Button 
                       variant="outline" 
                       onClick={() => setBudget([6000000, 15000000])}
+                      className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg"
                     >
                       60L+
                     </Button>
@@ -192,24 +196,24 @@ const BudgetFinder = () => {
               {step === 2 && (
                 <div className="space-y-6">
                   <RadioGroup value={category} onValueChange={setCategory}>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="any" id="category-any" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="any" id="category-any" className="border border-border" />
                       <Label htmlFor="category-any">Any Category</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="suv" id="category-suv" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="suv" id="category-suv" className="border border-border" />
                       <Label htmlFor="category-suv">SUV</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="sedan" id="category-sedan" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="sedan" id="category-sedan" className="border border-border" />
                       <Label htmlFor="category-sedan">Sedan</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="hatchback" id="category-hatchback" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="hatchback" id="category-hatchback" className="border border-border" />
                       <Label htmlFor="category-hatchback">Hatchback</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="muv" id="category-muv" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="muv" id="category-muv" className="border border-border" />
                       <Label htmlFor="category-muv">MUV</Label>
                     </div>
                   </RadioGroup>
@@ -219,24 +223,24 @@ const BudgetFinder = () => {
               {step === 3 && (
                 <div className="space-y-6">
                   <RadioGroup value={fuelType} onValueChange={setFuelType}>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="any" id="fuel-any" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="any" id="fuel-any" className="border border-border" />
                       <Label htmlFor="fuel-any">Any Fuel Type</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="petrol" id="fuel-petrol" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="petrol" id="fuel-petrol" className="border border-border" />
                       <Label htmlFor="fuel-petrol">Petrol</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="diesel" id="fuel-diesel" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="diesel" id="fuel-diesel" className="border border-border" />
                       <Label htmlFor="fuel-diesel">Diesel</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="electric" id="fuel-electric" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="electric" id="fuel-electric" className="border border-border" />
                       <Label htmlFor="fuel-electric">Electric</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="hybrid" id="fuel-hybrid" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="hybrid" id="fuel-hybrid" className="border border-border" />
                       <Label htmlFor="fuel-hybrid">Hybrid</Label>
                     </div>
                   </RadioGroup>
@@ -246,20 +250,20 @@ const BudgetFinder = () => {
               {step === 4 && (
                 <div className="space-y-6">
                   <RadioGroup value={seating} onValueChange={setSeating}>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="any" id="seating-any" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="any" id="seating-any" className="border border-border" />
                       <Label htmlFor="seating-any">Any Seating</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="2" id="seating-2" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="2" id="seating-2" className="border border-border" />
                       <Label htmlFor="seating-2">2 Seater</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="5" id="seating-5" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="5" id="seating-5" className="border border-border" />
                       <Label htmlFor="seating-5">5 Seater</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="7" id="seating-7" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="7" id="seating-7" className="border border-border" />
                       <Label htmlFor="seating-7">7 Seater</Label>
                     </div>
                   </RadioGroup>
@@ -269,31 +273,32 @@ const BudgetFinder = () => {
               {step === 5 && (
                 <div className="space-y-6">
                   <RadioGroup value={transmission} onValueChange={setTransmission}>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="any" id="transmission-any" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="any" id="transmission-any" className="border border-border" />
                       <Label htmlFor="transmission-any">Any Transmission</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="manual" id="transmission-manual" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="manual" id="transmission-manual" className="border border-border" />
                       <Label htmlFor="transmission-manual">Manual</Label>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="automatic" id="transmission-automatic" />
+                    <div className="flex items-center space-x-3">
+                      <RadioGroupItem value="automatic" id="transmission-automatic" className="border border-border" />
                       <Label htmlFor="transmission-automatic">Automatic</Label>
                     </div>
                   </RadioGroup>
                 </div>
               )}
               
-              <div className="flex justify-between mt-8">
+              <div className="flex justify-between mt-10">
                 <Button 
                   variant="outline" 
                   onClick={prevStep} 
                   disabled={step === 1}
+                  className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg"
                 >
                   Previous
                 </Button>
-                <Button onClick={nextStep}>
+                <Button onClick={nextStep} className="bg-accent hover:bg-accent/90 text-white rounded-lg">
                   {step === 5 ? "Get Recommendations" : "Next"}
                 </Button>
               </div>
@@ -301,21 +306,21 @@ const BudgetFinder = () => {
           </Card>
         ) : (
           <div>
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold mb-2">Your Perfect Matches</h2>
-              <p className="text-muted-foreground">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-semibold mb-3">Your Perfect Matches</h2>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
                 Based on your preferences, here are the cars we recommend
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {results.map(car => (
                 <CarCard key={car.id} {...car} />
               ))}
             </div>
             
             <div className="text-center">
-              <Button onClick={resetQuiz} variant="outline">
+              <Button onClick={resetQuiz} variant="outline" className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg">
                 Start Over
               </Button>
             </div>

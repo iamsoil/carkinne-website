@@ -13,7 +13,6 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { EmiCalculator } from '@/components/EmiCalculator';
-import { supabase } from '@/integrations/supabase/client';
 
 const CarDetail = () => {
   const { slug } = useParams();
@@ -27,60 +26,125 @@ const CarDetail = () => {
   const [offers, setOffers] = useState<any[]>([]);
   const [expandedOnRoad, setExpandedOnRoad] = useState(false);
 
+  // Mock data for demonstration
   useEffect(() => {
-    if (slug) {
-      fetchCar();
-    }
+    // Simulate loading data
+    setTimeout(() => {
+      setCar({
+        id: '1',
+        name: 'Fortuner',
+        brand: 'Toyota',
+        variant: '2.8 GD-6 4WD',
+        ex_showroom_price: 11500000,
+        on_road_price: 12800000,
+        fuel_type: 'Diesel',
+        transmission: 'Automatic',
+        seating: 7,
+        engine_cc: 2755,
+        is_electric: false,
+        is_featured: true,
+        is_new: true,
+        year: 2024,
+        images: [
+          'https://images.unsplash.com/photo-1549399542-7e7f8c7a5e3d?auto=format&fit=crop&w=800&h=600',
+          'https://images.unsplash.com/photo-1549399542-7e7f8c7a5e3d?auto=format&fit=crop&w=800&h=600',
+          'https://images.unsplash.com/photo-1549399542-7e7f8c7a5e3d?auto=format&fit=crop&w=800&h=600'
+        ],
+        mileage_kmpl: 12.0,
+        updated_at: '2024-03-15'
+      });
+      
+      setSimilarCars([
+        {
+          id: '2',
+          name: 'Innova Crysta',
+          brand: 'Toyota',
+          variant: '2.4 VX MT',
+          ex_showroom_price: 8500000,
+          on_road_price: 9500000,
+          fuel_type: 'Diesel',
+          transmission: 'Manual',
+          seating: 7,
+          engine_cc: 2393,
+          is_electric: false,
+          is_featured: true,
+          is_new: true,
+          images: ['https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=600&h=400'],
+          mileage_kmpl: 15.0
+        },
+        {
+          id: '3',
+          name: 'XUV700',
+          brand: 'Mahindra',
+          variant: 'AX7',
+          ex_showroom_price: 7500000,
+          on_road_price: 8300000,
+          fuel_type: 'Diesel',
+          transmission: 'Automatic',
+          seating: 7,
+          engine_cc: 2198,
+          is_electric: false,
+          is_featured: true,
+          is_new: true,
+          images: ['https://images.unsplash.com/photo-1596779911828-609b0b4e8c7b?auto=format&fit=crop&w=600&h=400'],
+          mileage_kmpl: 14.0
+        },
+        {
+          id: '4',
+          name: 'Seltos',
+          brand: 'Kia',
+          variant: 'HTX+',
+          ex_showroom_price: 4200000,
+          on_road_price: 4700000,
+          fuel_type: 'Petrol',
+          transmission: 'Automatic',
+          seating: 5,
+          engine_cc: 1497,
+          is_electric: false,
+          is_featured: false,
+          is_new: true,
+          images: ['https://images.unsplash.com/photo-1596779911828-609b0b4e8c7b?auto=format&fit=crop&w=600&h=400'],
+          mileage_kmpl: 16.5
+        }
+      ]);
+      
+      setShowrooms([
+        {
+          id: '1',
+          name: 'Toyota Nepal - Thapathali',
+          brand: 'Toyota',
+          address: 'Thapathali, Kathmandu',
+          city: 'Kathmandu',
+          phone: '01-4234567',
+          is_authorized: true,
+          working_hours: '9:00 AM - 6:00 PM'
+        },
+        {
+          id: '2',
+          name: 'Toyota Showroom - New Road',
+          brand: 'Toyota',
+          address: 'New Road, Pokhara',
+          city: 'Pokhara',
+          phone: '061-465789',
+          is_authorized: true,
+          working_hours: '9:00 AM - 6:00 PM'
+        }
+      ]);
+      
+      setOffers([
+        {
+          id: '1',
+          title: 'Dashain Special Offer',
+          description: 'Get up to Rs.2L off on selected models',
+          discount_amount: 200000,
+          valid_until: '2024-10-31',
+          image_url: 'https://placehold.co/300x200/f59e0b/ffffff?text=Special+Offer'
+        }
+      ]);
+      
+      setLoading(false);
+    }, 1000);
   }, [slug]);
-
-  useEffect(() => {
-    if (car) {
-      fetchRelatedData();
-    }
-  }, [car]);
-
-  const fetchCar = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('cars')
-      .select('*')
-      .eq('slug', slug)
-      .single();
-
-    if (error) {
-      console.error('Error fetching car:', error);
-    } else {
-      setCar(data);
-    }
-    setLoading(false);
-  };
-
-  const fetchRelatedData = async () => {
-    // Fetch similar cars
-    const { data: similarData } = await supabase
-      .from('cars')
-      .select('*')
-      .neq('id', car.id)
-      .limit(4);
-    
-    if (similarData) setSimilarCars(similarData);
-
-    // Fetch showrooms
-    const { data: showroomData } = await supabase
-      .from('showrooms')
-      .select('*')
-      .eq('brand', car.brand);
-    
-    if (showroomData) setShowrooms(showroomData);
-
-    // Fetch offers
-    const { data: offerData } = await supabase
-      .from('offers')
-      .select('*')
-      .limit(3);
-    
-    if (offerData) setOffers(offerData);
-  };
 
   // Calculate on-road price breakdown
   const calculateOnRoadPrice = () => {
@@ -116,9 +180,9 @@ const CarDetail = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-20">
         <div className="text-center py-12">
-          <p>Loading car details...</p>
+          <p className="text-muted-foreground">Loading car details...</p>
         </div>
       </div>
     );
@@ -126,11 +190,11 @@ const CarDetail = () => {
 
   if (!car) {
     return (
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-20">
         <div className="text-center py-12">
           <h2 className="text-2xl font-bold mb-2">Car Not Found</h2>
           <p className="text-muted-foreground">The car you're looking for doesn't exist or has been removed.</p>
-          <Button className="mt-4" onClick={() => window.location.href = '/cars'}>
+          <Button className="mt-4 bg-foreground text-white hover:bg-accent" onClick={() => window.location.href = '/cars'}>
             Browse All Cars
           </Button>
         </div>
@@ -170,9 +234,9 @@ const CarDetail = () => {
       <div className="mb-6">
         {/* Breadcrumb */}
         <div className="text-sm text-muted-foreground mb-2">
-          <a href="/" className="hover:text-foreground">Home</a> / 
-          <a href="/cars" className="hover:text-foreground"> Cars</a> / 
-          <a href={`/cars?brand=${car.brand}`} className="hover:text-foreground"> {car.brand}</a> / 
+          <a href="/" className="hover:text-accent">Home</a> / 
+          <a href="/cars" className="hover:text-accent"> Cars</a> / 
+          <a href={`/cars?brand=${car.brand}`} className="hover:text-accent"> {car.brand}</a> / 
           <span className="text-foreground"> {car.name}</span>
         </div>
         
@@ -187,7 +251,7 @@ const CarDetail = () => {
         {/* IMAGE GALLERY */}
         <div className="lg:w-2/3">
           {/* Large main image */}
-          <div className="relative rounded-lg overflow-hidden mb-4 bg-gray-100">
+          <div className="relative rounded-2xl overflow-hidden mb-4 bg-gray-100 border border-border">
             <img 
               src={car.images[activeImageIndex] || 'https://placehold.co/800x600/cccccc/ffffff?text=Car+Image'} 
               alt={`${car.brand} ${car.name}`} 
@@ -197,7 +261,7 @@ const CarDetail = () => {
             <Button
               variant="secondary"
               size="icon"
-              className="absolute top-4 right-4 rounded-full"
+              className="absolute top-4 right-4 rounded-full bg-white hover:bg-accent hover:text-white border border-border"
               onClick={() => setIsSaved(!isSaved)}
             >
               <Heart className={`h-5 w-5 ${isSaved ? 'fill-red-500 text-red-500' : ''}`} />
@@ -210,7 +274,7 @@ const CarDetail = () => {
               <button
                 key={index}
                 onClick={() => setActiveImageIndex(index)}
-                className={`flex-shrink-0 w-24 h-24 rounded-md overflow-hidden border-2 ${activeImageIndex === index ? 'border-orange-500' : 'border-transparent'}`}
+                className={`flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden border-2 ${activeImageIndex === index ? 'border-accent' : 'border-border'}`}
               >
                 <img 
                   src={image} 
@@ -224,23 +288,23 @@ const CarDetail = () => {
 
         {/* PRICE CARD */}
         <div className="lg:w-1/3">
-          <Card className="sticky top-24">
+          <Card className="sticky top-24 border border-border rounded-2xl">
             <CardContent className="p-6">
               <div className="mb-4">
-                <h1 className="text-2xl font-bold">{car.name} {car.variant}</h1>
+                <h1 className="text-2xl font-semibold">{car.name} {car.variant}</h1>
                 <p className="text-muted-foreground">{car.brand} • {car.year}</p>
               </div>
               
               {/* Ex-showroom price */}
               <div className="mb-4">
                 <p className="text-sm text-muted-foreground">Ex-showroom Price</p>
-                <p className="text-3xl font-bold text-orange-500">
+                <p className="text-3xl font-semibold text-accent">
                   {formatPrice(car.ex_showroom_price)}
                 </p>
               </div>
               
               {/* Estimated On-Road Price */}
-              <div className="mb-4 border rounded-lg p-4">
+              <div className="mb-4 border border-border rounded-xl p-4">
                 <button 
                   className="flex justify-between items-center w-full"
                   onClick={() => setExpandedOnRoad(!expandedOnRoad)}
@@ -267,9 +331,9 @@ const CarDetail = () => {
                       <span>Road tax</span>
                       <span>~{formatPrice(onRoadBreakdown.roadTax)}</span>
                     </div>
-                    <div className="border-t pt-2 flex justify-between font-bold">
+                    <div className="border-t border-border pt-2 flex justify-between font-semibold">
                       <span>Total On-Road</span>
-                      <span className="text-orange-500">{formatPrice(onRoadBreakdown.total)}</span>
+                      <span className="text-accent">{formatPrice(onRoadBreakdown.total)}</span>
                     </div>
                   </div>
                 )}
@@ -282,14 +346,14 @@ const CarDetail = () => {
               {/* Action Buttons */}
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <Button 
-                  className="w-full bg-orange-500 hover:bg-orange-600"
+                  className="w-full bg-accent hover:bg-accent/90 text-white rounded-lg"
                   onClick={() => setShowEmiModal(true)}
                 >
                   Calculate EMI
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="w-full"
+                  className="w-full border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg"
                   onClick={() => window.open(`https://wa.me/97798XXXXXXXX?text=I'm interested in ${car.name} ${car.variant}`, '_blank')}
                 >
                   Enquire on WhatsApp
@@ -297,7 +361,7 @@ const CarDetail = () => {
               </div>
               
               <Button 
-                className="w-full"
+                className="w-full bg-foreground text-white hover:bg-accent rounded-lg"
                 onClick={() => document.getElementById('showrooms-section')?.scrollIntoView({ behavior: 'smooth' })}
               >
                 Find Showroom
@@ -308,136 +372,161 @@ const CarDetail = () => {
       </div>
 
       {/* KEY SPECS STRIP */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 my-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center shadow-sm">
-          <Gauge className="h-6 w-6 mx-auto text-orange-500 mb-2" />
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 my-12">
+        <div className="bg-white border border-border rounded-xl p-4 text-center">
+          <Gauge className="h-6 w-6 mx-auto text-accent mb-2" />
           <p className="text-sm font-medium">{car.engine_cc} cc</p>
           <p className="text-xs text-muted-foreground">Engine</p>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center shadow-sm">
-          <Fuel className="h-6 w-6 mx-auto text-orange-500 mb-2" />
+        <div className="bg-white border border-border rounded-xl p-4 text-center">
+          <Fuel className="h-6 w-6 mx-auto text-accent mb-2" />
           <p className="text-sm font-medium">
             {car.mileage_kmpl ? `${car.mileage_kmpl} kmpl` : 'N/A'}
           </p>
           <p className="text-xs text-muted-foreground">Mileage</p>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center shadow-sm">
-          <Fuel className="h-6 w-6 mx-auto text-orange-500 mb-2" />
+        <div className="bg-white border border-border rounded-xl p-4 text-center">
+          <Fuel className="h-6 w-6 mx-auto text-accent mb-2" />
           <p className="text-sm font-medium">{car.fuel_type}</p>
           <p className="text-xs text-muted-foreground">Fuel</p>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center shadow-sm">
-          <Settings className="h-6 w-6 mx-auto text-orange-500 mb-2" />
+        <div className="bg-white border border-border rounded-xl p-4 text-center">
+          <Settings className="h-6 w-6 mx-auto text-accent mb-2" />
           <p className="text-sm font-medium">{car.transmission}</p>
           <p className="text-xs text-muted-foreground">Transmission</p>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 text-center shadow-sm">
-          <Users className="h-6 w-6 mx-auto text-orange-500 mb-2" />
+        <div className="bg-white border border-border rounded-xl p-4 text-center">
+          <Users className="h-6 w-6 mx-auto text-accent mb-2" />
           <p className="text-sm font-medium">{car.seating} Seats</p>
           <p className="text-xs text-muted-foreground">Seating</p>
         </div>
       </div>
 
       {/* TABS */}
-      <Tabs defaultValue="specifications" className="w-full mb-12">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="specifications">Specifications</TabsTrigger>
-          <TabsTrigger value="features">Features</TabsTrigger>
-          <TabsTrigger value="colors">Colors</TabsTrigger>
-          <TabsTrigger value="variants">Variants</TabsTrigger>
-          <TabsTrigger value="emi">EMI Calculator</TabsTrigger>
+      <Tabs defaultValue="specifications" className="w-full mb-16">
+        <TabsList className="grid w-full grid-cols-5 bg-transparent border-b border-border rounded-none p-0 h-auto">
+          <TabsTrigger 
+            value="specifications" 
+            className="data-[state=active]:bg-transparent data-[state=active]:text-accent data-[state=active]:border-b-2 data-[state=active]:border-accent rounded-none pb-3 px-0"
+          >
+            Specifications
+          </TabsTrigger>
+          <TabsTrigger 
+            value="features" 
+            className="data-[state=active]:bg-transparent data-[state=active]:text-accent data-[state=active]:border-b-2 data-[state=active]:border-accent rounded-none pb-3 px-0"
+          >
+            Features
+          </TabsTrigger>
+          <TabsTrigger 
+            value="colors" 
+            className="data-[state=active]:bg-transparent data-[state=active]:text-accent data-[state=active]:border-b-2 data-[state=active]:border-accent rounded-none pb-3 px-0"
+          >
+            Colors
+          </TabsTrigger>
+          <TabsTrigger 
+            value="variants" 
+            className="data-[state=active]:bg-transparent data-[state=active]:text-accent data-[state=active]:border-b-2 data-[state=active]:border-accent rounded-none pb-3 px-0"
+          >
+            Variants
+          </TabsTrigger>
+          <TabsTrigger 
+            value="emi" 
+            className="data-[state=active]:bg-transparent data-[state=active]:text-accent data-[state=active]:border-b-2 data-[state=active]:border-accent rounded-none pb-3 px-0"
+          >
+            EMI Calculator
+          </TabsTrigger>
         </TabsList>
         
         {/* Specifications Tab */}
         <TabsContent value="specifications" className="mt-6">
-          <Card>
+          <Card className="border border-border rounded-2xl">
             <CardHeader>
-              <CardTitle>Full Specifications</CardTitle>
+              <CardTitle className="text-2xl font-semibold">Full Specifications</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <h3 className="font-bold text-lg">Engine & Performance</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between border-b pb-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-6">
+                  <h3 className="font-semibold text-lg">Engine & Performance</h3>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Engine Type</span>
                       <span className="font-medium">Turbocharged</span>
                     </div>
-                    <div className="flex justify-between border-b pb-1">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Engine Size</span>
                       <span className="font-medium">{car.engine_cc} cc</span>
                     </div>
-                    <div className="flex justify-between border-b pb-1">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Max Power</span>
                       <span className="font-medium">150 bhp</span>
                     </div>
-                    <div className="flex justify-between border-b pb-1">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Max Torque</span>
                       <span className="font-medium">250 Nm</span>
                     </div>
-                    <div className="flex justify-between border-b pb-1">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Fuel System</span>
                       <span className="font-medium">Direct Injection</span>
                     </div>
                   </div>
                   
-                  <h3 className="font-bold text-lg mt-4">Dimensions & Weight</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between border-b pb-1">
+                  <h3 className="font-semibold text-lg mt-6">Dimensions & Weight</h3>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Length</span>
                       <span className="font-medium">4795 mm</span>
                     </div>
-                    <div className="flex justify-between border-b pb-1">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Width</span>
                       <span className="font-medium">1855 mm</span>
                     </div>
-                    <div className="flex justify-between border-b pb-1">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Height</span>
                       <span className="font-medium">1835 mm</span>
                     </div>
-                    <div className="flex justify-between border-b pb-1">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Wheelbase</span>
                       <span className="font-medium">2745 mm</span>
                     </div>
-                    <div className="flex justify-between border-b pb-1">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Kerb Weight</span>
                       <span className="font-medium">2180 kg</span>
                     </div>
                   </div>
                 </div>
                 
-                <div className="space-y-4">
-                  <h3 className="font-bold text-lg">Suspension & Brakes</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between border-b pb-1">
+                <div className="space-y-6">
+                  <h3 className="font-semibold text-lg">Suspension & Brakes</h3>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Front Suspension</span>
                       <span className="font-medium">MacPherson Strut</span>
                     </div>
-                    <div className="flex justify-between border-b pb-1">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Rear Suspension</span>
                       <span className="font-medium">Multi-link</span>
                     </div>
-                    <div className="flex justify-between border-b pb-1">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Front Brakes</span>
                       <span className="font-medium">Ventilated Disc</span>
                     </div>
-                    <div className="flex justify-between border-b pb-1">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Rear Brakes</span>
                       <span className="font-medium">Disc</span>
                     </div>
                   </div>
                   
-                  <h3 className="font-bold text-lg mt-4">Fuel & Tyres</h3>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between border-b pb-1">
+                  <h3 className="font-semibold text-lg mt-6">Fuel & Tyres</h3>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Fuel Tank Capacity</span>
                       <span className="font-medium">80 L</span>
                     </div>
-                    <div className="flex justify-between border-b pb-1">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Tyre Size</span>
                       <span className="font-medium">265/60 R18</span>
                     </div>
-                    <div className="flex justify-between border-b pb-1">
+                    <div className="flex justify-between border-b border-border pb-2">
                       <span className="text-muted-foreground">Spare Wheel</span>
                       <span className="font-medium">Full Size</span>
                     </div>
@@ -450,58 +539,58 @@ const CarDetail = () => {
         
         {/* Features Tab */}
         <TabsContent value="features" className="mt-6">
-          <Card>
+          <Card className="border border-border rounded-2xl">
             <CardHeader>
-              <CardTitle>Key Features</CardTitle>
+              <CardTitle className="text-2xl font-semibold">Key Features</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
+                  <Check className="h-4 w-4 text-accent mr-2" />
                   <span>ABS</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
+                  <Check className="h-4 w-4 text-accent mr-2" />
                   <span>Airbags (6)</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
+                  <Check className="h-4 w-4 text-accent mr-2" />
                   <span>Sunroof</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
+                  <Check className="h-4 w-4 text-accent mr-2" />
                   <span>LED Headlights</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
+                  <Check className="h-4 w-4 text-accent mr-2" />
                   <span>Automatic Climate Control</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
+                  <Check className="h-4 w-4 text-accent mr-2" />
                   <span>Touchscreen Infotainment</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
+                  <Check className="h-4 w-4 text-accent mr-2" />
                   <span>Bluetooth Connectivity</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
+                  <Check className="h-4 w-4 text-accent mr-2" />
                   <span>Cruise Control</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
+                  <Check className="h-4 w-4 text-accent mr-2" />
                   <span>Parking Sensors</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
+                  <Check className="h-4 w-4 text-accent mr-2" />
                   <span>Keyless Entry</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
+                  <Check className="h-4 w-4 text-accent mr-2" />
                   <span>Push Button Start</span>
                 </div>
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-500 mr-2" />
+                  <Check className="h-4 w-4 text-accent mr-2" />
                   <span>Electric Folding Mirrors</span>
                 </div>
               </div>
@@ -511,16 +600,16 @@ const CarDetail = () => {
         
         {/* Colors Tab */}
         <TabsContent value="colors" className="mt-6">
-          <Card>
+          <Card className="border border-border rounded-2xl">
             <CardHeader>
-              <CardTitle>Available Colors</CardTitle>
+              <CardTitle className="text-2xl font-semibold">Available Colors</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {['White Pearl', 'Silver', 'Black', 'Red', 'Blue', 'Bronze'].map((color, index) => (
                   <div 
                     key={index} 
-                    className="border rounded-lg p-4 text-center cursor-pointer hover:shadow-md transition-shadow"
+                    className="border border-border rounded-xl p-4 text-center cursor-pointer hover:border-foreground transition-colors"
                     onClick={() => setActiveImageIndex(index % car.images.length)}
                   >
                     <div className="w-12 h-12 rounded-full mx-auto mb-2 border" 
@@ -535,23 +624,23 @@ const CarDetail = () => {
         
         {/* Variants Tab */}
         <TabsContent value="variants" className="mt-6">
-          <Card>
+          <Card className="border border-border rounded-2xl">
             <CardHeader>
-              <CardTitle>{car.name} Variants</CardTitle>
+              <CardTitle className="text-2xl font-semibold">{car.name} Variants</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b">
-                      <th className="text-left py-3">Variant</th>
-                      <th className="text-left py-3">Price</th>
-                      <th className="text-left py-3">Key Difference</th>
-                      <th className="text-left py-3">Action</th>
+                    <tr className="border-b border-border">
+                      <th className="text-left py-3 text-muted-foreground font-medium">Variant</th>
+                      <th className="text-left py-3 text-muted-foreground font-medium">Price</th>
+                      <th className="text-left py-3 text-muted-foreground font-medium">Key Difference</th>
+                      <th className="text-left py-3 text-muted-foreground font-medium">Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b">
+                    <tr className="border-b border-border">
                       <td className="py-3">
                         <div>
                           <p className="font-medium">{car.name} Base</p>
@@ -559,12 +648,14 @@ const CarDetail = () => {
                         </div>
                       </td>
                       <td className="py-3 font-medium">Rs.45,00,000</td>
-                      <td className="py-3 text-sm">Basic features</td>
+                      <td className="py-3 text-sm text-muted-foreground">Basic features</td>
                       <td className="py-3">
-                        <Button size="sm">Enquire</Button>
+                        <Button size="sm" variant="outline" className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg">
+                          Enquire
+                        </Button>
                       </td>
                     </tr>
-                    <tr className="border-b">
+                    <tr className="border-b border-border">
                       <td className="py-3">
                         <div>
                           <p className="font-medium">{car.name} Mid</p>
@@ -572,24 +663,28 @@ const CarDetail = () => {
                         </div>
                       </td>
                       <td className="py-3 font-medium">Rs.48,50,000</td>
-                      <td className="py-3 text-sm">+Sunroof, Leather seats</td>
+                      <td className="py-3 text-sm text-muted-foreground">+Sunroof, Leather seats</td>
                       <td className="py-3">
-                        <Button size="sm">Enquire</Button>
+                        <Button size="sm" variant="outline" className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg">
+                          Enquire
+                        </Button>
                       </td>
                     </tr>
-                    <tr className="border-b bg-orange-50 dark:bg-orange-900/20">
+                    <tr className="border-b border-border bg-accent/10">
                       <td className="py-3">
                         <div>
                           <p className="font-medium">{car.name} {car.variant}</p>
                           <p className="text-sm text-muted-foreground">Automatic</p>
                         </div>
                       </td>
-                      <td className="py-3 font-bold text-orange-500">
+                      <td className="py-3 font-semibold text-accent">
                         {formatPrice(car.ex_showroom_price)}
                       </td>
-                      <td className="py-3 text-sm">+Cruise control, Premium sound</td>
+                      <td className="py-3 text-sm text-muted-foreground">+Cruise control, Premium sound</td>
                       <td className="py-3">
-                        <Button className="bg-orange-500 hover:bg-orange-600">Selected</Button>
+                        <Button size="sm" className="bg-foreground text-white hover:bg-accent rounded-lg">
+                          Selected
+                        </Button>
                       </td>
                     </tr>
                     <tr>
@@ -600,9 +695,11 @@ const CarDetail = () => {
                         </div>
                       </td>
                       <td className="py-3 font-medium">Rs.55,00,000</td>
-                      <td className="py-3 text-sm">+360 camera, Massage seats</td>
+                      <td className="py-3 text-sm text-muted-foreground">+360 camera, Massage seats</td>
                       <td className="py-3">
-                        <Button size="sm">Enquire</Button>
+                        <Button size="sm" variant="outline" className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg">
+                          Enquire
+                        </Button>
                       </td>
                     </tr>
                   </tbody>
@@ -614,12 +711,12 @@ const CarDetail = () => {
         
         {/* EMI Calculator Tab */}
         <TabsContent value="emi" className="mt-6">
-          <Card>
+          <Card className="border border-border rounded-2xl">
             <CardHeader>
-              <CardTitle>EMI Calculator for {car.name}</CardTitle>
+              <CardTitle className="text-2xl font-semibold">EMI Calculator for {car.name}</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+              <div className="bg-secondary rounded-xl p-6">
                 <EmiCalculator prefillPrice={car.ex_showroom_price} />
               </div>
             </CardContent>
@@ -629,20 +726,20 @@ const CarDetail = () => {
 
       {/* Current offers on this car */}
       {offers.length > 0 && (
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6">Current Offers</h2>
+        <section className="mb-16">
+          <h2 className="text-3xl font-semibold mb-8">Current Offers</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {offers.map((offer) => (
-              <Card key={offer.id} className="overflow-hidden">
+              <Card key={offer.id} className="overflow-hidden border border-border rounded-2xl">
                 <img 
                   src={offer.image_url || 'https://placehold.co/400x200/f59e0b/ffffff?text=Special+Offer'} 
                   alt={offer.title} 
                   className="w-full h-32 object-cover"
                 />
-                <CardContent className="p-4">
-                  <h3 className="font-bold mb-2">{offer.title}</h3>
-                  <p className="text-sm text-muted-foreground mb-3">{offer.description}</p>
-                  <Button size="sm" className="w-full">
+                <CardContent className="p-5">
+                  <h3 className="font-semibold text-lg mb-2">{offer.title}</h3>
+                  <p className="text-sm text-muted-foreground mb-4">{offer.description}</p>
+                  <Button size="sm" className="w-full bg-accent hover:bg-accent/90 text-white rounded-lg">
                     View Details
                   </Button>
                 </CardContent>
@@ -653,52 +750,52 @@ const CarDetail = () => {
       )}
 
       {/* Showrooms selling this car */}
-      <section id="showrooms-section" className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Showrooms Selling {car.name}</h2>
+      <section id="showrooms-section" className="mb-16">
+        <h2 className="text-3xl font-semibold mb-8">Showrooms Selling {car.name}</h2>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
-            <Card>
+            <Card className="border border-border rounded-2xl">
               <CardHeader>
-                <CardTitle>Map</CardTitle>
+                <CardTitle className="text-2xl font-semibold">Map</CardTitle>
               </CardHeader>
-              <CardContent className="h-80 flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg">
+              <CardContent className="h-80 flex items-center justify-center bg-secondary rounded-lg">
                 <p className="text-muted-foreground">Map showing showrooms would appear here</p>
               </CardContent>
             </Card>
           </div>
           
           <div>
-            <Card>
+            <Card className="border border-border rounded-2xl">
               <CardHeader>
-                <CardTitle>Showrooms</CardTitle>
+                <CardTitle className="text-2xl font-semibold">Showrooms</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 max-h-80 overflow-y-auto">
                 {showrooms.map((showroom) => (
-                  <div key={showroom.id} className="border rounded-lg p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <h3 className="font-bold">{showroom.name}</h3>
+                  <div key={showroom.id} className="border border-border rounded-xl p-4">
+                    <div className="flex justify-between items-start mb-3">
+                      <h3 className="font-semibold">{showroom.name}</h3>
                       {showroom.is_authorized && (
-                        <Badge className="bg-green-500">Authorized</Badge>
+                        <Badge className="bg-accent text-white">Authorized</Badge>
                       )}
                     </div>
                     <p className="text-sm text-muted-foreground mb-2">{showroom.address}</p>
                     <div className="flex items-center text-sm mb-1">
-                      <MapPin className="h-3 w-3 mr-1" />
+                      <MapPin className="h-3 w-3 mr-1 text-accent" />
                       <span>{showroom.city}</span>
                     </div>
                     <div className="flex items-center text-sm mb-1">
-                      <Phone className="h-3 w-3 mr-1" />
+                      <Phone className="h-3 w-3 mr-1 text-accent" />
                       <span>{showroom.phone}</span>
                     </div>
-                    <div className="flex items-center text-sm mb-3">
-                      <Clock className="h-3 w-3 mr-1" />
+                    <div className="flex items-center text-sm mb-4">
+                      <Clock className="h-3 w-3 mr-1 text-accent" />
                       <span>{showroom.working_hours}</span>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="flex-1">
+                      <Button size="sm" variant="outline" className="flex-1 border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg">
                         Directions
                       </Button>
-                      <Button size="sm" className="flex-1">
+                      <Button size="sm" className="flex-1 bg-foreground text-white hover:bg-accent rounded-lg">
                         Call
                       </Button>
                     </div>
@@ -712,23 +809,23 @@ const CarDetail = () => {
 
       {/* You might also like */}
       {similarCars.length > 0 && (
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6">You Might Also Like</h2>
+        <section className="mb-16">
+          <h2 className="text-3xl font-semibold mb-8">You Might Also Like</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {similarCars.slice(0, 4).map((similarCar) => (
-              <Card key={similarCar.id} className="overflow-hidden">
+              <Card key={similarCar.id} className="overflow-hidden border border-border rounded-2xl">
                 <img 
                   src={similarCar.images[0]} 
                   alt={`${similarCar.brand} ${similarCar.name}`} 
                   className="w-full h-40 object-cover"
                 />
                 <CardContent className="p-4">
-                  <h3 className="font-bold">{similarCar.name} {similarCar.variant}</h3>
+                  <h3 className="font-semibold">{similarCar.name} {similarCar.variant}</h3>
                   <p className="text-sm text-muted-foreground mb-2">{similarCar.brand}</p>
-                  <p className="text-orange-500 font-bold">
+                  <p className="text-accent font-semibold">
                     {formatPrice(similarCar.ex_showroom_price)}
                   </p>
-                  <Button size="sm" className="w-full mt-3">
+                  <Button size="sm" className="w-full mt-4 bg-foreground text-white hover:bg-accent rounded-lg">
                     View Details
                   </Button>
                 </CardContent>
@@ -739,20 +836,20 @@ const CarDetail = () => {
       )}
 
       {/* Compare with similar cars */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-bold mb-6">Compare with Similar Cars</h2>
+      <section className="mb-16">
+        <h2 className="text-3xl font-semibold mb-8">Compare with Similar Cars</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {similarCars.slice(0, 3).map((similarCar) => (
-            <Card key={similarCar.id} className="overflow-hidden">
-              <CardContent className="p-4">
-                <div className="flex items-center mb-3">
+            <Card key={similarCar.id} className="overflow-hidden border border-border rounded-2xl">
+              <CardContent className="p-5">
+                <div className="flex items-center mb-4">
                   <img 
                     src={similarCar.images[0]} 
                     alt={`${similarCar.brand} ${similarCar.name}`} 
-                    className="w-16 h-16 object-cover rounded-md mr-3"
+                    className="w-16 h-16 object-cover rounded-lg mr-4"
                   />
                   <div>
-                    <h3 className="font-bold">{similarCar.name}</h3>
+                    <h3 className="font-semibold">{similarCar.name}</h3>
                     <p className="text-sm text-muted-foreground">{similarCar.brand}</p>
                   </div>
                 </div>
@@ -774,7 +871,7 @@ const CarDetail = () => {
                     <span className="font-medium">{similarCar.transmission}</span>
                   </div>
                 </div>
-                <Button size="sm" variant="outline" className="w-full mt-3">
+                <Button size="sm" variant="outline" className="w-full mt-4 border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg">
                   Compare
                 </Button>
               </CardContent>
@@ -785,9 +882,9 @@ const CarDetail = () => {
 
       {/* EMI Calculator Modal */}
       <Dialog open={showEmiModal} onOpenChange={setShowEmiModal}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl rounded-2xl">
           <DialogHeader>
-            <DialogTitle>EMI Calculator for {car.name}</DialogTitle>
+            <DialogTitle className="text-2xl font-semibold">EMI Calculator for {car.name}</DialogTitle>
           </DialogHeader>
           <div className="py-4">
             <EmiCalculator prefillPrice={car.ex_showroom_price} />

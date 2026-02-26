@@ -62,10 +62,10 @@ const CarCard = ({
   const emi = calculateEMI();
 
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow bg-white">
+    <Card className="overflow-hidden border border-border rounded-2xl transition-all hover:shadow-xl hover:-translate-y-1">
       <div className="relative">
         {/* Car Image */}
-        <div className="aspect-video bg-gray-200 relative overflow-hidden">
+        <div className="aspect-video bg-gray-100 relative overflow-hidden">
           {images && images.length > 0 ? (
             <img 
               src={images[0]} 
@@ -73,25 +73,25 @@ const CarCard = ({
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-              <span className="text-gray-500">No image</span>
+            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+              <span className="text-gray-400">No image</span>
             </div>
           )}
           
           {/* Brand Badge */}
-          <div className="absolute top-2 left-2 bg-white px-2 py-1 rounded text-xs font-semibold">
+          <div className="absolute top-3 left-3 bg-white px-2 py-1 rounded text-xs font-medium uppercase tracking-wider text-muted-foreground">
             {brand}
           </div>
           
           {/* Status Badges */}
-          <div className="absolute top-2 right-2 flex space-x-1">
+          <div className="absolute top-3 right-3 flex space-x-2">
             {is_new && (
-              <span className="bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold">
+              <span className="bg-foreground text-white px-2 py-1 rounded text-xs font-medium">
                 NEW
               </span>
             )}
             {is_featured && (
-              <span className="bg-orange-500 text-white px-2 py-1 rounded text-xs font-semibold">
+              <span className="bg-accent text-white px-2 py-1 rounded text-xs font-medium">
                 POPULAR
               </span>
             )}
@@ -101,7 +101,7 @@ const CarCard = ({
           <Button
             variant="secondary"
             size="icon"
-            className="absolute bottom-2 right-2 rounded-full bg-white hover:bg-orange-100"
+            className="absolute bottom-3 right-3 rounded-full bg-white hover:bg-accent hover:text-white border border-border"
             onClick={() => setIsSaved(!isSaved)}
           >
             <Heart className={`h-4 w-4 ${isSaved ? 'fill-red-500 text-red-500' : ''}`} />
@@ -109,51 +109,54 @@ const CarCard = ({
         </div>
       </div>
       
-      <CardContent className="p-4">
-        <div className="mb-2">
-          <h3 className="font-bold text-lg">{name} {variant}</h3>
+      <CardContent className="p-5">
+        <div className="mb-1">
+          <h3 className="font-semibold text-lg text-foreground">{name} {variant}</h3>
         </div>
         
         <div className="mb-3">
-          <p className="text-orange-500 font-bold text-xl">
+          <p className="text-accent font-semibold text-xl">
             {formatPrice(ex_showroom_price)}
           </p>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-muted-foreground">
             On-road: {formatPrice(on_road_price)}
           </p>
         </div>
         
         {/* Specs */}
-        <div className="grid grid-cols-4 gap-2 mb-4 text-xs">
+        <div className="flex flex-wrap gap-2 mb-4 text-xs text-muted-foreground">
           <div className="flex items-center">
-            <Fuel className="h-3 w-3 mr-1 text-orange-500" />
+            <Fuel className="h-3 w-3 mr-1 text-accent" />
             <span>{fuel_type}</span>
           </div>
+          <span>•</span>
           <div className="flex items-center">
-            <Settings className="h-3 w-3 mr-1 text-orange-500" />
+            <Settings className="h-3 w-3 mr-1 text-accent" />
             <span>{transmission}</span>
           </div>
+          <span>•</span>
           <div className="flex items-center">
-            <Users className="h-3 w-3 mr-1 text-orange-500" />
+            <Users className="h-3 w-3 mr-1 text-accent" />
             <span>{seating} Seats</span>
           </div>
+          <span>•</span>
           <div className="flex items-center">
-            <Gauge className="h-3 w-3 mr-1 text-orange-500" />
+            <Gauge className="h-3 w-3 mr-1 text-accent" />
             <span>{engine_cc}cc</span>
           </div>
         </div>
         
-        <div className="mb-3">
-          <p className="text-sm text-slate-600">
-            EMI from <span className="font-semibold text-orange-500">Rs.{emi.toLocaleString('en-IN')}/month</span>
+        <div className="mb-4">
+          <p className="text-sm text-muted-foreground">
+            EMI from <span className="font-medium text-accent">Rs.{emi.toLocaleString('en-IN')}/month</span>
           </p>
         </div>
         
         <div className="flex space-x-2">
-          <Button className="flex-1 bg-orange-500 hover:bg-orange-600 text-white">
+          <Button className="flex-1 bg-foreground text-white hover:bg-accent rounded-lg">
             View Details
           </Button>
-          <Button variant="outline" size="sm">
+          <Button variant="outline" size="sm" className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg">
             Compare
           </Button>
         </div>

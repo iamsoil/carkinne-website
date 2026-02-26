@@ -61,10 +61,10 @@ const EmiCalculator = () => {
   const totalPayment = calculateTotalPayment();
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">EMI Calculator</h1>
-        <p className="text-muted-foreground">
+    <div className="container mx-auto px-4 py-12">
+      <div className="mb-12 text-center">
+        <h1 className="text-4xl font-semibold mb-3">EMI Calculator</h1>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
           Calculate your monthly car loan payments
         </p>
       </div>
@@ -72,38 +72,38 @@ const EmiCalculator = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Calculator Form */}
         <div className="lg:col-span-2">
-          <Card>
+          <Card className="border border-border rounded-2xl">
             <CardHeader>
-              <CardTitle>Loan Details</CardTitle>
+              <CardTitle className="text-2xl font-semibold">Loan Details</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="carPrice">Car Price (Rs.)</Label>
+                  <Label htmlFor="carPrice" className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Car Price (Rs.)</Label>
                   <Input
                     id="carPrice"
                     type="number"
                     value={carPrice}
                     onChange={(e) => setCarPrice(Number(e.target.value))}
-                    className="mt-1"
+                    className="mt-1 rounded-lg border border-border"
                   />
                 </div>
                 
                 <div>
-                  <Label htmlFor="downPaymentPercent">Down Payment (%)</Label>
+                  <Label htmlFor="downPaymentPercent" className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Down Payment (%)</Label>
                   <Input
                     id="downPaymentPercent"
                     type="number"
                     value={downPaymentPercent}
                     onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
-                    className="mt-1"
+                    className="mt-1 rounded-lg border border-border"
                   />
                 </div>
                 
                 <div>
-                  <Label htmlFor="loanTerm">Loan Term (Years)</Label>
+                  <Label htmlFor="loanTerm" className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Loan Term (Years)</Label>
                   <Select value={loanTerm.toString()} onValueChange={(value) => setLoanTerm(Number(value))}>
-                    <SelectTrigger>
+                    <SelectTrigger className="rounded-lg border border-border">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -122,81 +122,81 @@ const EmiCalculator = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="interestRate">Interest Rate (%)</Label>
+                  <Label htmlFor="interestRate" className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Interest Rate (%)</Label>
                   <Input
                     id="interestRate"
                     type="number"
                     step="0.1"
                     value={interestRate}
                     onChange={(e) => setInterestRate(Number(e.target.value))}
-                    className="mt-1"
+                    className="mt-1 rounded-lg border border-border"
                   />
                 </div>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
-                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                  <p className="text-sm text-muted-foreground">Down Payment</p>
-                  <p className="text-xl font-bold text-orange-500">
+                <div className="bg-secondary p-5 rounded-xl">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Down Payment</p>
+                  <p className="text-xl font-semibold text-accent">
                     Rs.{downPaymentAmount.toLocaleString('en-IN')}
                   </p>
                 </div>
                 
-                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                  <p className="text-sm text-muted-foreground">Loan Amount</p>
-                  <p className="text-xl font-bold">
+                <div className="bg-secondary p-5 rounded-xl">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Loan Amount</p>
+                  <p className="text-xl font-semibold">
                     Rs.{loanAmount.toLocaleString('en-IN')}
                   </p>
                 </div>
                 
-                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                  <p className="text-sm text-muted-foreground">Monthly EMI</p>
-                  <p className="text-xl font-bold text-green-500">
+                <div className="bg-secondary p-5 rounded-xl">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Monthly EMI</p>
+                  <p className="text-xl font-semibold text-accent">
                     Rs.{emi.toLocaleString('en-IN')}
                   </p>
                 </div>
               </div>
               
-              <Button className="w-full bg-orange-500 hover:bg-orange-600">
+              <Button className="w-full bg-accent hover:bg-accent/90 text-white rounded-lg">
                 Calculate EMI
               </Button>
             </CardContent>
           </Card>
           
           {/* Amortization Schedule */}
-          <Card className="mt-8">
+          <Card className="mt-8 border border-border rounded-2xl">
             <CardHeader>
-              <CardTitle>Loan Summary</CardTitle>
+              <CardTitle className="text-2xl font-semibold">Loan Summary</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="border rounded-lg p-4">
-                  <p className="text-sm text-muted-foreground">Total Principal</p>
-                  <p className="text-lg font-bold">
+                <div className="border border-border rounded-xl p-5">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Total Principal</p>
+                  <p className="text-lg font-semibold">
                     Rs.{loanAmount.toLocaleString('en-IN')}
                   </p>
                 </div>
                 
-                <div className="border rounded-lg p-4">
-                  <p className="text-sm text-muted-foreground">Total Interest</p>
-                  <p className="text-lg font-bold text-red-500">
+                <div className="border border-border rounded-xl p-5">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Total Interest</p>
+                  <p className="text-lg font-semibold text-accent">
                     Rs.{totalInterest.toLocaleString('en-IN')}
                   </p>
                 </div>
                 
-                <div className="border rounded-lg p-4">
-                  <p className="text-sm text-muted-foreground">Total Payment</p>
-                  <p className="text-lg font-bold">
+                <div className="border border-border rounded-xl p-5">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Total Payment</p>
+                  <p className="text-lg font-semibold">
                     Rs.{totalPayment.toLocaleString('en-IN')}
                   </p>
                 </div>
               </div>
               
-              <div className="mt-6">
-                <h3 className="font-semibold mb-2">Payment Breakdown</h3>
-                <div className="w-full bg-gray-200 rounded-full h-4">
+              <div className="mt-8">
+                <h3 className="font-semibold mb-3">Payment Breakdown</h3>
+                <div className="w-full bg-secondary rounded-full h-3">
                   <div 
-                    className="bg-orange-500 h-4 rounded-full" 
+                    className="bg-accent h-3 rounded-full" 
                     style={{ width: `${(loanAmount / totalPayment) * 100}%` }}
                   ></div>
                 </div>
@@ -211,33 +211,33 @@ const EmiCalculator = () => {
         
         {/* Tips and Information */}
         <div>
-          <Card>
+          <Card className="border border-border rounded-2xl">
             <CardHeader>
-              <CardTitle>EMI Tips</CardTitle>
+              <CardTitle className="text-2xl font-semibold">EMI Tips</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <CardContent className="space-y-5">
+              <div className="p-5 bg-secondary rounded-xl">
                 <h4 className="font-semibold mb-2">Higher Down Payment</h4>
                 <p className="text-sm text-muted-foreground">
                   Paying more upfront reduces your loan amount and total interest.
                 </p>
               </div>
               
-              <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+              <div className="p-5 bg-secondary rounded-xl">
                 <h4 className="font-semibold mb-2">Compare Interest Rates</h4>
                 <p className="text-sm text-muted-foreground">
                   Even a 1% difference can save lakhs in interest over the loan term.
                 </p>
               </div>
               
-              <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+              <div className="p-5 bg-secondary rounded-xl">
                 <h4 className="font-semibold mb-2">Prepayment Benefits</h4>
                 <p className="text-sm text-muted-foreground">
                   Making extra payments reduces principal and saves on interest.
                 </p>
               </div>
               
-              <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+              <div className="p-5 bg-secondary rounded-xl">
                 <h4 className="font-semibold mb-2">Processing Fees</h4>
                 <p className="text-sm text-muted-foreground">
                   Factor in processing fees, documentation charges, and insurance.
@@ -246,12 +246,12 @@ const EmiCalculator = () => {
             </CardContent>
           </Card>
           
-          <Card className="mt-8">
+          <Card className="mt-8 border border-border rounded-2xl">
             <CardHeader>
-              <CardTitle>Popular Loan Terms</CardTitle>
+              <CardTitle className="text-2xl font-semibold">Popular Loan Terms</CardTitle>
             </CardHeader>
             <CardContent>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 <li className="flex justify-between">
                   <span>5 Years (60 months)</span>
                   <span className="font-medium">Most Popular</span>

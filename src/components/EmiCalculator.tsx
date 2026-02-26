@@ -67,32 +67,32 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <Label htmlFor="carPrice">Car Price (Rs.)</Label>
+          <Label htmlFor="carPrice" className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Car Price (Rs.)</Label>
           <Input
             id="carPrice"
             type="number"
             value={carPrice}
             onChange={(e) => setCarPrice(Number(e.target.value))}
-            className="mt-1"
+            className="w-full"
           />
         </div>
         
         <div>
-          <Label htmlFor="downPaymentPercent">Down Payment (%)</Label>
+          <Label htmlFor="downPaymentPercent" className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Down Payment (%)</Label>
           <Input
             id="downPaymentPercent"
             type="number"
             value={downPaymentPercent}
             onChange={(e) => setDownPaymentPercent(Number(e.target.value))}
-            className="mt-1"
+            className="w-full"
           />
         </div>
         
         <div>
-          <Label htmlFor="loanTerm">Loan Term (Years)</Label>
+          <Label htmlFor="loanTerm" className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Loan Term (Years)</Label>
           <Select value={loanTerm.toString()} onValueChange={(value) => setLoanTerm(Number(value))}>
             <SelectTrigger>
               <SelectValue />
@@ -113,69 +113,69 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
         </div>
         
         <div>
-          <Label htmlFor="interestRate">Interest Rate (%)</Label>
+          <Label htmlFor="interestRate" className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Interest Rate (%)</Label>
           <Input
             id="interestRate"
             type="number"
             step="0.1"
             value={interestRate}
             onChange={(e) => setInterestRate(Number(e.target.value))}
-            className="mt-1"
+            className="w-full"
           />
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
-        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-          <p className="text-sm text-muted-foreground">Down Payment</p>
-          <p className="text-xl font-bold text-orange-500">
+        <div className="bg-secondary p-5 rounded-xl">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Down Payment</p>
+          <p className="text-xl font-semibold text-accent">
             {formatPrice(downPaymentAmount)}
           </p>
         </div>
         
-        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-          <p className="text-sm text-muted-foreground">Loan Amount</p>
-          <p className="text-xl font-bold">
+        <div className="bg-secondary p-5 rounded-xl">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Loan Amount</p>
+          <p className="text-xl font-semibold">
             {formatPrice(loanAmount)}
           </p>
         </div>
         
-        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-          <p className="text-sm text-muted-foreground">Monthly EMI</p>
-          <p className="text-xl font-bold text-green-500">
+        <div className="bg-secondary p-5 rounded-xl">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Monthly EMI</p>
+          <p className="text-xl font-semibold text-accent">
             {formatPrice(emi)}
           </p>
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="border rounded-lg p-4">
-          <p className="text-sm text-muted-foreground">Total Principal</p>
-          <p className="text-lg font-bold">
+        <div className="border border-border rounded-xl p-5">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Total Principal</p>
+          <p className="text-lg font-semibold">
             {formatPrice(loanAmount)}
           </p>
         </div>
         
-        <div className="border rounded-lg p-4">
-          <p className="text-sm text-muted-foreground">Total Interest</p>
-          <p className="text-lg font-bold text-red-500">
+        <div className="border border-border rounded-xl p-5">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Total Interest</p>
+          <p className="text-lg font-semibold text-accent">
             {formatPrice(totalInterest)}
           </p>
         </div>
         
-        <div className="border rounded-lg p-4">
-          <p className="text-sm text-muted-foreground">Total Payment</p>
-          <p className="text-lg font-bold">
+        <div className="border border-border rounded-xl p-5">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Total Payment</p>
+          <p className="text-lg font-semibold">
             {formatPrice(totalPayment)}
           </p>
         </div>
       </div>
       
       <div className="mt-6">
-        <h3 className="font-semibold mb-2">Payment Breakdown</h3>
-        <div className="w-full bg-gray-200 rounded-full h-4">
+        <h3 className="font-semibold mb-3">Payment Breakdown</h3>
+        <div className="w-full bg-secondary rounded-full h-3">
           <div 
-            className="bg-orange-500 h-4 rounded-full" 
+            className="bg-accent h-3 rounded-full" 
             style={{ width: `${(loanAmount / totalPayment) * 100}%` }}
           ></div>
         </div>
