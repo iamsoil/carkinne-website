@@ -272,7 +272,7 @@ const Index = () => {
       </section>
 
       {/* Popular Brands */}
-      <section className="py-20 bg-white">
+      <section className="py-14 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-semibold text-center text-foreground mb-3">
             Popular Brands
