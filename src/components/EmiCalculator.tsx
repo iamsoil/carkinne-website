@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 
 const BANKS = [
@@ -26,7 +27,7 @@ function calcEMI(principal: number, rate: number, months: number): number {
   return (principal * r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1);
 }
 
-export default function EMICalculator() {
+export const EmiCalculator = () => {
   const [carPrice, setCarPrice] = useState(3000000);
   const [carPriceInput, setCarPriceInput] = useState("3000000");
   const [downPct, setDownPct] = useState(10);
@@ -380,4 +381,4 @@ export default function EMICalculator() {
       </div>
     </div>
   );
-}
+};
