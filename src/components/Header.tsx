@@ -81,7 +81,7 @@ const Header = () => {
               <span className="sr-only">Toggle theme</span>
             </Button>
             
-            <Button variant="ghost" size="icon" className="text-foreground hover:text-white">
+            <Button variant="ghost" size="icon" className="text-foreground hover:text-white" onClick={() => window.location.href = '/#search'}>
               <Search className="h-5 w-5" />
               <span className="sr-only">Search</span>
             </Button>
