@@ -224,49 +224,68 @@ const Index = () => {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="py-20 bg-secondary">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-6xl font-semibold text-foreground leading-tight tracking-tight">
-            Find Your Perfect Car in Nepal
-          </h1>
-          <p className="text-xl text-muted-foreground mt-3 max-w-2xl mx-auto">
-            Compare prices, calculate EMI, find showrooms
-          </p>
-          
-          {/* Search Bar */}
-          <div className="max-w-2xl mx-auto mt-10">
-            <div className="relative">
-              <Input
-                type="text"
-                placeholder="Search Toyota, Suzuki, Budget..."
-                className="pl-6 pr-32 py-6 text-base rounded-xl bg-white border border-border text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-1 focus:ring-accent"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-lg bg-accent hover:bg-accent/90 text-white px-6">
-                Search
-              </Button>
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col lg:flex-row items-center">
+            {/* Text Content - Left Column */}
+            <div className="lg:w-1/2 lg:pr-12 text-center lg:text-left">
+              <h1 className="text-5xl md:text-6xl font-semibold text-foreground leading-tight tracking-tight">
+                Find Your Perfect Car in Nepal
+              </h1>
+              <p className="text-xl text-muted-foreground mt-3 max-w-2xl mx-auto lg:mx-0">
+                Compare prices, calculate EMI, find showrooms
+              </p>
+              
+              {/* Search Bar */}
+              <div className="max-w-2xl mx-auto lg:mx-0 mt-10">
+                <div className="relative">
+                  <Input
+                    type="text"
+                    placeholder="Search Toyota, Suzuki, Budget..."
+                    className="pl-6 pr-32 py-6 text-base rounded-xl bg-white border border-border text-foreground placeholder:text-muted-foreground focus:border-accent focus:ring-1 focus:ring-accent"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <Button className="absolute right-2 top-1/2 transform -translate-y-1/2 rounded-lg bg-accent hover:bg-accent/90 text-white px-6">
+                    Search
+                  </Button>
+                </div>
+              </div>
+              
+              {/* Quick Stats */}
+              <div className="text-muted-foreground text-sm mt-6 flex flex-wrap justify-center lg:justify-start gap-4">
+                <span>150+ Cars</span>
+                <span className="hidden sm:block">•</span>
+                <span>50+ Showrooms</span>
+                <span className="hidden sm:block">•</span>
+                <span>Updated Monthly</span>
+              </div>
+              
+              {/* Quick Filters */}
+              <div className="flex flex-wrap justify-center lg:justify-start gap-3 mt-8">
+                {quickFilters.map((filter, index) => (
+                  <button
+                    key={index}
+                    className="px-5 py-2 text-sm font-medium text-foreground bg-white border border-border rounded-full hover:border-foreground transition-colors"
+                  >
+                    {filter}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-          
-          {/* Quick Stats */}
-          <div className="text-muted-foreground text-sm mt-6 flex flex-wrap justify-center gap-4">
-            <span>150+ Cars</span>
-            <span className="hidden sm:block">•</span>
-            <span>50+ Showrooms</span>
-            <span className="hidden sm:block">•</span>
-            <span>Updated Monthly</span>
-          </div>
-          
-          {/* Quick Filters */}
-          <div className="flex flex-wrap justify-center gap-3 mt-8">
-            {quickFilters.map((filter, index) => (
-              <button
-                key={index}
-                className="px-5 py-2 text-sm font-medium text-foreground bg-white border border-border rounded-full hover:border-foreground transition-colors"
-              >
-                {filter}
-              </button>
-            ))}
+            
+            {/* Hero Image - Right Column (Desktop Only) */}
+            <div className="hidden lg:block lg:w-1/2 mt-12 lg:mt-0 relative">
+              <div className="relative w-full">
+                <img
+                  src="https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=1200&q=80"
+                  alt="Luxury car"
+                  className="w-full h-auto rounded-2xl object-cover"
+                  style={{ borderRadius: '16px' }}
+                />
+                {/* Subtle fade on left edge */}
+                <div className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-secondary to-transparent rounded-l-2xl pointer-events-none"></div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
