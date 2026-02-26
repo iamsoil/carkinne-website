@@ -224,7 +224,7 @@ const Index = () => {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section 
-        className="relative h-screen w-full flex items-center overflow-hidden"
+        className="relative h-[80vh] w-full flex items-center overflow-hidden"
         style={{
           backgroundImage: "url('https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=1600&q=80')",
           backgroundSize: "cover",
@@ -302,14 +302,6 @@ const Index = () => {
               ></div>
             ))}
           </div>
-        </div>
-        
-        {/* Curved bottom edge */}
-        <div style={{ position: "absolute", bottom: -1, left: 0, width: "100%", overflow: "hidden", lineHeight: 0 }}>
-          <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none" style={{ width: "100%", height: 80, display: "block" }}>
-            <path d="M0,80 C360,0 1080,0 1440,80 L1440,80 L0,80 Z" fill="#ffffff" />
-          </svg>
         </div>
       </section>
 
