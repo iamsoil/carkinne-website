@@ -504,3 +504,4 @@ export const EmiCalculator = () => {
     </div>
   );
 };
+export default EmiCalculator;
