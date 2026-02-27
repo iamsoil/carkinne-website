@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import CarCard from '@/components/CarCard';
 import { supabase } from '@/integrations/supabase/client';
+import { Link } from 'react-router-dom';
 
 const EvCars = () => {
   const [evCars, setEvCars] = useState<any[]>([]);
@@ -182,7 +183,8 @@ const EvCars = () => {
               <ul className="space-y-3 text-[#6e6e73]">
                 <li>Fast DC chargers: 30-60 mins</li>
                 <li>Available at: Kathmandu, Pokhara, Chitwan</li>
-                <li>Growing network across Nepal</p>
+                <li>Growing network across Nepal</li>
+              </ul>
             </div>
           </div>
         </div>
