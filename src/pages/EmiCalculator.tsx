@@ -111,12 +111,15 @@ const EmiCalculatorPage = () => {
     <div className="container mx-auto px-4 py-8 max-w-6xl">
 
       {/* PAGE HEADER */}
-      <div className="text-center mb-12">
+      <div className="mb-12">
         <h1 className="text-4xl font-semibold tracking-tight text-[#1d1d1f]">
           Car Loan EMI Calculator
         </h1>
         <p className="text-lg text-[#6e6e73] mt-3">
           Calculate your monthly installment with real Nepal bank rates
+        </p>
+        <p className="text-lg text-[#6e6e73] mt-1">
+          Plan your car purchase with confidence
         </p>
       </div>
 
