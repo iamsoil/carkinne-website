@@ -22,6 +22,8 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminCars from "./pages/AdminCars";
 import AdminCarForm from "./pages/AdminCarForm";
 import AdminBlog from "./pages/AdminBlog";
+import AdminShowrooms from "./pages/AdminShowrooms";
+import AdminOffers from "./pages/AdminOffers";
 import NotFound from "./pages/NotFound";
 import EvCars from "./pages/EvCars";
 
@@ -58,6 +60,8 @@ const App = () => (
                 <Route path="/admin/cars/new" element={<AdminCarForm />} />
                 <Route path="/admin/cars/edit/:id" element={<AdminCarForm />} />
                 <Route path="/admin/blog" element={<AdminBlog />} />
+                <Route path="/admin/showrooms" element={<AdminShowrooms />} />
+                <Route path="/admin/offers" element={<AdminOffers />} />
                 
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
