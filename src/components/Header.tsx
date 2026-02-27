@@ -4,12 +4,17 @@ import { useState, useEffect } from 'react';
 import { Moon, Sun, Search, Menu, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
+import { useLocation } from 'react-router-dom';
 
 const Header = () => {
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showAnnouncement, setShowAnnouncement] = useState(true);
+  const location = useLocation();
+
+  // Hide header on admin pages
+  if (location.pathname.startsWith('/admin')) return null;
 
   useEffect(() => {
     const handleScroll = () => {
