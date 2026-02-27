@@ -163,6 +163,9 @@ const Showrooms = () => {
                 <div 
                   key={showroom.id} 
                   className="border border-[#d2d2d7] rounded-xl p-5 bg-white hover:-translate-y-0.5 transition-transform cursor-pointer"
+                  style={{
+                    borderLeft: '3px solid #e8531a',
+                  }}
                 >
                   <div className="flex items-start">
                     <div className="bg-[#f5f5f7] w-10 h-10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
@@ -223,8 +226,12 @@ const Showrooms = () => {
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d56516.27776862953!2d85.29111453057422!3d27.708968424465493!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39eb198a307baabf%3A0xb5137c1bf18db1ea!2sKathmandu%2C%20Nepal!5e0!3m2!1sen!2snp!4v1234567890"
               width="100%"
-              height="calc(100vh - 200px)"
-              style={{ border: 0, borderRadius: '16px' }}
+              height="calc(100vh - 220px)"
+              style={{ 
+                border: 0, 
+                borderRadius: '16px',
+                minHeight: '600px'
+              }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
