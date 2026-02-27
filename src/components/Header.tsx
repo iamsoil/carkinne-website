@@ -5,12 +5,14 @@ import { Moon, Sun, Search, Menu, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'react-router-dom';
+import { supabase } from '@/lib/supabase';
 
 const Header = () => {
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showAnnouncement, setShowAnnouncement] = useState(true);
+  const [announcement, setAnnouncement] = useState<any>(null);
   const location = useLocation();
 
   // Hide header on admin pages
@@ -23,6 +25,27 @@ const Header = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    fetchAnnouncement();
+  }, []);
+
+  const fetchAnnouncement = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('announcements')
+        .select('*')
+        .eq('is_active', true)
+        .limit(1)
+        .single();
+
+      if (!error && data) {
+        setAnnouncement(data);
+      }
+    } catch (error) {
+      console.error('Error fetching announcement:', error);
+    }
+  };
 
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -40,17 +63,33 @@ const Header = () => {
   return (
     <header className={`sticky top-0 z-50 backdrop-blur-xl transition-all duration-300 ${isScrolled ? 'bg-white/85 border-b border-border' : 'bg-white/85'}`}>
       {/* Announcement Bar */}
-      {showAnnouncement && (
-        <div className="bg-foreground text-white text-center py-2 text-xs tracking-wide">
+      {showAnnouncement && announcement && (
+        <div 
+          className="text-center py-2 text-xs tracking-wide"
+          style={{ 
+            backgroundColor: announcement.bg_color || '#1d1d1f',
+            color: announcement.text_color || '#ffffff'
+          }}
+        >
           <div className="container mx-auto px-4 flex justify-between items-center">
             <div></div>
-            <span>Dashain Special — Up to Rs. 2 Lakh off on selected cars</span>
-            <button 
-              className="hover:opacity-70 transition-opacity"
-              onClick={() => setShowAnnouncement(false)}
-            >
-              <X className="h-4 w-4" />
-            </button>
+            <span>{announcement.message}</span>
+            <div className="flex items-center">
+              {announcement.link_text && (
+                <a 
+                  href={announcement.link_url || '#'} 
+                  className="hover:opacity-70 transition-opacity mr-3"
+                >
+                  {announcement.link_text}
+                </a>
+              )}
+              <button 
+                className="hover:opacity-70 transition-opacity"
+                onClick={() => setShowAnnouncement(false)}
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         </div>
       )}
