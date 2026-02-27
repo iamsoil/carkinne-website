@@ -6,7 +6,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import CarCard from '@/components/CarCard';
-import { MadeWithDyad } from '@/components/made-with-dyad';
 import { supabase } from '@/lib/supabase';
 import { formatNPR } from '@/utils/format';
 
@@ -37,7 +36,7 @@ const Index = () => {
       description: 'Get up to Rs.2L off on selected models',
       discount_amount: 200000,
       valid_until: '2024-10-31',
-      image_url: 'https://placehold.co/300x200/f59e0b/ffffff?text=Special+Offer',
+      image_url: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600',
       car: 'Toyota Fortuner',
       type: 'Festival Offer'
     },
@@ -47,7 +46,7 @@ const Index = () => {
       description: 'Free accessories worth Rs.50,000 with all new purchases',
       discount_amount: 50000,
       valid_until: '2024-11-15',
-      image_url: 'https://placehold.co/300x200/0f172a/ffffff?text=Free+Accessories',
+      image_url: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=600',
       car: 'Honda City',
       type: 'Free Accessories'
     },
@@ -57,7 +56,7 @@ const Index = () => {
       description: 'Special financing at just 7% interest rate',
       discount_amount: 0,
       valid_until: '2024-12-31',
-      image_url: 'https://placehold.co/300x200/0f172a/ffffff?text=Low+Interest',
+      image_url: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600',
       car: 'Suzuki Swift',
       type: 'Finance Offer'
     }
@@ -404,7 +403,7 @@ const Index = () => {
                   <img 
                     src={offer.image_url} 
                     alt={offer.title} 
-                    className="w-full h-48 object-cover"
+                    className="w-full h-48 object-cover rounded-t-2xl"
                   />
                   <span className="absolute top-3 left-3 bg-[#e8531a] text-white text-[11px] font-semibold uppercase px-2 py-1 rounded-full">
                     {offer.type}
@@ -441,7 +440,7 @@ const Index = () => {
       </section>
 
       {/* Top Showrooms */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-[#f5f5f7]">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-12">
             <h2 className="text-4xl font-semibold text-foreground">Top Showrooms</h2>
@@ -537,8 +536,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
-      <MadeWithDyad />
     </div>
   );
 };
