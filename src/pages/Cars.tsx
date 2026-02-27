@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import CarCard from '@/components/CarCard';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 
 const Cars = () => {
   const [cars, setCars] = useState<any[]>([]);
@@ -44,7 +44,8 @@ const Cars = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('cars')
-        .select('*');
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       

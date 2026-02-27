@@ -13,7 +13,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { EmiCalculator } from '@/components/EmiCalculator';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
+import { formatNPR } from '@/utils/format';
 
 const CarDetail = () => {
   const { slug } = useParams();
@@ -136,11 +137,6 @@ const CarDetail = () => {
 
   const onRoadBreakdown = calculateOnRoadPrice();
 
-  // Format price in Nepali format
-  const formatPrice = (price: number) => {
-    return `Rs.${price.toLocaleString('en-IN')}`;
-  };
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -216,8 +212,8 @@ const CarDetail = () => {
   const emi = calculateEMI();
 
   // SEO Meta tags
-  const metaTitle = `${car.name} Price in Nepal 2025 — ${formatPrice(car.ex_showroom_price)} | CarKinne`;
-  const metaDescription = `${car.name} price in Nepal starts at ${formatPrice(car.ex_showroom_price)}. Check full specs, EMI, colors, variants and find nearest showroom. Updated ${formatDate(car.updated_at || new Date().toISOString())}.`;
+  const metaTitle = `${car.name} Price in Nepal 2025 — ${formatNPR(car.ex_showroom_price)} | CarKinne`;
+  const metaDescription = `${car.name} price in Nepal starts at ${formatNPR(car.ex_showroom_price)}. Check full specs, EMI, colors, variants and find nearest showroom. Updated ${formatDate(car.updated_at || new Date().toISOString())}.`;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -296,7 +292,7 @@ const CarDetail = () => {
               <div className="mb-4">
                 <p className="text-sm text-muted-foreground">Ex-showroom Price</p>
                 <p className="text-3xl font-semibold text-accent">
-                  {formatPrice(car.ex_showroom_price)}
+                  {formatNPR(car.ex_showroom_price)}
                 </p>
               </div>
               
@@ -314,23 +310,23 @@ const CarDetail = () => {
                   <div className="mt-3 space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span>Ex-showroom</span>
-                      <span>{formatPrice(onRoadBreakdown.exShowroom)}</span>
+                      <span>{formatNPR(onRoadBreakdown.exShowroom)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Registration</span>
-                      <span>~{formatPrice(onRoadBreakdown.registration)}</span>
+                      <span>~{formatNPR(onRoadBreakdown.registration)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Insurance (1yr)</span>
-                      <span>~{formatPrice(onRoadBreakdown.insurance)}</span>
+                      <span>~{formatNPR(onRoadBreakdown.insurance)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Road tax</span>
-                      <span>~{formatPrice(onRoadBreakdown.roadTax)}</span>
+                      <span>~{formatNPR(onRoadBreakdown.roadTax)}</span>
                     </div>
                     <div className="border-t border-border pt-2 flex justify-between font-semibold">
                       <span>Total On-Road</span>
-                      <span className="text-accent">{formatPrice(onRoadBreakdown.total)}</span>
+                      <span className="text-accent">{formatNPR(onRoadBreakdown.total)}</span>
                     </div>
                   </div>
                 )}
@@ -644,7 +640,7 @@ const CarDetail = () => {
                           <p className="text-sm text-muted-foreground">Manual</p>
                         </div>
                       </td>
-                      <td className="py-3 font-medium">Rs.45,00,000</td>
+                      <td className="py-3 font-medium">{formatNPR(4500000)}</td>
                       <td className="py-3 text-sm text-muted-foreground">Basic features</td>
                       <td className="py-3">
                         <Button size="sm" variant="outline" className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg">
@@ -659,7 +655,7 @@ const CarDetail = () => {
                           <p className="text-sm text-muted-foreground">Manual</p>
                         </div>
                       </td>
-                      <td className="py-3 font-medium">Rs.48,50,000</td>
+                      <td className="py-3 font-medium">{formatNPR(4850000)}</td>
                       <td className="py-3 text-sm text-muted-foreground">+Sunroof, Leather seats</td>
                       <td className="py-3">
                         <Button size="sm" variant="outline" className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg">
@@ -675,7 +671,7 @@ const CarDetail = () => {
                         </div>
                       </td>
                       <td className="py-3 font-semibold text-accent">
-                        {formatPrice(car.ex_showroom_price)}
+                        {formatNPR(car.ex_showroom_price)}
                       </td>
                       <td className="py-3 text-sm text-muted-foreground">+Cruise control, Premium sound</td>
                       <td className="py-3">
@@ -691,7 +687,7 @@ const CarDetail = () => {
                           <p className="text-sm text-muted-foreground">Automatic</p>
                         </div>
                       </td>
-                      <td className="py-3 font-medium">Rs.55,00,000</td>
+                      <td className="py-3 font-medium">{formatNPR(5500000)}</td>
                       <td className="py-3 text-sm text-muted-foreground">+360 camera, Massage seats</td>
                       <td className="py-3">
                         <Button size="sm" variant="outline" className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg">
@@ -820,7 +816,7 @@ const CarDetail = () => {
                   <h3 className="font-semibold">{similarCar.name} {similarCar.variant}</h3>
                   <p className="text-sm text-muted-foreground mb-2">{similarCar.brand}</p>
                   <p className="text-accent font-semibold">
-                    {formatPrice(similarCar.ex_showroom_price)}
+                    {formatNPR(similarCar.ex_showroom_price)}
                   </p>
                   <Button size="sm" className="w-full mt-4 bg-foreground text-white hover:bg-accent rounded-lg">
                     View Details
@@ -853,7 +849,7 @@ const CarDetail = () => {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span>Price</span>
-                    <span className="font-medium">{formatPrice(similarCar.ex_showroom_price)}</span>
+                    <span className="font-medium">{formatNPR(similarCar.ex_showroom_price)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Engine</span>

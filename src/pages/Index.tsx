@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import CarCard from '@/components/CarCard';
 import { MadeWithDyad } from '@/components/made-with-dyad';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
+import { formatNPR } from '@/utils/format';
 
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState('');

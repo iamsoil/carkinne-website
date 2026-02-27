@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 
 const Showrooms = () => {
   const [selectedCity, setSelectedCity] = useState<string>('All');
@@ -38,7 +38,8 @@ const Showrooms = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('showrooms')
-        .select('*');
+        .select('*')
+        .order('city');
 
       if (error) throw error;
       
