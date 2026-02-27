@@ -13,6 +13,31 @@ const banks = [
   { name: 'Laxmi Sunrise Bank', rate: 10.50, tenure: 7, financing: 80, fee: 0.5, lowest: false },
 ];
 
+const emiTips = [
+  {
+    title: 'Higher Down Payment',
+    description: 'Paying more upfront reduces your loan amount and total interest paid over time.',
+  },
+  {
+    title: 'Compare Interest Rates',
+    description: 'Even a 1% difference in rate can save you several lakhs over the loan tenure.',
+  },
+  {
+    title: 'Prepayment Benefits',
+    description: 'Making extra payments reduces your principal and saves significantly on interest.',
+  },
+  {
+    title: 'Factor in All Costs',
+    description: 'Include processing fees, insurance, and registration in your total budget.',
+  },
+];
+
+const popularTerms = [
+  { label: '3 Years (36 months)', tag: 'Lower Interest',  tenure: 3  },
+  { label: '5 Years (60 months)', tag: 'Most Popular',    tenure: 5  },
+  { label: '7 Years (84 months)', tag: 'Lower EMI',       tenure: 7  },
+];
+
 // Nepali number format: 3000000 -> Rs. 30,00,000
 function formatNPR(amount: number): string {
   if (!amount && amount !== 0) return 'Rs. 0';
@@ -37,7 +62,7 @@ const EmiCalculatorPage = () => {
   const [interestRate, setInterestRate] = useState(10.5);
   const [showAmort,    setShowAmort]    = useState(false);
 
-  // All derived — no useEffect needed, no infinite loop
+  // All derived — no useEffect, no infinite loop
   const downPayment   = Math.round(carPrice * downPct / 100);
   const loanAmount    = carPrice - downPayment;
   const months        = tenure * 12;
@@ -45,9 +70,9 @@ const EmiCalculatorPage = () => {
   const totalPayment  = emi * months;
   const totalInterest = totalPayment - loanAmount;
 
-  // When user types in amount box — convert to percent
   const handleDownAmount = (val: number) => {
-    if (carPrice > 0) setDownPct(Math.min(50, Math.max(10, Math.round((val / carPrice) * 100))));
+    if (carPrice > 0)
+      setDownPct(Math.min(50, Math.max(10, Math.round((val / carPrice) * 100))));
   };
 
   // Amortization rows
@@ -95,112 +120,126 @@ const EmiCalculatorPage = () => {
         </p>
       </div>
 
-      {/* CALCULATOR */}
+      {/* CALCULATOR — TWO COLUMNS */}
       <div className="grid grid-cols-1 lg:grid-cols-[55%_43%] gap-8">
 
-        {/* LEFT INPUTS */}
-        <div className="space-y-8">
+        {/* ── LEFT — INPUTS inside one bordered card ── */}
+        <Card className="border border-[#d2d2d7] rounded-2xl shadow-none">
+          <CardContent className="p-7 space-y-8">
 
-          {/* Car Price */}
-          <div>
-            <label className="block text-xs uppercase tracking-wider text-[#6e6e73] mb-3">
-              Car Price
-            </label>
-            <input
-              type="number"
-              placeholder="Enter car price"
-              value={carPrice || ''}
-              onChange={e => setCarPrice(Number(e.target.value))}
-              className="w-full px-4 py-3 rounded-xl border border-[#d2d2d7] text-base outline-none focus:border-[#e8531a] transition-colors"
-            />
-            <p className="text-xs text-[#6e6e73] mt-2">
-              {carPrice > 0 ? formatNPR(carPrice) : 'Enter amount above'}
-            </p>
-          </div>
-
-          {/* Down Payment */}
-          <div>
-            <label className="block text-xs uppercase tracking-wider text-[#6e6e73] mb-3">
-              Down Payment
-            </label>
-            <div className="grid grid-cols-2 gap-4 mb-3">
+            {/* Car Price */}
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-[#6e6e73] mb-3">
+                Car Price
+              </label>
               <input
                 type="number"
-                value={downPayment || ''}
-                onChange={e => handleDownAmount(Number(e.target.value))}
-                placeholder="Amount"
-                className="px-4 py-3 rounded-xl border border-[#d2d2d7] text-base outline-none focus:border-[#e8531a] transition-colors"
+                placeholder="Enter car price"
+                value={carPrice || ''}
+                onChange={e => setCarPrice(Number(e.target.value))}
+                className="w-full px-4 py-3 rounded-xl border border-[#d2d2d7] text-base outline-none focus:border-[#e8531a] transition-colors"
               />
-              <div className="relative">
+              <p className="text-xs text-[#6e6e73] mt-2">
+                {carPrice > 0 ? formatNPR(carPrice) : 'Enter amount above'}
+              </p>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-[#d2d2d7]" />
+
+            {/* Down Payment */}
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-[#6e6e73] mb-3">
+                Down Payment
+              </label>
+              <div className="grid grid-cols-2 gap-4 mb-3">
                 <input
                   type="number"
-                  min={10} max={50}
-                  value={downPct}
-                  onChange={e => setDownPct(Math.min(50, Math.max(10, Number(e.target.value))))}
-                  className="w-full px-4 py-3 pr-8 rounded-xl border border-[#d2d2d7] text-base outline-none focus:border-[#e8531a] transition-colors"
+                  value={downPayment || ''}
+                  onChange={e => handleDownAmount(Number(e.target.value))}
+                  placeholder="Amount"
+                  className="px-4 py-3 rounded-xl border border-[#d2d2d7] text-base outline-none focus:border-[#e8531a] transition-colors"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6e6e73]">%</span>
+                <div className="relative">
+                  <input
+                    type="number"
+                    min={10} max={50}
+                    value={downPct}
+                    onChange={e => setDownPct(Math.min(50, Math.max(10, Number(e.target.value))))}
+                    className="w-full px-4 py-3 pr-8 rounded-xl border border-[#d2d2d7] text-base outline-none focus:border-[#e8531a] transition-colors"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6e6e73]">%</span>
+                </div>
+              </div>
+              <input
+                type="range" min={10} max={50} step={1}
+                value={downPct}
+                onChange={e => setDownPct(Number(e.target.value))}
+                className="w-full accent-[#e8531a]"
+              />
+              <div className="flex justify-between text-xs text-[#6e6e73] mt-1">
+                <span>10%</span><span>50%</span>
               </div>
             </div>
-            <input
-              type="range" min={10} max={50} step={1}
-              value={downPct}
-              onChange={e => setDownPct(Number(e.target.value))}
-              className="w-full accent-[#e8531a]"
-            />
-            <div className="flex justify-between text-xs text-[#6e6e73] mt-1">
-              <span>10%</span><span>50%</span>
-            </div>
-          </div>
 
-          {/* Loan Tenure */}
-          <div>
-            <label className="block text-xs uppercase tracking-wider text-[#6e6e73] mb-3">
-              Loan Tenure
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {[1,2,3,4,5,6,7].map(yr => (
+            {/* Divider */}
+            <div className="border-t border-[#d2d2d7]" />
+
+            {/* Loan Tenure */}
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-[#6e6e73] mb-3">
+                Loan Tenure
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {[1,2,3,4,5,6,7].map(yr => (
+                  <button
+                    key={yr}
+                    onClick={() => setTenure(yr)}
+                    className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
+                      tenure === yr
+                        ? 'bg-[#1d1d1f] text-white'
+                        : 'bg-white border border-[#d2d2d7] text-[#1d1d1f] hover:border-[#1d1d1f]'
+                    }`}
+                  >
+                    {yr}yr
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-[#d2d2d7]" />
+
+            {/* Interest Rate */}
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-[#6e6e73] mb-3">
+                Interest Rate
+              </label>
+              <div className="flex items-center">
                 <button
-                  key={yr}
-                  onClick={() => setTenure(yr)}
-                  className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
-                    tenure === yr
-                      ? 'bg-[#1d1d1f] text-white'
-                      : 'bg-white border border-[#d2d2d7] text-[#1d1d1f] hover:border-[#1d1d1f]'
-                  }`}
-                >
-                  {yr}yr
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Interest Rate */}
-          <div>
-            <label className="block text-xs uppercase tracking-wider text-[#6e6e73] mb-3">
-              Interest Rate
-            </label>
-            <div className="flex items-center">
-              <button
-                onClick={() => setInterestRate(r => Math.max(8, Math.round((r - 0.25) * 100) / 100))}
-                className="w-10 h-11 border border-[#d2d2d7] rounded-l-lg bg-white text-xl text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors"
-              >−</button>
-              <div className="px-6 py-2.5 border-t border-b border-[#d2d2d7] text-base font-medium min-w-[90px] text-center">
-                {interestRate}%
+                  onClick={() => setInterestRate(r => Math.max(8, Math.round((r - 0.25) * 100) / 100))}
+                  className="w-10 h-11 border border-[#d2d2d7] rounded-l-lg bg-white text-xl text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors"
+                >−</button>
+                <div className="px-6 py-2.5 border-t border-b border-[#d2d2d7] text-base font-medium min-w-[90px] text-center">
+                  {interestRate}%
+                </div>
+                <button
+                  onClick={() => setInterestRate(r => Math.min(18, Math.round((r + 0.25) * 100) / 100))}
+                  className="w-10 h-11 border border-[#d2d2d7] rounded-r-lg bg-white text-xl text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors"
+                >+</button>
               </div>
-              <button
-                onClick={() => setInterestRate(r => Math.min(18, Math.round((r + 0.25) * 100) / 100))}
-                className="w-10 h-11 border border-[#d2d2d7] rounded-r-lg bg-white text-xl text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors"
-              >+</button>
+              <p className="text-xs text-[#6e6e73] mt-2">
+                Average Nepal bank car loan rate: 10–11%
+              </p>
             </div>
-            <p className="text-xs text-[#6e6e73] mt-2">
-              Average Nepal bank car loan rate: 10–11%
-            </p>
-          </div>
-        </div>
 
-        {/* RIGHT RESULTS */}
-        <div className="lg:sticky lg:top-8 h-fit">
+          </CardContent>
+        </Card>
+
+        {/* ── RIGHT — Results + EMI Tips + Popular Terms ── */}
+        <div className="flex flex-col gap-6 lg:sticky lg:top-8 h-fit">
+
+          {/* RESULTS CARD */}
           <Card className="border border-[#d2d2d7] rounded-2xl shadow-none">
             <CardContent className="p-7">
 
@@ -288,6 +327,66 @@ const EmiCalculatorPage = () => {
 
             </CardContent>
           </Card>
+
+          {/* EMI TIPS CARD */}
+          <Card className="border border-[#d2d2d7] rounded-2xl shadow-none">
+            <CardContent className="p-7">
+              <h3 className="text-base font-semibold text-[#1d1d1f] mb-5">
+                EMI Tips
+              </h3>
+              <div className="space-y-4">
+                {emiTips.map((tip, i) => (
+                  <div key={i} className="flex gap-3">
+                    {/* Orange dot accent */}
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#e8531a] mt-2 shrink-0" />
+                    <div>
+                      <p className="text-sm font-medium text-[#1d1d1f]">{tip.title}</p>
+                      <p className="text-xs text-[#6e6e73] mt-0.5 leading-relaxed">
+                        {tip.description}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* POPULAR LOAN TERMS CARD */}
+          <Card className="border border-[#d2d2d7] rounded-2xl shadow-none">
+            <CardContent className="p-7">
+              <h3 className="text-base font-semibold text-[#1d1d1f] mb-5">
+                Popular Loan Terms
+              </h3>
+              <div className="space-y-3">
+                {popularTerms.map((term) => (
+                  <div
+                    key={term.tenure}
+                    onClick={() => setTenure(term.tenure)}
+                    className={`flex justify-between items-center p-3 rounded-xl border cursor-pointer transition-all ${
+                      tenure === term.tenure
+                        ? 'border-[#e8531a] bg-[#fff8f5]'
+                        : 'border-[#d2d2d7] hover:border-[#1d1d1f]'
+                    }`}
+                  >
+                    <span className="text-sm text-[#1d1d1f]">{term.label}</span>
+                    <span
+                      className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                        tenure === term.tenure
+                          ? 'bg-[#e8531a] text-white'
+                          : 'bg-[#f5f5f7] text-[#6e6e73]'
+                      }`}
+                    >
+                      {term.tag}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-[#6e6e73] mt-4">
+                Clicking a term updates the calculator above.
+              </p>
+            </CardContent>
+          </Card>
+
         </div>
       </div>
 
@@ -311,9 +410,7 @@ const EmiCalculatorPage = () => {
                 }}
                 className="bg-white rounded-2xl p-6 cursor-pointer hover:-translate-y-1 transition-all"
                 style={{
-                  border: bank.lowest
-                    ? '2px solid #e8531a'
-                    : '1px solid #d2d2d7',
+                  border: bank.lowest ? '2px solid #e8531a' : '1px solid #d2d2d7',
                 }}
               >
                 <div className="flex justify-between items-start">
