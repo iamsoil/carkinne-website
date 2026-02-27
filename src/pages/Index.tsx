@@ -485,7 +485,7 @@ const Index = () => {
       </section>
 
       {/* Latest from Blog */}
-      <section className="py-20 bg-secondary">
+      <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-12">
             <h2 className="text-4xl font-semibold text-foreground">Latest from Blog</h2>
