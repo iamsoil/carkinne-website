@@ -27,9 +27,14 @@ function calcEMI(principal: number, rate: number, months: number): number {
   return (principal * r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1);
 }
 
-export const EmiCalculator = () => {
-  const [carPrice, setCarPrice] = useState(3000000);
-  const [carPriceInput, setCarPriceInput] = useState("3000000");
+// Add interface for props
+interface EmiCalculatorProps {
+  prefillPrice?: number;
+}
+
+export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
+  const [carPrice, setCarPrice] = useState(prefillPrice || 3000000);
+  const [carPriceInput, setCarPriceInput] = useState(prefillPrice?.toString() || "3000000");
   const [downPct, setDownPct] = useState(10);
   const [tenure, setTenure] = useState(5);
   const [rate, setRate] = useState(10.5);
