@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Moon, Sun, Search, Menu, X } from 'lucide-react';
+import { Moon, Sun, Menu, X } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'react-router-dom';
@@ -129,11 +129,6 @@ const Header = () => {
                 <Moon className="h-5 w-5" />
               )}
               <span className="sr-only">Toggle theme</span>
-            </Button>
-            
-            <Button variant="ghost" size="icon" className="text-foreground hover:text-white" onClick={() => window.location.href = '/#search'}>
-              <Search className="h-5 w-5" />
-              <span className="sr-only">Search</span>
             </Button>
 
             {/* Mobile Menu Button */}
