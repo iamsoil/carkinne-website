@@ -136,7 +136,7 @@ const Showrooms = () => {
       {/* Brand Filter */}
       <div className="mb-8 flex justify-end">
         <Select value={selectedBrand} onValueChange={setSelectedBrand}>
-          <SelectTrigger className="w-[200px] border border-[#d2d2d7] rounded-lg">
+          <SelectTrigger className="w-[200px] border border-[#d2d2d7] rounded-lg px-4 py-2 text-sm">
             <SelectValue placeholder="All Brands" />
           </SelectTrigger>
           <SelectContent>
