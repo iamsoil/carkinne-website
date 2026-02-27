@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Heart, Fuel, Settings, Users, Gauge } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,6 +20,7 @@ interface CarCardProps {
   is_new: boolean;
   images: string[];
   mileage_kmpl?: number;
+  slug: string;
 }
 
 const CarCard = ({
@@ -36,7 +38,8 @@ const CarCard = ({
   is_featured,
   is_new,
   images,
-  mileage_kmpl
+  mileage_kmpl,
+  slug
 }: CarCardProps) => {
   const [isSaved, setIsSaved] = useState(false);
 
@@ -153,10 +156,17 @@ const CarCard = ({
         </div>
         
         <div className="flex space-x-2">
-          <Button className="flex-1 bg-foreground text-white hover:bg-accent rounded-lg">
-            View Details
-          </Button>
-          <Button variant="outline" size="sm" className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg">
+          <Link to={`/cars/${slug}`} className="flex-1">
+            <Button className="w-full bg-foreground text-white hover:bg-accent rounded-lg">
+              View Details
+            </Button>
+          </Link>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg"
+            onClick={() => alert(`${name} added to compare`)}
+          >
             Compare
           </Button>
         </div>
