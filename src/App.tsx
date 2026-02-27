@@ -18,6 +18,10 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import Compare from "./pages/Compare";
 import Admin from "./pages/Admin";
+import AdminLogin from "./pages/AdminLogin";
+import AdminCars from "./pages/AdminCars";
+import AdminCarForm from "./pages/AdminCarForm";
+import AdminBlog from "./pages/AdminBlog";
 import NotFound from "./pages/NotFound";
 import EvCars from "./pages/EvCars";
 
@@ -46,7 +50,15 @@ const App = () => (
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/compare" element={<Compare />} />
+                
+                {/* Admin Routes */}
+                <Route path="/admin/login" element={<AdminLogin />} />
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/admin/cars" element={<AdminCars />} />
+                <Route path="/admin/cars/new" element={<AdminCarForm />} />
+                <Route path="/admin/cars/edit/:id" element={<AdminCarForm />} />
+                <Route path="/admin/blog" element={<AdminBlog />} />
+                
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
