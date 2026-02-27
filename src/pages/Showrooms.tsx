@@ -66,7 +66,7 @@ const Showrooms = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="mb-12 text-center">
+      <div className="mb-12">
         <h1 className="text-3xl font-semibold mb-2">Car Showrooms in Nepal</h1>
         <p className="text-[#6e6e73]">Find authorized dealers near you</p>
       </div>
