@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Search, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import CarCard from '@/components/CarCard';
@@ -10,6 +11,7 @@ import { supabase } from '@/lib/supabase';
 import { formatNPR } from '@/utils/format';
 
 const Index = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [featuredCars, setFeaturedCars] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +35,9 @@ const Index = () => {
       description: 'Get up to Rs.2L off on selected models',
       discount_amount: 200000,
       valid_until: '2024-10-31',
-      image_url: 'https://placehold.co/300x200/f59e0b/ffffff?text=Special+Offer'
+      image_url: 'https://placehold.co/300x200/f59e0b/ffffff?text=Special+Offer',
+      car: 'Toyota Fortuner',
+      type: 'Festival Offer'
     },
     {
       id: '2',
@@ -41,7 +45,9 @@ const Index = () => {
       description: 'Free accessories worth Rs.50,000 with all new purchases',
       discount_amount: 50000,
       valid_until: '2024-11-15',
-      image_url: 'https://placehold.co/300x200/0f172a/ffffff?text=Free+Accessories'
+      image_url: 'https://placehold.co/300x200/0f172a/ffffff?text=Free+Accessories',
+      car: 'Honda City',
+      type: 'Free Accessories'
     },
     {
       id: '3',
@@ -49,7 +55,9 @@ const Index = () => {
       description: 'Special financing at just 7% interest rate',
       discount_amount: 0,
       valid_until: '2024-12-31',
-      image_url: 'https://placehold.co/300x200/0f172a/ffffff?text=Low+Interest'
+      image_url: 'https://placehold.co/300x200/0f172a/ffffff?text=Low+Interest',
+      car: 'Suzuki Swift',
+      type: 'Finance Offer'
     }
   ];
 
@@ -117,6 +125,25 @@ const Index = () => {
       published_at: '2024-09-05'
     }
   ];
+
+  // EMI Calculator state
+  const [carPrice, setCarPrice] = useState(3000000);
+  const [downPct, setDownPct] = useState(10);
+  const [tenure, setTenure] = useState(5);
+  const [interestRate, setInterestRate] = useState(10.5);
+
+  // Calculate EMI
+  const calculateEMI = () => {
+    const downPayment = carPrice * (downPct / 100);
+    const loanAmount = carPrice - downPayment;
+    const r = interestRate / 12 / 100;
+    const n = tenure * 12;
+    if (r === 0) return loanAmount / n;
+    const emi = (loanAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+    return emi;
+  };
+
+  const emi = calculateEMI();
 
   useEffect(() => {
     fetchFeaturedCars();
@@ -323,32 +350,64 @@ const Index = () => {
             <div className="text-center mb-8">
               <h2 className="text-4xl font-semibold text-foreground">EMI Calculator</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div>
                 <label className="block text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Car Price (Rs.)</label>
-                <Input type="number" placeholder="e.g. 3000000" className="w-full" />
+                <Input 
+                  type="number" 
+                  placeholder="e.g. 3000000" 
+                  className="w-full" 
+                  value={carPrice}
+                  onChange={(e) => setCarPrice(Number(e.target.value))}
+                />
               </div>
               <div>
                 <label className="block text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Down Payment (%)</label>
-                <Input type="number" placeholder="e.g. 10" defaultValue="10" className="w-full" />
+                <Input 
+                  type="number" 
+                  placeholder="e.g. 10" 
+                  defaultValue="10" 
+                  className="w-full" 
+                  value={downPct}
+                  onChange={(e) => setDownPct(Number(e.target.value))}
+                />
               </div>
               <div>
                 <label className="block text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Loan Term (Years)</label>
-                <Input type="number" placeholder="e.g. 5" defaultValue="5" className="w-full" />
+                <Input 
+                  type="number" 
+                  placeholder="e.g. 5" 
+                  defaultValue="5" 
+                  className="w-full" 
+                  value={tenure}
+                  onChange={(e) => setTenure(Number(e.target.value))}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Interest Rate (%)</label>
+                <Input 
+                  type="number" 
+                  placeholder="e.g. 10.5" 
+                  defaultValue="10.5" 
+                  className="w-full" 
+                  value={interestRate}
+                  onChange={(e) => setInterestRate(Number(e.target.value))}
+                />
               </div>
             </div>
             <div className="mt-8 text-center">
-              <Button className="bg-accent hover:bg-accent/90 rounded-xl px-8 text-white">
-                Calculate EMI
-              </Button>
+              <p className="text-2xl font-semibold text-[#e8531a]">
+                {formatNPR(Math.round(emi))} <span className="text-base font-normal text-foreground">/ month</span>
+              </p>
             </div>
-            <div className="mt-8 p-6 bg-secondary rounded-xl">
-              <p className="text-center text-lg">
-                Monthly EMI: <span className="font-semibold text-accent">Rs.55,000</span>
-              </p>
-              <p className="text-center text-sm text-muted-foreground mt-2">
-                Total Interest: Rs.300,000 | Total Amount: Rs.33,00,000
-              </p>
+            <div className="mt-4 text-center">
+              <Button 
+                variant="link" 
+                className="text-[#e8531a] hover:text-[#e8531a]/90 p-0 h-auto"
+                onClick={() => navigate('/emi-calculator')}
+              >
+                Full Calculator →
+              </Button>
             </div>
           </div>
         </div>
@@ -363,20 +422,40 @@ const Index = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
             {latestOffers.map((offer) => (
-              <div key={offer.id} className="bg-white border border-border rounded-2xl overflow-hidden">
-                <img 
-                  src={offer.image_url} 
-                  alt={offer.title} 
-                  className="w-full h-48 object-cover"
-                />
+              <div 
+                key={offer.id} 
+                className="bg-white border border-[#d2d2d7] rounded-2xl overflow-hidden"
+              >
+                <div className="relative">
+                  <img 
+                    src={offer.image_url} 
+                    alt={offer.title} 
+                    className="w-full h-48 object-cover"
+                  />
+                  <span className="absolute top-3 left-3 bg-[#e8531a] text-white text-[11px] font-semibold uppercase px-2 py-1 rounded-full">
+                    {offer.type}
+                  </span>
+                </div>
                 <div className="p-6">
-                  <h3 className="text-xl font-semibold mb-2">{offer.title}</h3>
-                  <p className="text-muted-foreground mb-4">{offer.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-accent font-semibold">
-                      {offer.discount_amount > 0 ? `Save up to Rs.${offer.discount_amount.toLocaleString('en-IN')}` : 'Special Offer'}
+                  <h3 className="text-lg font-semibold text-[#1d1d1f] mb-1">{offer.car}</h3>
+                  <p className="text-sm text-[#6e6e73] mb-3">{offer.title}</p>
+                  <p className="text-[#e8531a] font-semibold text-sm mb-4">
+                    {offer.discount_amount > 0 ? `Save Rs. ${offer.discount_amount.toLocaleString('en-IN')}` : offer.description}
+                  </p>
+                  <div className="flex justify-between items-center mt-4">
+                    <span className="text-xs text-[#6e6e73]">
+                      Valid until: {new Date(offer.valid_until).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                      })}
                     </span>
-                    <Button variant="outline" size="sm" className="border border-border text-foreground hover:bg-foreground hover:text-white">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="border border-[#1d1d1f] text-[#1d1d1f] hover:bg-[#1d1d1f] hover:text-white rounded-lg"
+                      onClick={() => navigate('/offers')}
+                    >
                       View Details
                     </Button>
                   </div>
