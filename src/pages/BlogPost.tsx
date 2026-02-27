@@ -2,17 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Calendar, User, Tag, Share2, Facebook, Twitter, Linkedin } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 
 const BlogPost = () => {
   const { slug } = useParams();
   const [post, setPost] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [relatedPosts, setRelatedPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (slug) {
@@ -27,50 +23,45 @@ const BlogPost = () => {
   }, [post]);
 
   const fetchPost = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('slug', slug)
-      .eq('is_published', true)
-      .single();
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('slug', slug)
+        .single();
 
-    if (error) {
-      console.error('Error fetching blog post:', error);
-    } else {
+      if (error) throw error;
       setPost(data);
+    } catch (err) {
+      console.error('Error fetching blog post:', err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const fetchRelatedPosts = async () => {
-    if (!post) return;
-    
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .select('*')
-      .eq('category', post.category)
-      .neq('id', post.id)
-      .eq('is_published', true)
-      .limit(3);
+    try {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .neq('id', post.id)
+        .eq('is_published', true)
+        .limit(3);
 
-    if (!error) {
-      setRelatedPosts(data);
+      if (!error) {
+        setRelatedPosts(data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching related posts:', err);
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
   };
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center py-12">
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e8531a] mx-auto mb-4"></div>
           <p>Loading blog post...</p>
         </div>
       </div>
@@ -79,128 +70,135 @@ const BlogPost = () => {
 
   if (!post) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center py-12">
-          <h2 className="text-2xl font-bold mb-2">Post Not Found</h2>
-          <p className="text-muted-foreground">The blog post you're looking for doesn't exist or has been removed.</p>
-          <Button className="mt-4" onClick={() => window.location.href = '/blog'}>
-            Browse All Posts
-          </Button>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-[#1d1d1f] mb-2">Post Not Found</h2>
+          <p className="text-[#6e6e73] mb-6">The blog post you're looking for doesn't exist.</p>
+          <a 
+            href="/blog" 
+            className="inline-block bg-[#1d1d1f] text-white px-6 py-3 rounded-lg hover:bg-[#e8531a] transition-colors"
+          >
+            ← Back to Blog
+          </a>
         </div>
       </div>
     );
   }
 
+  // Format date
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Breadcrumb */}
-      <div className="mb-6 text-sm text-muted-foreground">
-        <a href="/" className="hover:text-foreground">Home</a> / 
-        <a href="/blog" className="hover:text-foreground"> Blog</a> / 
-        <span className="text-foreground"> {post.title}</span>
+    <div className="min-h-screen bg-white">
+      {/* SEO Meta */}
+      <div className="hidden">
+        <title>{post.seo_title || post.title} | CarKinne</title>
+        <meta name="description" content={post.seo_description || post.excerpt} />
       </div>
 
-      <div className="max-w-4xl mx-auto">
-        <div className="mb-6">
-          <div className="flex flex-wrap gap-2 mb-4">
-            {post.category && (
-              <Badge variant="secondary">{post.category}</Badge>
-            )}
-            <Badge variant="outline">
-              {formatDate(post.published_at)}
-            </Badge>
-          </div>
-          
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">{post.title}</h1>
-          
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center">
-              <User className="h-4 w-4 text-muted-foreground mr-2" />
-              <span className="text-sm text-muted-foreground">{post.author}</span>
+      {/* Cover Image */}
+      <div className="w-full h-96 overflow-hidden">
+        <img 
+          src={post.cover_image || 'https://placehold.co/1200x400/f5f5f7/6e6e73?text=Blog+Cover'} 
+          alt={post.title} 
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      {/* Content */}
+      <div className="max-w-4xl mx-auto px-6 py-12">
+        <a 
+          href="/blog" 
+          className="text-[#e8531a] hover:underline mb-8 inline-block"
+        >
+          ← Back to Blog
+        </a>
+        
+        <div className="mb-4">
+          <span className="inline-block bg-[#f5f5f7] text-[#6e6e73] text-xs px-3 py-1 rounded-full">
+            {post.category || 'General'}
+          </span>
+        </div>
+        
+        <h1 className="text-4xl font-bold text-[#1d1d1f] mt-4 mb-2">
+          {post.title}
+        </h1>
+        
+        <p className="text-[#6e6e73] text-sm mt-2">
+          By {post.author || 'CarKinne Team'} · {formatDate(post.published_at || post.created_at)}
+        </p>
+        
+        <div className="border-t border-[#d2d2d7] my-8"></div>
+        
+        <div className="prose prose-lg max-w-none">
+          {post.content ? (
+            <div 
+              className="text-[#1d1d1f] text-base leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: post.content }} 
+            />
+          ) : (
+            <div>
+              <p className="text-[#1d1d1f] text-base leading-relaxed">
+                {post.excerpt}
+              </p>
+              <p className="text-[#6e6e73] text-base mt-6">
+                Full article coming soon. Subscribe to our newsletter for updates.
+              </p>
             </div>
-            
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="icon">
-                <Share2 className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="icon">
-                <Facebook className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="icon">
-                <Twitter className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="icon">
-                <Linkedin className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
+          )}
         </div>
+      </div>
 
-        <div className="mb-8">
-          <img 
-            src={post.cover_image || 'https://placehold.co/800x400/0f172a/ffffff?text=Blog+Cover'} 
-            alt={post.title} 
-            className="w-full h-64 md:h-96 object-cover rounded-lg"
-          />
-        </div>
-
-        <div className="prose prose-lg dark:prose-invert max-w-none mb-12">
-          <div dangerouslySetInnerHTML={{ __html: post.content }} />
-        </div>
-
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-12">
-          <Tag className="h-4 w-4 text-muted-foreground mt-1" />
-          {post.tags && post.tags.map((tag: string, index: number) => (
-            <Badge key={index} variant="outline">{tag}</Badge>
-          ))}
-        </div>
-
-        {/* Author Box */}
-        <Card className="mb-12">
-          <CardContent className="p-6">
-            <div className="flex items-center">
-              <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
-              <div className="ml-4">
-                <h3 className="font-bold">CarKinne Team</h3>
-                <p className="text-sm text-muted-foreground">
-                  We're a team of car enthusiasts providing the latest information about cars in Nepal.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Related Posts */}
-        {relatedPosts.length > 0 && (
-          <section>
-            <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
+      {/* Related Posts */}
+      {relatedPosts.length > 0 && (
+        <div className="bg-[#f5f5f7] py-16">
+          <div className="max-w-6xl mx-auto px-6">
+            <h2 className="text-2xl font-semibold text-[#1d1d1f] mb-8">More Articles</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedPosts.map((relatedPost) => (
-                <Card key={relatedPost.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+                <div 
+                  key={relatedPost.id} 
+                  className="bg-white border border-[#d2d2d7] rounded-xl overflow-hidden"
+                >
                   <img 
-                    src={relatedPost.cover_image || 'https://placehold.co/400x250/0f172a/ffffff?text=Blog+Post'} 
+                    src={relatedPost.cover_image || 'https://placehold.co/600x300/f5f5f7/6e6e73?text=Blog+Image'} 
                     alt={relatedPost.title} 
                     className="w-full h-40 object-cover"
                   />
-                  <CardContent className="p-4">
-                    <div className="flex flex-wrap gap-2 mb-2">
-                      {relatedPost.category && (
-                        <Badge variant="secondary" className="text-xs">{relatedPost.category}</Badge>
-                      )}
+                  <div className="p-5">
+                    <span className="inline-block bg-[#e8531a] text-white text-xs px-2 py-1 rounded mb-2">
+                      {relatedPost.category || 'General'}
+                    </span>
+                    <h3 className="font-semibold text-[#1d1d1f] text-base line-clamp-2 mb-2">
+                      {relatedPost.title}
+                    </h3>
+                    <p className="text-[#6e6e73] text-sm line-clamp-2 mb-4">
+                      {relatedPost.excerpt}
+                    </p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[#6e6e73] text-xs">
+                        {formatDate(relatedPost.published_at || relatedPost.created_at)}
+                      </span>
+                      <a 
+                        href={`/blog/${relatedPost.slug}`} 
+                        className="text-[#e8531a] text-xs hover:underline"
+                      >
+                        Read →
+                      </a>
                     </div>
-                    <h3 className="font-bold line-clamp-2 mb-2">{relatedPost.title}</h3>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Calendar className="h-3 w-3 mr-1" />
-                      <span>{formatDate(relatedPost.published_at)}</span>
-                    </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
-          </section>
-        )}
-      </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
