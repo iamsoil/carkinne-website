@@ -27,6 +27,8 @@ import AdminOffers from "./pages/AdminOffers";
 import AdminAnnouncements from "./pages/AdminAnnouncements";
 import NotFound from "./pages/NotFound";
 import EvCars from "./pages/EvCars";
+import About from "./pages/About";
+import Advertise from "./pages/Advertise";
 
 const queryClient = new QueryClient();
 
@@ -53,6 +55,8 @@ const App = () => (
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/compare" element={<Compare />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/advertise" element={<Advertise />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin/login" element={<AdminLogin />} />
