@@ -19,6 +19,7 @@ import BlogPost from "./pages/BlogPost";
 import Compare from "./pages/Compare";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import EvCars from "./pages/EvCars";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
                 <Route path="/emi-calculator" element={<EmiCalculator />} />
                 <Route path="/budget-finder" element={<BudgetFinder />} />
                 <Route path="/electric-cars" element={<ElectricCars />} />
+                <Route path="/ev-cars" element={<EvCars />} />
                 <Route path="/showrooms" element={<Showrooms />} />
                 <Route path="/offers" element={<Offers />} />
                 <Route path="/blog" element={<Blog />} />
