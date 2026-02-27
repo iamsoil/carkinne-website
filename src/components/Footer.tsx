@@ -1,6 +1,12 @@
+import { useLocation } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, Youtube } from 'lucide-react';
 
 const Footer = () => {
+  const location = useLocation();
+  
+  // Hide footer on admin pages
+  if (location.pathname.startsWith('/admin')) return null;
+
   const currentYear = new Date().getFullYear();
 
   return (

@@ -30,28 +30,18 @@ const Admin = () => {
 
   const fetchStats = async () => {
     try {
-      const { count: totalCars } = await supabase
-        .from('cars')
-        .select('*', { count: 'exact', head: true });
-      
-      const { count: blogPosts } = await supabase
-        .from('blog_posts')
-        .select('*', { count: 'exact', head: true });
-      
-      const { count: showrooms } = await supabase
-        .from('showrooms')
-        .select('*', { count: 'exact', head: true });
-      
-      const { count: featuredCars } = await supabase
-        .from('cars')
-        .select('*', { count: 'exact', head: true })
-        .eq('is_featured', true);
+      const [cars, posts, showrooms, featured] = await Promise.all([
+        supabase.from('cars').select('*', { count: 'exact', head: true }),
+        supabase.from('blog_posts').select('*', { count: 'exact', head: true }),
+        supabase.from('showrooms').select('*', { count: 'exact', head: true }),
+        supabase.from('cars').select('*', { count: 'exact', head: true }).eq('is_featured', true),
+      ]);
       
       setStats({
-        totalCars: totalCars || 0,
-        blogPosts: blogPosts || 0,
-        showrooms: showrooms || 0,
-        featuredCars: featuredCars || 0
+        totalCars: cars.count || 0,
+        blogPosts: posts.count || 0,
+        showrooms: showrooms.count || 0,
+        featuredCars: featured.count || 0,
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
