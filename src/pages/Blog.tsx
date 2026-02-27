@@ -14,6 +14,7 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
+import { Link } from 'react-router-dom';
 
 const Blog = () => {
   const [posts, setPosts] = useState<any[]>([]);
@@ -181,9 +182,11 @@ const Blog = () => {
                     <span className="text-sm text-muted-foreground">{post.author}</span>
                   </div>
                   
-                  <Button variant="link" className="p-0 h-auto">
-                    Read More
-                  </Button>
+                  <Link to={`/blog/${post.slug}`}>
+                    <Button variant="link" className="p-0 h-auto">
+                      Read More
+                    </Button>
+                  </Link>
                 </div>
               </CardContent>
             </Card>
