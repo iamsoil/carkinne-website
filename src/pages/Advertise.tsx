@@ -48,8 +48,9 @@ const Advertise = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="w-full bg-[#1d1d1f] py-20 px-6 text-center">
-        <div className="max-w-4xl mx-auto">
+      <div className="w-full bg-[#1d1d1f] py-20 px-6 text-center relative">
+        <div className="absolute inset-0 bg-black/50"></div>
+        <div className="max-w-4xl mx-auto relative z-10">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Reach Nepal's Car Buyers
           </h1>
