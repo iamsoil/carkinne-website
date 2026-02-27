@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MapPin, Phone, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -10,97 +10,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { supabase } from '@/integrations/supabase/client';
 
 const Showrooms = () => {
   const [selectedCity, setSelectedCity] = useState<string>('All');
   const [selectedBrand, setSelectedBrand] = useState<string>('All');
-
-  // Sample showroom data
-  const showrooms = [
-    {
-      id: '1',
-      name: 'Suzuki Nepal Pvt. Ltd.',
-      brand: 'Suzuki',
-      city: 'Kathmandu',
-      address: 'Naxal, Kathmandu 44600',
-      phone: '01-4413071',
-      hours: 'Sun–Fri 9:00am–6:00pm',
-      mapsUrl: 'https://maps.google.com/?q=Suzuki+Nepal+Naxal+Kathmandu'
-    },
-    {
-      id: '2',
-      name: 'United Traders Syndicate',
-      brand: 'Toyota',
-      city: 'Kathmandu',
-      address: 'Naxal, Kathmandu 44600',
-      phone: '01-4413100',
-      hours: 'Sun–Fri 9:00am–6:00pm',
-      mapsUrl: 'https://maps.google.com/?q=United+Traders+Toyota+Naxal+Kathmandu'
-    },
-    {
-      id: '3',
-      name: 'Laxmi Intercontinental Pvt. Ltd.',
-      brand: 'Hyundai',
-      city: 'Lalitpur',
-      address: 'Jawalakhel, Lalitpur 44600',
-      phone: '01-5522480',
-      hours: 'Sun–Fri 9:00am–6:00pm',
-      mapsUrl: 'https://maps.google.com/?q=Laxmi+Intercontinental+Hyundai+Jawalakhel'
-    },
-    {
-      id: '4',
-      name: 'Sipradi Trading Pvt. Ltd.',
-      brand: 'Kia',
-      city: 'Kathmandu',
-      address: 'Naxal, Kathmandu 44600',
-      phone: '01-4422100',
-      hours: 'Sun–Fri 9:00am–6:00pm',
-      mapsUrl: 'https://maps.google.com/?q=Sipradi+Trading+Kia+Naxal+Kathmandu'
-    },
-    {
-      id: '5',
-      name: 'Syakar Trading Co. Pvt. Ltd.',
-      brand: 'MG',
-      city: 'Kathmandu',
-      address: 'Gairidhara, Kathmandu 44600',
-      phone: '01-4002555',
-      hours: 'Sun–Fri 9:00am–6:00pm',
-      mapsUrl: 'https://maps.google.com/?q=Syakar+Trading+MG+Gairidhara+Kathmandu'
-    },
-    {
-      id: '6',
-      name: 'Sharma Transport Pvt. Ltd.',
-      brand: 'Honda',
-      city: 'Kathmandu',
-      address: 'Tripureshwor, Kathmandu 44600',
-      phone: '01-4260388',
-      hours: 'Sun–Fri 9:00am–6:00pm',
-      mapsUrl: 'https://maps.google.com/?q=Sharma+Transport+Honda+Tripureshwor+Kathmandu'
-    },
-    {
-      id: '7',
-      name: 'Agni Incorporated Pvt. Ltd.',
-      brand: 'Nissan',
-      city: 'Kathmandu',
-      address: 'Chakrapath, Kathmandu 44600',
-      phone: '01-4371281',
-      hours: 'Sun–Fri 9:00am–6:00pm',
-      mapsUrl: 'https://maps.google.com/?q=Agni+Incorporated+Nissan+Kathmandu'
-    },
-    {
-      id: '8',
-      name: 'Pashupati Motors Pvt. Ltd.',
-      brand: 'BYD',
-      city: 'Lalitpur',
-      address: 'Sanepa, Lalitpur 44600',
-      phone: '01-5548000',
-      hours: 'Sun–Fri 9:00am–6:00pm',
-      mapsUrl: 'https://maps.google.com/?q=Pashupati+Motors+BYD+Sanepa+Lalitpur'
-    }
-  ];
+  const [showrooms, setShowrooms] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const cities = ['All', 'Kathmandu', 'Lalitpur', 'Bhaktapur', 'Pokhara', 'Biratnagar', 'Butwal', 'Chitwan', 'Dharan'];
   const brands = ['All', 'Suzuki', 'Toyota', 'Hyundai', 'Kia', 'MG', 'Honda', 'Nissan', 'BYD'];
+
+  useEffect(() => {
+    fetchShowrooms();
+  }, []);
 
   // Filter showrooms based on selected city and brand
   const filteredShowrooms = showrooms.filter(showroom => {
@@ -108,6 +32,36 @@ const Showrooms = () => {
     const brandMatch = selectedBrand === 'All' || showroom.brand === selectedBrand;
     return cityMatch && brandMatch;
   });
+
+  const fetchShowrooms = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('showrooms')
+        .select('*');
+
+      if (error) throw error;
+      
+      setShowrooms(data || []);
+      console.log('Showrooms fetched:', data);
+    } catch (err) {
+      console.error('Error fetching showrooms:', err);
+      setError('Unable to load showrooms. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <Button onClick={fetchShowrooms}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -157,67 +111,91 @@ const Showrooms = () => {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
         {/* Showroom List */}
         <div className="lg:col-span-2">
-          <div className="space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
-            {filteredShowrooms.length > 0 ? (
-              filteredShowrooms.map((showroom) => (
-                <div 
-                  key={showroom.id} 
-                  className="border border-[#d2d2d7] rounded-xl p-5 bg-white hover:-translate-y-0.5 transition-transform cursor-pointer"
-                  style={{
-                    borderLeft: '3px solid #e8531a',
-                  }}
-                >
+          {loading ? (
+            <div className="space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
+              {[...Array(6)].map((_, index) => (
+                <div key={index} className="border border-[#d2d2d7] rounded-xl p-5 bg-white animate-pulse">
                   <div className="flex items-start">
                     <div className="bg-[#f5f5f7] w-10 h-10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                      <span className="font-bold text-[#1d1d1f]">
-                        {showroom.brand.charAt(0)}
-                      </span>
+                      <div className="bg-gray-200 rounded-full w-4 h-4"></div>
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-[#1d1d1f] text-base">
-                        {showroom.name}
-                      </h3>
-                      <p className="text-[#6e6e73] text-sm mb-2">
-                        {showroom.brand}
-                      </p>
-                      <div className="flex items-center text-[#6e6e73] text-sm mb-1">
-                        <MapPin className="h-4 w-4 mr-1" />
-                        <span>{showroom.address}</span>
-                      </div>
-                      <div className="flex items-center text-[#1d1d1f] text-sm mb-1">
-                        <Phone className="h-4 w-4 mr-1" />
-                        <a href={`tel:${showroom.phone}`} className="hover:text-[#e8531a]">
-                          {showroom.phone}
-                        </a>
-                      </div>
-                      <div className="flex items-center text-[#6e6e73] text-sm mb-3">
-                        <Clock className="h-4 w-4 mr-1" />
-                        <span>{showroom.hours}</span>
-                      </div>
+                      <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2 mb-3"></div>
+                      <div className="h-3 bg-gray-200 rounded w-full mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded w-2/3 mb-2"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/3 mb-4"></div>
                       <div className="border-t border-[#d2d2d7] pt-3">
-                        <a 
-                          href={showroom.mapsUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-[#e8531a] text-sm font-medium flex items-center hover:underline"
-                        >
-                          Get Directions
-                        </a>
+                        <div className="h-3 bg-gray-200 rounded w-1/4"></div>
                       </div>
                     </div>
                   </div>
                 </div>
-              ))
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-[#6e6e73]">
-                  No showrooms found for this filter.
-                  <br />
-                  Try selecting a different city or brand.
-                </p>
-              </div>
-            )}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto pr-2">
+              {filteredShowrooms.length > 0 ? (
+                filteredShowrooms.map((showroom) => (
+                  <div 
+                    key={showroom.id} 
+                    className="border border-[#d2d2d7] rounded-xl p-5 bg-white hover:-translate-y-0.5 transition-transform cursor-pointer"
+                    style={{
+                      borderLeft: '3px solid #e8531a',
+                    }}
+                  >
+                    <div className="flex items-start">
+                      <div className="bg-[#f5f5f7] w-10 h-10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                        <span className="font-bold text-[#1d1d1f]">
+                          {showroom.brand.charAt(0)}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-[#1d1d1f] text-base">
+                          {showroom.name}
+                        </h3>
+                        <p className="text-[#6e6e73] text-sm mb-2">
+                          {showroom.brand}
+                        </p>
+                        <div className="flex items-center text-[#6e6e73] text-sm mb-1">
+                          <MapPin className="h-4 w-4 mr-1" />
+                          <span>{showroom.address}</span>
+                        </div>
+                        <div className="flex items-center text-[#1d1d1f] text-sm mb-1">
+                          <Phone className="h-4 w-4 mr-1" />
+                          <a href={`tel:${showroom.phone}`} className="hover:text-[#e8531a]">
+                            {showroom.phone}
+                          </a>
+                        </div>
+                        <div className="flex items-center text-[#6e6e73] text-sm mb-3">
+                          <Clock className="h-4 w-4 mr-1" />
+                          <span>{showroom.working_hours}</span>
+                        </div>
+                        <div className="border-t border-[#d2d2d7] pt-3">
+                          <a 
+                            href={showroom.google_maps_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-[#e8531a] text-sm font-medium flex items-center hover:underline"
+                          >
+                            Get Directions
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-[#6e6e73]">
+                    No showrooms found for this filter.
+                    <br />
+                    Try selecting a different city or brand.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Google Maps Embed */}

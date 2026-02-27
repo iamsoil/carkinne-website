@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { 
   MapPin, 
   Navigation, 
@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import CarCard from '@/components/CarCard';
+import { supabase } from '@/integrations/supabase/client';
 
 const BudgetFinder = () => {
   const [step, setStep] = useState(1);
@@ -32,6 +33,8 @@ const BudgetFinder = () => {
     { id: '6', label: 'Easy to maintain' },
   ]);
   const [results, setResults] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const dragItem = useRef<number | null>(null);
   const dragOverItem = useRef<number | null>(null);
 
@@ -117,82 +120,6 @@ const BudgetFinder = () => {
     }
   };
 
-  // Mock car data for results
-  const mockCars = [
-    {
-      id: '1',
-      name: 'Creta',
-      brand: 'Hyundai',
-      variant: 'SX(O) Turbo DCT',
-      ex_showroom_price: 5200000,
-      on_road_price: 5800000,
-      fuel_type: 'Petrol',
-      transmission: 'Automatic',
-      seating: 5,
-      engine_cc: 1482,
-      is_electric: false,
-      is_featured: true,
-      is_new: true,
-      images: ['https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=600&h=400'],
-      mileage_kmpl: 16.8,
-      category: 'SUV'
-    },
-    {
-      id: '2',
-      name: 'City',
-      brand: 'Honda',
-      variant: 'SV',
-      ex_showroom_price: 3850000,
-      on_road_price: 4300000,
-      fuel_type: 'Petrol',
-      transmission: 'Manual',
-      seating: 5,
-      engine_cc: 1498,
-      is_electric: false,
-      is_featured: false,
-      is_new: true,
-      images: ['https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=600&h=400'],
-      mileage_kmpl: 17.8,
-      category: 'Sedan'
-    },
-    {
-      id: '3',
-      name: 'Nexon',
-      brand: 'Tata',
-      variant: 'XZ+',
-      ex_showroom_price: 2950000,
-      on_road_price: 3300000,
-      fuel_type: 'Petrol',
-      transmission: 'Automatic',
-      seating: 5,
-      engine_cc: 1199,
-      is_electric: false,
-      is_featured: true,
-      is_new: true,
-      images: ['https://images.unsplash.com/photo-1596779911828-609b0b4e8c7b?auto=format&fit=crop&w=600&h=400'],
-      mileage_kmpl: 18.2,
-      category: 'SUV'
-    },
-    {
-      id: '4',
-      name: 'Swift',
-      brand: 'Suzuki',
-      variant: 'VXI MT',
-      ex_showroom_price: 2650000,
-      on_road_price: 2950000,
-      fuel_type: 'Petrol',
-      transmission: 'Manual',
-      seating: 5,
-      engine_cc: 1197,
-      is_electric: false,
-      is_featured: true,
-      is_new: true,
-      images: ['https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=600&h=400'],
-      mileage_kmpl: 23.5,
-      category: 'Hatchback'
-    }
-  ];
-
   // Calculate match score for cars
   const calculateMatchScore = (car: any) => {
     let score = 0;
@@ -239,17 +166,43 @@ const BudgetFinder = () => {
   };
 
   // Get results based on user preferences
-  const getResults = () => {
-    const scoredCars = mockCars
-      .map(car => ({
-        ...car,
-        score: calculateMatchScore(car)
-      }))
-      .filter(car => car.score >= 0)
-      .sort((a, b) => b.score - a.score);
-    
-    setResults(scoredCars);
-    setStep(5);
+  const getResults = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Fetch cars within budget
+      const { data: cars, error } = await supabase
+        .from('cars')
+        .select('*')
+        .lte('ex_showroom_price', budget)
+        .limit(20); // Limit to 20 cars to avoid performance issues
+
+      if (error) throw error;
+
+      if (!cars || cars.length === 0) {
+        setResults([]);
+        setStep(5);
+        return;
+      }
+
+      // Calculate match scores
+      const scoredCars = cars
+        .map(car => ({
+          ...car,
+          score: calculateMatchScore(car)
+        }))
+        .filter(car => car.score >= 0)
+        .sort((a, b) => b.score - a.score);
+
+      setResults(scoredCars);
+      setStep(5);
+    } catch (err) {
+      console.error('Error fetching budget results:', err);
+      setError('Unable to load car recommendations. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Usage options
@@ -268,6 +221,30 @@ const BudgetFinder = () => {
     'Apple CarPlay', '7 seats', 'Good resale value',
     'ABS & Airbags', 'Reverse Camera', 'Keyless Entry'
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#e8531a] mx-auto mb-4"></div>
+          <p>Finding your perfect car match...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <p className="text-red-500 mb-4">{error}</p>
+          <Button onClick={getResults} className="bg-[#e8531a] text-white rounded-xl py-4 px-8 font-medium hover:bg-[#e8531a]/90">
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -628,7 +605,7 @@ const BudgetFinder = () => {
                 <div>
                   <h3 className="text-xl font-semibold mb-4">Other cars you might like</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {mockCars.slice(0, 4).map((car) => (
+                    {results.slice(0, 4).map((car) => (
                       <Card key={car.id} className="border border-[#d2d2d7] rounded-xl overflow-hidden hover:translate-y-[-2px] transition-transform">
                         <CardContent className="p-0 flex">
                           <div className="w-32">
@@ -645,7 +622,7 @@ const BudgetFinder = () => {
                               {formatPrice(car.ex_showroom_price)}
                             </p>
                             <p className="text-[#6e6e73] text-xs mb-2">88% match</p>
-                            <a href="#" className="text-[#e8531a] text-xs hover:underline">
+                            <a href={`/cars/${car.slug}`} className="text-[#e8531a] text-xs hover:underline">
                               View Details
                             </a>
                           </div>
@@ -674,7 +651,10 @@ const BudgetFinder = () => {
                   No exact matches found. Here are the closest options to your budget.
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {mockCars.slice(0, 2).map((car) => (
+                  {[
+                    { id: '1', name: 'Swift', brand: 'Suzuki', ex_showroom_price: 2650000, images: ['https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=600&h=400'] },
+                    { id: '2', name: 'City', brand: 'Honda', ex_showroom_price: 3850000, images: ['https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=600&h=400'] }
+                  ].map((car) => (
                     <Card key={car.id} className="border border-[#d2d2d7] rounded-2xl overflow-hidden">
                       <CardContent className="p-0">
                         <div className="flex">

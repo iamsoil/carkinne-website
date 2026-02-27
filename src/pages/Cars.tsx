@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import CarCard from '@/components/CarCard';
+import { supabase } from '@/integrations/supabase/client';
 
 const Cars = () => {
   const [cars, setCars] = useState<any[]>([]);
@@ -27,122 +28,35 @@ const Cars = () => {
   const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('featured');
   const [showFilters, setShowFilters] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock data for demonstration
   useEffect(() => {
-    const mockCars = [
-      {
-        id: '1',
-        name: 'Swift',
-        brand: 'Suzuki',
-        variant: 'VXI MT',
-        ex_showroom_price: 2650000,
-        on_road_price: 2950000,
-        fuel_type: 'Petrol',
-        transmission: 'Manual',
-        seating: 5,
-        engine_cc: 1197,
-        is_electric: false,
-        is_featured: true,
-        is_new: true,
-        images: ['https://images.unsplash.com/photo-1542362567-b07e54358753?auto=format&fit=crop&w=600&h=400'],
-        mileage_kmpl: 23.5
-      },
-      {
-        id: '2',
-        name: 'Fortuner',
-        brand: 'Toyota',
-        variant: '2.8 GD-6 4WD',
-        ex_showroom_price: 11500000,
-        on_road_price: 12800000,
-        fuel_type: 'Diesel',
-        transmission: 'Automatic',
-        seating: 7,
-        engine_cc: 2755,
-        is_electric: false,
-        is_featured: true,
-        is_new: true,
-        images: ['https://images.unsplash.com/photo-1549399542-7e7f8c7a5e3d?auto=format&fit=crop&w=600&h=400'],
-        mileage_kmpl: 12.0
-      },
-      {
-        id: '3',
-        name: 'Creta',
-        brand: 'Hyundai',
-        variant: 'SX(O) Turbo DCT',
-        ex_showroom_price: 5200000,
-        on_road_price: 5800000,
-        fuel_type: 'Petrol',
-        transmission: 'Automatic',
-        seating: 5,
-        engine_cc: 1482,
-        is_electric: false,
-        is_featured: true,
-        is_new: true,
-        images: ['https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=600&h=400'],
-        mileage_kmpl: 16.8
-      },
-      {
-        id: '4',
-        name: 'ZS EV',
-        brand: 'MG',
-        variant: 'Excite',
-        ex_showroom_price: 4750000,
-        on_road_price: 5200000,
-        fuel_type: 'Electric',
-        transmission: 'Automatic',
-        seating: 5,
-        engine_cc: 0,
-        is_electric: true,
-        is_featured: true,
-        is_new: true,
-        images: ['https://images.unsplash.com/photo-1617814076367-b759c7d7e7e1?auto=format&fit=crop&w=600&h=400'],
-        mileage_kmpl: 0,
-        battery_range_km: 320
-      },
-      {
-        id: '5',
-        name: 'Sonet',
-        brand: 'Kia',
-        variant: 'HTX Plus',
-        ex_showroom_price: 4100000,
-        on_road_price: 4600000,
-        fuel_type: 'Petrol',
-        transmission: 'Automatic',
-        seating: 5,
-        engine_cc: 1493,
-        is_electric: false,
-        is_featured: false,
-        is_new: true,
-        images: ['https://images.unsplash.com/photo-1596779911828-609b0b4e8c7b?auto=format&fit=crop&w=600&h=400'],
-        mileage_kmpl: 18.2
-      },
-      {
-        id: '6',
-        name: 'City',
-        brand: 'Honda',
-        variant: 'SV',
-        ex_showroom_price: 3850000,
-        on_road_price: 4300000,
-        fuel_type: 'Petrol',
-        transmission: 'Manual',
-        seating: 5,
-        engine_cc: 1498,
-        is_electric: false,
-        is_featured: false,
-        is_new: true,
-        images: ['https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=600&h=400'],
-        mileage_kmpl: 17.8
-      }
-    ];
-    
-    setCars(mockCars);
-    setFilteredCars(mockCars);
+    fetchCars();
   }, []);
 
   useEffect(() => {
     filterCars();
   }, [cars, searchQuery, priceRange, selectedBrands, selectedCategories, selectedFuelTypes]);
+
+  const fetchCars = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('cars')
+        .select('*');
+
+      if (error) throw error;
+      
+      setCars(data || []);
+      console.log('All cars fetched:', data);
+    } catch (err) {
+      console.error('Error fetching cars:', err);
+      setError('Unable to load cars. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filterCars = () => {
     let result = [...cars];
@@ -208,6 +122,17 @@ const Cars = () => {
   const brands = Array.from(new Set(cars.map(car => car.brand)));
   const categories = Array.from(new Set(cars.map(car => car.category || 'SUV')));
   const fuelTypes = Array.from(new Set(cars.map(car => car.fuel_type)));
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-20">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error}</p>
+          <Button onClick={fetchCars}>Retry</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -387,7 +312,22 @@ const Cars = () => {
         </p>
       </div>
 
-      {viewMode === 'grid' ? (
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, index) => (
+            <div key={index} className="border border-border rounded-2xl overflow-hidden animate-pulse">
+              <div className="bg-gray-200 h-48 w-full"></div>
+              <div className="p-5">
+                <div className="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
+                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+                <div className="h-8 bg-gray-200 rounded w-full mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded w-2/3 mb-2"></div>
+                <div className="h-10 bg-gray-200 rounded w-full mt-4"></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : viewMode === 'grid' ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredCars.map(car => (
             <CarCard key={car.id} {...car} />
@@ -457,7 +397,7 @@ const Cars = () => {
         </div>
       )}
 
-      {filteredCars.length === 0 && (
+      {!loading && filteredCars.length === 0 && (
         <div className="text-center py-16">
           <p className="text-muted-foreground">No cars match your filters. Try adjusting your search criteria.</p>
         </div>

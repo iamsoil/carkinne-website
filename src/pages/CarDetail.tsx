@@ -13,11 +13,13 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { EmiCalculator } from '@/components/EmiCalculator';
+import { supabase } from '@/integrations/supabase/client';
 
 const CarDetail = () => {
   const { slug } = useParams();
   const [car, setCar] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [showEmiModal, setShowEmiModal] = useState(false);
@@ -26,125 +28,93 @@ const CarDetail = () => {
   const [offers, setOffers] = useState<any[]>([]);
   const [expandedOnRoad, setExpandedOnRoad] = useState(false);
 
-  // Mock data for demonstration
   useEffect(() => {
-    // Simulate loading data
-    setTimeout(() => {
-      setCar({
-        id: '1',
-        name: 'Fortuner',
-        brand: 'Toyota',
-        variant: '2.8 GD-6 4WD',
-        ex_showroom_price: 11500000,
-        on_road_price: 12800000,
-        fuel_type: 'Diesel',
-        transmission: 'Automatic',
-        seating: 7,
-        engine_cc: 2755,
-        is_electric: false,
-        is_featured: true,
-        is_new: true,
-        year: 2024,
-        images: [
-          'https://images.unsplash.com/photo-1549399542-7e7f8c7a5e3d?auto=format&fit=crop&w=800&h=600',
-          'https://images.unsplash.com/photo-1549399542-7e7f8c7a5e3d?auto=format&fit=crop&w=800&h=600',
-          'https://images.unsplash.com/photo-1549399542-7e7f8c7a5e3d?auto=format&fit=crop&w=800&h=600'
-        ],
-        mileage_kmpl: 12.0,
-        updated_at: '2024-03-15'
-      });
-      
-      setSimilarCars([
-        {
-          id: '2',
-          name: 'Innova Crysta',
-          brand: 'Toyota',
-          variant: '2.4 VX MT',
-          ex_showroom_price: 8500000,
-          on_road_price: 9500000,
-          fuel_type: 'Diesel',
-          transmission: 'Manual',
-          seating: 7,
-          engine_cc: 2393,
-          is_electric: false,
-          is_featured: true,
-          is_new: true,
-          images: ['https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=600&h=400'],
-          mileage_kmpl: 15.0
-        },
-        {
-          id: '3',
-          name: 'XUV700',
-          brand: 'Mahindra',
-          variant: 'AX7',
-          ex_showroom_price: 7500000,
-          on_road_price: 8300000,
-          fuel_type: 'Diesel',
-          transmission: 'Automatic',
-          seating: 7,
-          engine_cc: 2198,
-          is_electric: false,
-          is_featured: true,
-          is_new: true,
-          images: ['https://images.unsplash.com/photo-1596779911828-609b0b4e8c7b?auto=format&fit=crop&w=600&h=400'],
-          mileage_kmpl: 14.0
-        },
-        {
-          id: '4',
-          name: 'Seltos',
-          brand: 'Kia',
-          variant: 'HTX+',
-          ex_showroom_price: 4200000,
-          on_road_price: 4700000,
-          fuel_type: 'Petrol',
-          transmission: 'Automatic',
-          seating: 5,
-          engine_cc: 1497,
-          is_electric: false,
-          is_featured: false,
-          is_new: true,
-          images: ['https://images.unsplash.com/photo-1596779911828-609b0b4e8c7b?auto=format&fit=crop&w=600&h=400'],
-          mileage_kmpl: 16.5
-        }
-      ]);
-      
-      setShowrooms([
-        {
-          id: '1',
-          name: 'Toyota Nepal - Thapathali',
-          brand: 'Toyota',
-          address: 'Thapathali, Kathmandu',
-          city: 'Kathmandu',
-          phone: '01-4234567',
-          is_authorized: true,
-          working_hours: '9:00 AM - 6:00 PM'
-        },
-        {
-          id: '2',
-          name: 'Toyota Showroom - New Road',
-          brand: 'Toyota',
-          address: 'New Road, Pokhara',
-          city: 'Pokhara',
-          phone: '061-465789',
-          is_authorized: true,
-          working_hours: '9:00 AM - 6:00 PM'
-        }
-      ]);
-      
-      setOffers([
-        {
-          id: '1',
-          title: 'Dashain Special Offer',
-          description: 'Get up to Rs.2L off on selected models',
-          discount_amount: 200000,
-          valid_until: '2024-10-31',
-          image_url: 'https://placehold.co/300x200/f59e0b/ffffff?text=Special+Offer'
-        }
-      ]);
-      
-      setLoading(false);
-    }, 1000);
+    if (slug) {
+      fetchCar();
+    }
   }, [slug]);
+
+  useEffect(() => {
+    if (car) {
+      fetchSimilarCars();
+      fetchShowrooms();
+      fetchOffers();
+    }
+  }, [car]);
+
+  const fetchCar = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('cars')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+
+      if (error) throw error;
+      
+      setCar(data);
+      console.log('Car details fetched:', data);
+    } catch (err) {
+      console.error('Error fetching car:', err);
+      setError('Unable to load car details. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSimilarCars = async () => {
+    if (!car) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('cars')
+        .select('*')
+        .eq('category', car.category)
+        .neq('id', car.id)
+        .limit(4);
+
+      if (!error) {
+        setSimilarCars(data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching similar cars:', err);
+    }
+  };
+
+  const fetchShowrooms = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('showrooms')
+        .select('*')
+        .eq('brand', car?.brand)
+        .limit(4);
+
+      if (!error) {
+        setShowrooms(data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching showrooms:', err);
+    }
+  };
+
+  const fetchOffers = async () => {
+    if (!car) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('offers')
+        .select('*')
+        .eq('car_id', car.id)
+        .limit(3);
+
+      if (!error) {
+        setOffers(data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching offers:', err);
+    }
+  };
 
   // Calculate on-road price breakdown
   const calculateOnRoadPrice = () => {
@@ -182,7 +152,34 @@ const CarDetail = () => {
     return (
       <div className="container mx-auto px-4 py-20">
         <div className="text-center py-12">
-          <p className="text-muted-foreground">Loading car details...</p>
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/4 mx-auto mb-6"></div>
+            <div className="h-6 bg-gray-200 rounded w-1/3 mx-auto mb-12"></div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2">
+                <div className="bg-gray-200 h-96 rounded-2xl mb-4"></div>
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                  {[...Array(4)].map((_, i) => (
+                    <div key={i} className="bg-gray-200 w-24 h-24 rounded-lg"></div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <div className="bg-gray-200 h-96 rounded-2xl"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-20">
+        <div className="text-center py-12">
+          <p className="text-red-500 mb-4">{error}</p>
+          <Button onClick={fetchCar}>Retry</Button>
         </div>
       </div>
     );
