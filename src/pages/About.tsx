@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const About = () => {
   const [activeTab, setActiveTab] = useState('mission');
@@ -119,27 +120,49 @@ const About = () => {
       </div>
 
       {/* Contact Section */}
-      <div className="w-full bg-[#1d1d1f] py-15 px-6">
-        <div className="max-w-3xl mx-auto text-center py-15">
-          <h2 className="text-2xl md:text-3xl font-semibold text-white mb-4">
+      <div className="w-full bg-[#f5f5f7] py-20 px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl font-semibold text-[#1d1d1f] mb-4">
             Get in Touch
           </h2>
-          <p className="text-sm text-[#a0a0a0] max-w-2xl mx-auto">
-            Questions, feedback or partnership? We'd love to hear from you.
+          <p className="text-base text-[#6e6e73] max-w-2xl mx-auto mt-3 leading-relaxed">
+            Questions, feedback or partnership enquiries? We'd love to hear from you.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+            <div className="bg-white border border-[#d2d2d7] rounded-2xl p-7 text-center">
+              <p className="text-sm text-[#6e6e73]">General Enquiries</p>
+              <a href="mailto:hello@carkinne.com" className="text-[#e8531a] font-medium text-sm mt-2 block">
+                hello@carkinne.com
+              </a>
+            </div>
+            <div className="bg-white border border-[#d2d2d7] rounded-2xl p-7 text-center">
+              <p className="text-sm text-[#6e6e73]">Advertising</p>
+              <a href="mailto:ads@carkinne.com" className="text-[#e8531a] font-medium text-sm mt-2 block">
+                ads@carkinne.com
+              </a>
+            </div>
+            <div className="bg-white border border-[#d2d2d7] rounded-2xl p-7 text-center">
+              <p className="text-sm text-[#6e6e73]">Data & Listings</p>
+              <a href="mailto:data@carkinne.com" className="text-[#e8531a] font-medium text-sm mt-2 block">
+                data@carkinne.com
+              </a>
+            </div>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row justify-center gap-3 mt-10">
             <a 
               href="mailto:hello@carkinne.com" 
-              className="bg-white text-[#1d1d1f] px-8 py-3.5 rounded-xl font-medium hover:bg-gray-100 transition-colors"
+              className="bg-white border border-[#d2d2d7] text-[#1d1d1f] px-8 py-3.5 rounded-xl font-medium hover:border-[#1d1d1f] transition-colors text-sm"
             >
-              Email Us
+              Send us an Email
             </a>
-            <a 
-              href="/advertise" 
-              className="bg-[#e8531a] text-white px-8 py-3.5 rounded-xl font-medium hover:bg-[#e8531a]/90 transition-colors"
+            <Link 
+              to="/advertise" 
+              className="bg-[#e8531a] text-white px-8 py-3.5 rounded-xl font-medium hover:opacity-90 transition-opacity text-sm"
             >
               Advertise With Us
-            </a>
+            </Link>
           </div>
         </div>
       </div>
