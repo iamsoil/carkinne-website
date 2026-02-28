@@ -180,7 +180,7 @@ const Index = () => {
       <section 
         className="relative h-[80vh] w-full flex items-center overflow-hidden"
         style={{
-          backgroundImage: "url('https://images.unsplash.com/photo-1617469767053-d3b523a0b982?w=1600&q=80')",
+          backgroundImage: "url('https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/Blog-Images/Hero-image/hero.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center"
         }}
@@ -368,7 +368,7 @@ const Index = () => {
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols- 3 gap-6 mt-12">
               {featuredCars.map((car) => (
                 <CarCard key={car.id} {...car} />
               ))}
