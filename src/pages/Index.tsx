@@ -178,11 +178,10 @@ const Index = () => {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section 
-        className="relative h-[80vh] w-full flex items-center overflow-hidden"
-        className="relative h-[80vh] w-full flex items-center overflow-hidden bg-cover bg-center bg-no-repeat"
-      style={{ 
+       className="relative h-[80vh] w-full flex items-center overflow-hidden bg-cover bg-center bg-no-repeat"
+        style={{ 
         backgroundImage: `url('https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/Blog-Images/Hero-image/hero.jpg')` 
-       }}
+        }}
       >
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-black/10"></div>
