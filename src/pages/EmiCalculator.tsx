@@ -86,7 +86,7 @@ const EmiCalculatorPage = () => {
     <div className="container mx-auto px-4 py-8 max-w-6xl">
 
       {/* PAGE HEADER */}
-      <div className="text-center mb-12">
+      <div className="text-left mb-12">
         <h1 className="text-4xl font-semibold tracking-tight text-[#1d1d1f]">
           Car Loan EMI Calculator
         </h1>
@@ -96,7 +96,7 @@ const EmiCalculatorPage = () => {
       </div>
 
       {/* CALCULATOR */}
-      <div className="grid grid-cols-1 lg:grid-cols-[55%_43%] gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-[55%_43%] gap-8 border border-[#d2d2d7] rounded-2xl p-6">
 
         {/* LEFT INPUTS */}
         <div className="space-y-8">
