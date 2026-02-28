@@ -546,11 +546,16 @@ const Index = () => {
       {/* Latest Offers */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-semibold text-center text-foreground mb-3">
-            Latest Offers
-          </h2>
+          <div className="flex justify-between items-center mb-12">
+            <h2 className="text-4xl font-semibold text-foreground">
+              Latest Offers
+            </h2>
+            <Link to="/offers" className="text-[#e8531a] text-sm font-medium hover:underline">
+              View All Offers →
+            </Link>
+          </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {latestOffers.map((offer) => (
               <div 
                 key={offer.id} 

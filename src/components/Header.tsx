@@ -57,6 +57,7 @@ const Header = () => {
     { name: 'EMI Calculator', href: '/emi-calculator' },
     { name: 'Showrooms', href: '/showrooms' },
     { name: 'EV Cars', href: '/electric-cars' },
+    { name: 'Offers', href: '/offers' },
     { name: 'Blog', href: '/blog' },
   ];
 
