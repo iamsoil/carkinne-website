@@ -186,9 +186,6 @@ const Index = () => {
           backgroundRepeat: 'no-repeat',
         }}
       >
-        {/* Overlay with reduced darkness */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-black/5"></div>
-        
         {/* Content */}
         <div className="relative z-10 w-full px-6 md:px-20 lg:pl-20">
           <div className="max-w-2xl">
