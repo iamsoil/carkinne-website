@@ -180,7 +180,7 @@ const Index = () => {
       <section 
         className="relative h-[80vh] w-full flex items-center overflow-hidden"
         style={{
-          backgroundImage: 'url(https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/Blog-Images/Hero-image/hero.jpg)',
+          backgroundImage: `url(https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/Blog-Images/Hero-image/hero.jpg)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
