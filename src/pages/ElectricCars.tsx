@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Battery, Zap, Leaf } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import CarCard from '@/components/CarCard';
 
 const ElectricCars = () => {
+  const navigate = useNavigate();
   const [electricCars, setElectricCars] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -211,9 +213,21 @@ const ElectricCars = () => {
           </div>
           
           <div className="mt-8 text-center">
-            <Button variant="outline" className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg">
+            <button
+              onClick={() => navigate('/ev-charging')}
+              style={{
+                background: '#e8531a',
+                color: 'white',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '14px 32px',
+                fontSize: '15px',
+                fontWeight: '600',
+                cursor: 'pointer',
+              }}
+            >
               Find Charging Stations Near You
-            </Button>
+            </button>
           </div>
         </CardContent>
       </Card>
