@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Search, ChevronRight } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Search, ChevronRight, X } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,6 +17,7 @@ const Index = () => {
   const [latestBlogPosts, setLatestBlogPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const carsSectionRef = useRef<HTMLDivElement>(null);
 
   // Quick filter options
   const quickFilters = [
@@ -143,6 +144,17 @@ const Index = () => {
     }
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/cars?search=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchQuery('');
+  };
+
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -191,18 +203,33 @@ const Index = () => {
             
             {/* Search bar */}
             <div className="mt-8 max-w-2xl">
-              <div className="flex bg-white rounded-xl p-1.5">
-                <Input
-                  type="text"
-                  placeholder="Search Toyota, Suzuki..."
-                  className="border-0 focus-visible:ring-0 text-base text-[#1d1d1f] placeholder:text-gray-400 flex-grow px-4"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <Button className="bg-[#e8531a] hover:bg-[#e8531a]/90 text-white font-medium rounded-lg px-6 py-4 whitespace-nowrap">
+              <form onSubmit={handleSearch} className="flex bg-white rounded-xl p-1.5">
+                <div className="relative flex-grow">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+                  <Input
+                    type="text"
+                    placeholder="Search by brand, model, or keyword..."
+                    className="pl-12 pr-10 py-4 border-0 focus-visible:ring-0 text-base text-[#1d1d1f] placeholder:text-gray-400 w-full"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      onClick={clearSearch}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  )}
+                </div>
+                <Button 
+                  type="submit"
+                  className="bg-[#e8531a] hover:bg-[#e8531a]/90 text-white font-medium rounded-lg px-6 py-4 whitespace-nowrap"
+                >
                   Search
                 </Button>
-              </div>
+              </form>
             </div>
             
             {/* Stats */}
@@ -260,7 +287,7 @@ const Index = () => {
       </section>
 
       {/* Featured Cars */}
-      <section className="py-20 bg-secondary">
+      <section className="py-20 bg-secondary" ref={carsSectionRef}>
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center">
             <div>
