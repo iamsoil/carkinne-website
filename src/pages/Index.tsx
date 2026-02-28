@@ -27,14 +27,22 @@ const Index = () => {
 
   // Popular brands for carousel
   const popularBrands = [
-    { name: 'Suzuki', link: '/cars?brand=Suzuki', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Suzuki_logo_2.svg/200px-Suzuki_logo_2.svg.png' },
-    { name: 'Toyota', link: '/cars?brand=Toyota', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Toyota_carlogo.svg/200px-Toyota_carlogo.svg.png' },
-    { name: 'Hyundai', link: '/cars?brand=Hyundai', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Hyundai_Motor_Company_logo.svg/200px-Hyundai_Motor_Company_logo.svg.png' },
-    { name: 'Kia', link: '/cars?brand=Kia', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Kia-logo.svg/200px-Kia-logo.svg.png' },
-    { name: 'Honda', link: '/cars?brand=Honda', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Honda.svg/200px-Honda.svg.png' },
-    { name: 'MG', link: '/cars?brand=MG', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/MG_logo.svg/200px-MG_logo.svg.png' },
-    { name: 'Tata', link: '/cars?brand=Tata', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Tata_logo.svg/200px-Tata_logo.svg.png' },
-    { name: 'BYD', link: '/cars?brand=BYD', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/BYD_Auto_logo.svg/200px-BYD_Auto_logo.svg.png' },
+    { name: 'Suzuki', link: '/cars?brand=Suzuki', 
+      logo: 'https://www.carlogos.org/car-logos/suzuki-logo.png' },
+    { name: 'Toyota', link: '/cars?brand=Toyota', 
+      logo: 'https://www.carlogos.org/car-logos/toyota-logo.png' },
+    { name: 'Hyundai', link: '/cars?brand=Hyundai', 
+      logo: 'https://www.carlogos.org/car-logos/hyundai-logo.png' },
+    { name: 'Kia', link: '/cars?brand=Kia', 
+      logo: 'https://www.carlogos.org/car-logos/kia-logo.png' },
+    { name: 'Honda', link: '/cars?brand=Honda', 
+      logo: 'https://www.carlogos.org/car-logos/honda-logo.png' },
+    { name: 'MG', link: '/cars?brand=MG', 
+      logo: 'https://www.carlogos.org/car-logos/mg-logo.png' },
+    { name: 'Tata', link: '/cars?brand=Tata', 
+      logo: 'https://www.carlogos.org/car-logos/tata-logo.png' },
+    { name: 'BYD', link: '/cars?brand=BYD', 
+      logo: 'https://www.carlogos.org/car-logos/byd-logo.png' },
   ];
 
   // Latest offers (mock data)
@@ -284,27 +292,115 @@ const Index = () => {
             className="relative overflow-hidden py-2"
             aria-label="Popular car brands in Nepal"
           >
-            <div className="flex animate-scroll whitespace-nowrap gap-6 md:gap-8">
+            <div style={{
+              display: 'flex',
+              width: 'max-content',
+              animation: 'scroll 25s linear infinite',
+            }}>
               {/* First set of logos */}
               {popularBrands.map((brand, index) => (
-                <Link to={brand.link} key={`first-${index}`}>
+                <Link 
+                  to={brand.link} 
+                  key={`first-${index}`}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '120px',
+                    height: '60px',
+                    flexShrink: 0,
+                    padding: '8px 16px',
+                  }}
+                >
                   <img 
-                    src={brand.logo} 
-                    alt={brand.name} 
-                    className="h-8 md:h-10 w-auto object-contain opacity-60 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
-                    loading="lazy"
+                    src={brand.logo}
+                    alt={brand.name}
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '100%',
+                      width: 'auto',
+                      height: 'auto',
+                      objectFit: 'contain',
+                      filter: 'grayscale(100%) opacity(50%)',
+                      transition: 'filter 0.2s ease',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.filter = 'grayscale(0%) opacity(100%)'}
+                    onMouseLeave={e => e.currentTarget.style.filter = 'grayscale(100%) opacity(50%)'}
+                    onError={(e) => {
+                      // Fallback to text if image fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const parent = target.parentElement;
+                      if (parent) {
+                        const fallback = document.createElement('div');
+                        fallback.style.width = '100%';
+                        fallback.style.height = '100%';
+                        fallback.style.display = 'flex';
+                        fallback.style.alignItems = 'center';
+                        fallback.style.justifyContent = 'center';
+                        fallback.style.backgroundColor = 'white';
+                        fallback.style.borderRadius = '4px';
+                        fallback.style.fontWeight = 'bold';
+                        fallback.style.color = '#1A1A1A';
+                        fallback.style.fontSize = '12px';
+                        fallback.textContent = brand.name;
+                        parent.appendChild(fallback);
+                      }
+                    }}
                   />
                 </Link>
               ))}
               
               {/* Duplicate set for seamless scrolling */}
               {popularBrands.map((brand, index) => (
-                <Link to={brand.link} key={`second-${index}`}>
+                <Link 
+                  to={brand.link} 
+                  key={`second-${index}`}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '120px',
+                    height: '60px',
+                    flexShrink: 0,
+                    padding: '8px 16px',
+                  }}
+                >
                   <img 
-                    src={brand.logo} 
-                    alt={brand.name} 
-                    className="h-8 md:h-10 w-auto object-contain opacity-60 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
-                    loading="lazy"
+                    src={brand.logo}
+                    alt={brand.name}
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '100%',
+                      width: 'auto',
+                      height: 'auto',
+                      objectFit: 'contain',
+                      filter: 'grayscale(100%) opacity(50%)',
+                      transition: 'filter 0.2s ease',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.filter = 'grayscale(0%) opacity(100%)'}
+                    onMouseLeave={e => e.currentTarget.style.filter = 'grayscale(100%) opacity(50%)'}
+                    onError={(e) => {
+                      // Fallback to text if image fails to load
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const parent = target.parentElement;
+                      if (parent) {
+                        const fallback = document.createElement('div');
+                        fallback.style.width = '100%';
+                        fallback.style.height = '100%';
+                        fallback.style.display = 'flex';
+                        fallback.style.alignItems = 'center';
+                        fallback.style.justifyContent = 'center';
+                        fallback.style.backgroundColor = 'white';
+                        fallback.style.borderRadius = '4px';
+                        fallback.style.fontWeight = 'bold';
+                        fallback.style.color = '#1A1A1A';
+                        fallback.style.fontSize = '12px';
+                        fallback.textContent = brand.name;
+                        parent.appendChild(fallback);
+                      }
+                    }}
                   />
                 </Link>
               ))}
@@ -315,20 +411,8 @@ const Index = () => {
 
       <style>{`
         @keyframes scroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-        
-        .animate-scroll {
-          animation: scroll 30s linear infinite;
-        }
-        
-        .animate-scroll:hover {
-          animation-play-state: paused;
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
       `}</style>
 
