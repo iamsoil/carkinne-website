@@ -185,7 +185,7 @@ const Index = () => {
     src="https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/Blog-Images/Hero-image/hero.jpg" 
     alt="Car showroom in Nepal" 
     className="absolute inset-0 w-full h-full object-cover"
-  >
+  />
   
   {/* Dark Overlay */}
   <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-black/10"></div>
