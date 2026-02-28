@@ -18,15 +18,23 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const carsSectionRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   // Quick filter options
   const quickFilters = [
     'Under 20L', '20-40L', '40-60L', '60L+', 'Electric', 'SUV', 'Sedan'
   ];
 
-  // Popular brands
+  // Popular brands for carousel
   const popularBrands = [
-    'Suzuki', 'Toyota', 'Hyundai', 'Kia', 'MG', 'Honda', 'Nissan', 'BYD'
+    { name: 'Tata', url: 'https://via.placeholder.com/80x80/F8F9FA/1A1A1A?text=TATA' },
+    { name: 'Hyundai', url: 'https://via.placeholder.com/80x80/F8F9FA/1A1A1A?text=HYUNDAI' },
+    { name: 'Kia', url: 'https://via.placeholder.com/80x80/F8F9FA/1A1A1A?text=KIA' },
+    { name: 'MG', url: 'https://via.placeholder.com/80x80/F8F9FA/1A1A1A?text=MG' },
+    { name: 'BYD', url: 'https://via.placeholder.com/80x80/F8F9FA/1A1A1A?text=BYD' },
+    { name: 'Nissan', url: 'https://via.placeholder.com/80x80/F8F9FA/1A1A1A?text=NISSAN' },
+    { name: 'Toyota', url: 'https://via.placeholder.com/80x80/F8F9FA/1A1A1A?text=TOYOTA' },
+    { name: 'Mahindra', url: 'https://via.placeholder.com/80x80/F8F9FA/1A1A1A?text=MAHINDRA' }
   ];
 
   // Latest offers (mock data)
@@ -266,25 +274,75 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Popular Brands */}
-      <section className="py-14 bg-white">
+      {/* Popular Brands Carousel */}
+      <section className="py-10 md:py-20 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-4xl font-semibold text-center text-foreground mb-3">
-            Popular Brands
+          <h2 className="text-2xl font-semibold text-center text-[#1A1A1A] mb-10">
+            Popular Brands in Nepal
           </h2>
           
-          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-4 mt-12">
-            {popularBrands.map((brand, index) => (
-              <div 
-                key={index} 
-                className="bg-white border border-border rounded-xl p-6 flex items-center justify-center hover:border-foreground transition-all hover:-translate-y-0.5 cursor-pointer"
-              >
-                <p className="font-medium text-foreground text-sm">{brand}</p>
-              </div>
-            ))}
+          <div 
+            ref={carouselRef}
+            className="relative overflow-hidden py-4"
+            aria-label="Popular car brands in Nepal"
+          >
+            <div className="flex animate-scroll whitespace-nowrap">
+              {/* First set of logos */}
+              {popularBrands.map((brand, index) => (
+                <div 
+                  key={`first-${index}`} 
+                  className="mx-4 flex-shrink-0"
+                >
+                  <div className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center bg-[#F8F9FA] rounded-lg hover:scale-105 hover:shadow-md transition-all duration-200">
+                    <img 
+                      src={brand.url} 
+                      alt={`${brand.name} Motors`}
+                      className="max-h-10 md:max-h-12 object-contain"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              ))}
+              
+              {/* Duplicate set for seamless scrolling */}
+              {popularBrands.map((brand, index) => (
+                <div 
+                  key={`second-${index}`} 
+                  className="mx-4 flex-shrink-0"
+                >
+                  <div className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center bg-[#F8F9FA] rounded-lg hover:scale-105 hover:shadow-md transition-all duration-200">
+                    <img 
+                      src={brand.url} 
+                      alt={`${brand.name} Motors`}
+                      className="max-h-10 md:max-h-12 object-contain"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
+
+      <style jsx>{`
+        @keyframes scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        
+        .animate-scroll {
+          animation: scroll 30s linear infinite;
+        }
+        
+        .animate-scroll:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
 
       {/* Featured Cars */}
       <section className="py-20 bg-secondary" ref={carsSectionRef}>
