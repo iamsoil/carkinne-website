@@ -291,6 +291,90 @@ const EmiCalculatorPage = () => {
         </div>
       </div>
 
+      {/* EMI Tips Section */}
+      <div className="mt-16">
+        <h2 className="text-2xl font-semibold text-[#1d1d1f] mb-6">EMI Tips</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card className="border border-[#d2d2d7] rounded-2xl">
+            <CardContent className="p-6">
+              <h3 className="font-semibold text-lg mb-2">Choose the Right Tenure</h3>
+              <p className="text-[#6e6e73] text-sm">
+                Longer tenures mean lower EMIs but higher total interest. Find the sweet spot that works for your budget.
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="border border-[#d2d2d7] rounded-2xl">
+            <CardContent className="p-6">
+              <h3 className="font-semibold text-lg mb-2">Make a Larger Down Payment</h3>
+              <p className="text-[#6e6e73] text-sm">
+                A bigger down payment reduces your loan amount and saves you money on interest over the loan term.
+              </p>
+            </CardContent>
+          </Card>
+          <Card className="border border-[#d2d2d7] rounded-2xl">
+            <CardContent className="p-6">
+              <h3 className="font-semibold text-lg mb-2">Compare Bank Rates</h3>
+              <p className="text-[#6e6e73] text-sm">
+                Even a 0.5% difference in interest rate can save you lakhs. Shop around for the best deal.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Popular Loan Terms */}
+      <div className="mt-16">
+        <h2 className="text-2xl font-semibold text-[#1d1d1f] mb-6">Popular Loan Terms in Nepal</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card className="border border-[#d2d2d7] rounded-2xl">
+            <CardContent className="p-6">
+              <h3 className="font-semibold text-lg mb-3">New Car Loans</h3>
+              <ul className="space-y-2 text-sm text-[#6e6e73]">
+                <li className="flex justify-between">
+                  <span>Maximum Financing</span>
+                  <span className="font-medium">80-90% of car value</span>
+                </li>
+                <li className="flex justify-between">
+                  <span>Typical Tenure</span>
+                  <span className="font-medium">5-7 years</span>
+                </li>
+                <li className="flex justify-between">
+                  <span>Interest Rate Range</span>
+                  <span className="font-medium">9-12% p.a.</span>
+                </li>
+                <li className="flex justify-between">
+                  <span>Processing Fee</span>
+                  <span className="font-medium">0.5-1% of loan amount</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+          <Card className="border border-[#d2d2d7] rounded-2xl">
+            <CardContent className="p-6">
+              <h3 className="font-semibold text-lg mb-3">Used Car Loans</h3>
+              <ul className="space-y-2 text-sm text-[#6e6e73]">
+                <li className="flex justify-between">
+                  <span>Maximum Financing</span>
+                  <span className="font-medium">70-80% of car value</span>
+                </li>
+                <li className="flex justify-between">
+                  <span>Typical Tenure</span>
+                  <span className="font-medium">3-5 years</span>
+                </li>
+                <li className="flex justify-between">
+                  <span>Interest Rate Range</span>
+                  <span className="font-medium">11-14% p.a.</span>
+                </li>
+                <li className="flex justify-between">
+                  <span>Processing Fee</span>
+                  <span className="font-medium">1-2% of loan amount</span>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
       {/* BANK RATES */}
       <div className="bg-[#f5f5f7] mt-16 py-14 -mx-4 px-4 rounded-2xl">
         <div className="max-w-6xl mx-auto">
