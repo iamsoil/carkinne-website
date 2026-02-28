@@ -177,7 +177,93 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
+      {/* Hero Section */}
+<section className="relative h-[80vh] w-full flex items-center overflow-hidden">
+  
+  {/* Background Image - Simple img tag approach */}
+  <img 
+    src="https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/Blog-Images/Hero-image/hero.jpg" 
+    alt="Car showroom in Nepal" 
+    className="absolute inset-0 w-full h-full object-cover"
+  />
+  
+  {/* Dark Overlay */}
+  <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-black/10"></div>
+  
+  {/* Content */}
+  <div className="relative z-10 w-full px-6 md:px-20 lg:pl-20">
+    <div className="max-w-2xl">
       
+      {/* Label */}
+      <div className="flex items-center mb-4">
+        <div className="w-8 h-0.5 bg-[#e8531a] mr-3"></div>
+        <span className="text-white text-xs font-medium uppercase tracking-widest">
+          Nepal's Smartest Car Buying Guide
+        </span>
+      </div>
+      
+      {/* Headline */}
+      <h1 className="text-white text-5xl md:text-7xl font-bold leading-tight tracking-tight">
+        Find Your Perfect Car in Nepal
+      </h1>
+      
+      {/* Subheadline */}
+      <p className="text-white/80 text-lg md:text-xl font-normal mt-4">
+        Compare prices, calculate EMI, find showrooms
+      </p>
+      
+      {/* Search Bar */}
+      <div className="mt-8 max-w-2xl">
+        <form onSubmit={handleSearch} className="flex bg-white rounded-xl p-1.5">
+          <div className="relative flex-grow">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <Input
+              type="text"
+              placeholder="Search by brand, model, or keyword..."
+              className="pl-12 pr-10 py-4 border-0 focus-visible:ring-0 text-base text-[#1d1d1f] placeholder:text-gray-400 w-full"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            {searchQuery && (
+              <button type="button" onClick={clearSearch} className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <X className="h-5 w-5" />
+              </button>
+            )}
+          </div>
+          <Button type="submit" className="bg-[#e8531a] hover:bg-[#e8531a]/90 text-white font-medium rounded-lg px-6 py-4 whitespace-nowrap">
+            Search
+          </Button>
+        </form>
+      </div>
+      
+      {/* Stats */}
+      <div className="mt-5 text-white/70 text-sm">
+        150+ Cars | 50+ Showrooms | Updated Monthly
+      </div>
+      
+      {/* Filter Pills */}
+      <div className="flex flex-wrap gap-2 mt-4">
+        {quickFilters.map((filter, index) => (
+          <button key={index} className="px-4 py-2 text-xs text-white bg-white/15 border border-white/30 rounded-full hover:bg-white hover:text-[#1d1d1f] transition-colors">
+            {filter}
+          </button>
+        ))}
+      </div>
+      
+    </div>
+  </div>
+  
+  {/* Social Proof */}
+  <div className="absolute bottom-10 left-20 hidden md:block">
+    <p className="text-white text-sm font-normal mb-2">Trusted by Nepal's car buyers</p>
+    <div className="flex">
+      {[...Array(3)].map((_, i) => (
+        <div key={i} className="w-8 h-8 rounded-full bg-gray-400 border-2 border-white" style={{ marginLeft: i === 0 ? 0 : -8 }}></div>
+      ))}
+    </div>
+  </div>
+  
+</section>
         
         {/* Social proof (desktop only) */}
         <div className="absolute bottom-10 left-20 hidden md:block">
