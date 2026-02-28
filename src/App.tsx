@@ -29,6 +29,7 @@ import NotFound from "./pages/NotFound";
 import EvCars from "./pages/EvCars";
 import About from "./pages/About";
 import Advertise from "./pages/Advertise";
+import EvCharging from './pages/EvCharging';
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ const App = () => (
                 <Route path="/compare" element={<Compare />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/advertise" element={<Advertise />} />
+                <Route path="/ev-charging" element={<EvCharging />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin/login" element={<AdminLogin />} />
