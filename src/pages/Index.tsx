@@ -275,9 +275,9 @@ const Index = () => {
       </section>
 
       {/* Popular Brands Carousel */}
-      <section className="py-10 md:py-20 bg-white">
+      <section className="py-12 md:py-16 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-semibold text-center text-[#1A1A1A] mb-10">
+          <h2 className="text-2xl font-semibold text-center text-[#1A1A1A] mb-8">
             Popular Brands in Nepal
           </h2>
           
@@ -286,21 +286,19 @@ const Index = () => {
             className="relative overflow-hidden py-4"
             aria-label="Popular car brands in Nepal"
           >
-            <div className="flex animate-scroll whitespace-nowrap">
+            <div className="flex animate-scroll whitespace-nowrap gap-8 md:gap-12">
               {/* First set of logos */}
               {popularBrands.map((brand, index) => (
                 <div 
                   key={`first-${index}`} 
-                  className="mx-4 flex-shrink-0"
+                  className="flex items-center justify-center h-auto"
                 >
-                  <div className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center bg-[#F8F9FA] rounded-lg hover:scale-105 hover:shadow-md transition-all duration-200">
-                    <img 
-                      src={brand.url} 
-                      alt={`${brand.name} Motors`}
-                      className="max-h-10 md:max-h-12 object-contain"
-                      loading="lazy"
-                    />
-                  </div>
+                  <img 
+                    src={brand.url} 
+                    alt={`${brand.name} Motors`}
+                    className="h-12 md:h-16 w-auto object-contain"
+                    loading="lazy"
+                  />
                 </div>
               ))}
               
@@ -308,16 +306,14 @@ const Index = () => {
               {popularBrands.map((brand, index) => (
                 <div 
                   key={`second-${index}`} 
-                  className="mx-4 flex-shrink-0"
+                  className="flex items-center justify-center h-auto"
                 >
-                  <div className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center bg-[#F8F9FA] rounded-lg hover:scale-105 hover:shadow-md transition-all duration-200">
-                    <img 
-                      src={brand.url} 
-                      alt={`${brand.name} Motors`}
-                      className="max-h-10 md:max-h-12 object-contain"
-                      loading="lazy"
-                    />
-                  </div>
+                  <img 
+                    src={brand.url} 
+                    alt={`${brand.name} Motors`}
+                    className="h-12 md:h-16 w-auto object-contain"
+                    loading="lazy"
+                  />
                 </div>
               ))}
             </div>
