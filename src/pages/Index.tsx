@@ -275,18 +275,18 @@ const Index = () => {
       </section>
 
       {/* Popular Brands Carousel */}
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-6 md:py-8 bg-white">
         <div className="container mx-auto px-4">
-          <h2 className="text-2xl font-semibold text-center text-[#1A1A1A] mb-8">
+          <h2 className="text-xl font-semibold text-center text-[#1A1A1A] mb-4">
             Popular Brands in Nepal
           </h2>
           
           <div 
             ref={carouselRef}
-            className="relative overflow-hidden py-4"
+            className="relative overflow-hidden py-2"
             aria-label="Popular car brands in Nepal"
           >
-            <div className="flex animate-scroll whitespace-nowrap gap-8 md:gap-12">
+            <div className="flex animate-scroll whitespace-nowrap gap-6 md:gap-8">
               {/* First set of logos */}
               {popularBrands.map((brand, index) => (
                 <div 
@@ -296,7 +296,7 @@ const Index = () => {
                   <img 
                     src={brand.url} 
                     alt={`${brand.name} Motors`}
-                    className="h-12 md:h-16 w-auto object-contain"
+                    className="h-8 md:h-10 w-auto object-contain"
                     loading="lazy"
                   />
                 </div>
@@ -311,7 +311,7 @@ const Index = () => {
                   <img 
                     src={brand.url} 
                     alt={`${brand.name} Motors`}
-                    className="h-12 md:h-16 w-auto object-contain"
+                    className="h-8 md:h-10 w-auto object-contain"
                     loading="lazy"
                   />
                 </div>
