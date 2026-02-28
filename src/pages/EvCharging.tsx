@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const EvCharging = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -103,71 +103,6 @@ const EvCharging = () => {
     return matchesSearch && matchesCity;
   });
 
-  useEffect(() => {
-    const L = (window as any).L
-    if (!L) return
-
-    const map = L.map('ev-map').setView([28.3949, 84.1240], 7)
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(map)
-
-    // Custom blue lightning bolt icon
-    const stationIcon = L.divIcon({
-      html: `<div style="
-        background: #2563eb;
-        width: 32px;
-        height: 32px;
-        border-radius: 50% 50% 50% 0;
-        transform: rotate(-45deg);
-        border: 3px solid white;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      "><span style="
-        transform: rotate(45deg);
-        color: white;
-        font-size: 14px;
-        display: block;
-        text-align: center;
-        line-height: 26px;
-      ">⚡</span></div>`,
-      className: '',
-      iconSize: [32, 32],
-      iconAnchor: [16, 32],
-      popupAnchor: [0, -32]
-    })
-
-    stations.forEach(station => {
-      L.marker([station.lat, station.lng], { icon: stationIcon })
-        .addTo(map)
-        .bindPopup(`
-          <div style="min-width:200px">
-            <strong style="font-size:14px">
-              ${station.name}
-            </strong>
-            <p style="font-size:12px;color:#666;margin:4px 0">
-              ${station.address}
-            </p>
-            <div style="margin-top:6px">
-              ${station.connectors.map((c: string) => 
-                `<span style="background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:11px;margin-right:4px">${c}</span>`
-              ).join('')}
-            </div>
-            <a href="https://maps.google.com/?q=${encodeURIComponent(station.name + ' Nepal')}" 
-              target="_blank"
-              style="display:block;margin-top:8px;color:#e8531a;font-size:12px">
-              Get Directions →
-            </a>
-          </div>
-        `)
-    })
-
-    return () => { map.remove() }
-  }, [])
-
   return (
     <div style={{ 
       display: 'flex', 
@@ -268,29 +203,29 @@ const EvCharging = () => {
                 borderBottom: '1px solid #f5f5f5',
                 cursor: 'pointer',
                 background: selectedStation?.id === station.id 
-                  ? '#eff6ff' : 'white',
+                  ? '#fff8f5' : 'white',
                 borderLeft: selectedStation?.id === station.id
-                  ? '3px solid #2563eb' : '3px solid transparent',
+                  ? '3px solid #e8531a' : '3px solid transparent',
               }}
               onClick={() => setSelectedStation(station)}
-              onMouseEnter={(e) => e.currentTarget.style.background = '#eff6ff'}
-              onMouseLeave={(e) => e.currentTarget.style.background = selectedStation?.id === station.id ? '#eff6ff' : 'white'}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#fff8f5'}
+              onMouseLeave={(e) => e.currentTarget.style.background = selectedStation?.id === station.id ? '#fff8f5' : 'white'}
             >
               {/* Pin icon */}
               <div style={{
                 width: 32, height: 32,
                 borderRadius: '50%',
                 background: selectedStation?.id === station.id 
-                  ? '#2563eb' : '#f0f0f0',
+                  ? '#e8531a' : '#f0f0f0',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginRight: 12,
                 flexShrink: 0,
-                fontSize: 14,
-                color: selectedStation?.id === station.id ? 'white' : '#666',
               }}>
-                📍
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
               </div>
 
               {/* Station info */}
@@ -329,10 +264,13 @@ const EvCharging = () => {
         height: '100%',
         position: 'relative',
       }}>
-        <div id="ev-map" style={{ 
-          width: '100%', 
-          height: '100%' 
-        }} />
+        <iframe
+          src="https://www.openstreetmap.org/export/embed.html?bbox=80.0%2C26.0%2C88.5%2C30.5&layer=mapnik&marker=28.3949%2C84.1240"
+          width="100%"
+          height="100%"
+          style={{ border: 'none', display: 'block' }}
+          loading="lazy"
+        />
       </div>
     </div>
   );
