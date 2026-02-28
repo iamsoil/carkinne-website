@@ -1,9 +1,14 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 
-const ThemeContext = createContext<{
+interface ThemeContextType {
   isDark: boolean
   toggleDark: () => void
-}>({ isDark: false, toggleDark: () => {} })
+}
+
+const ThemeContext = createContext<ThemeContextType>({
+  isDark: false,
+  toggleDark: () => {}
+})
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [isDark, setIsDark] = useState(() => {
@@ -21,10 +26,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   }, [isDark])
 
   return (
-    <ThemeContext.Provider value={{ 
-      isDark, 
-      toggleDark: () => setIsDark(prev => !prev) 
-    }}>
+    <ThemeContext.Provider value={{ isDark, toggleDark: () => setIsDark(p => !p) }}>
       {children}
     </ThemeContext.Provider>
   )
