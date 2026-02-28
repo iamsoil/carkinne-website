@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const EvCharging = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCity, setSelectedCity] = useState('All Cities');
+  const [selectedStation, setSelectedStation] = useState<any>(null);
 
   const cities = [
     'All Cities', 'Kathmandu', 'Lalitpur', 'Pokhara', 
@@ -102,6 +103,71 @@ const EvCharging = () => {
     return matchesSearch && matchesCity;
   });
 
+  useEffect(() => {
+    const L = (window as any).L
+    if (!L) return
+
+    const map = L.map('ev-map').setView([28.3949, 84.1240], 7)
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map)
+
+    // Custom blue lightning bolt icon
+    const stationIcon = L.divIcon({
+      html: `<div style="
+        background: #2563eb;
+        width: 32px;
+        height: 32px;
+        border-radius: 50% 50% 50% 0;
+        transform: rotate(-45deg);
+        border: 3px solid white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      "><span style="
+        transform: rotate(45deg);
+        color: white;
+        font-size: 14px;
+        display: block;
+        text-align: center;
+        line-height: 26px;
+      ">⚡</span></div>`,
+      className: '',
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+      popupAnchor: [0, -32]
+    })
+
+    stations.forEach(station => {
+      L.marker([station.lat, station.lng], { icon: stationIcon })
+        .addTo(map)
+        .bindPopup(`
+          <div style="min-width:200px">
+            <strong style="font-size:14px">
+              ${station.name}
+            </strong>
+            <p style="font-size:12px;color:#666;margin:4px 0">
+              ${station.address}
+            </p>
+            <div style="margin-top:6px">
+              ${station.connectors.map((c: string) => 
+                `<span style="background:#f0f0f0;padding:2px 6px;border-radius:4px;font-size:11px;margin-right:4px">${c}</span>`
+              ).join('')}
+            </div>
+            <a href="https://maps.google.com/?q=${encodeURIComponent(station.name + ' Nepal')}" 
+              target="_blank"
+              style="display:block;margin-top:8px;color:#e8531a;font-size:12px">
+              Get Directions →
+            </a>
+          </div>
+        `)
+    })
+
+    return () => { map.remove() }
+  }, [])
+
   return (
     <div style={{ 
       display: 'flex', 
@@ -196,49 +262,61 @@ const EvCharging = () => {
             <div 
               key={station.id}
               style={{
+                display: 'flex',
+                alignItems: 'flex-start',
                 padding: '12px 16px',
                 borderBottom: '1px solid #f5f5f5',
                 cursor: 'pointer',
-                transition: 'background 0.15s',
+                background: selectedStation?.id === station.id 
+                  ? '#eff6ff' : 'white',
+                borderLeft: selectedStation?.id === station.id
+                  ? '3px solid #2563eb' : '3px solid transparent',
               }}
-              onMouseEnter={(e) => e.currentTarget.style.background = '#fafafa'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'white'}
+              onClick={() => setSelectedStation(station)}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#eff6ff'}
+              onMouseLeave={(e) => e.currentTarget.style.background = selectedStation?.id === station.id ? '#eff6ff' : 'white'}
             >
-              <div style={{ 
-                display: 'flex', 
+              {/* Pin icon */}
+              <div style={{
+                width: 32, height: 32,
+                borderRadius: '50%',
+                background: selectedStation?.id === station.id 
+                  ? '#2563eb' : '#f0f0f0',
+                display: 'flex',
                 alignItems: 'center',
-                fontSize: '14px',
-                fontWeight: 600,
-                color: '#1d1d1f'
+                justifyContent: 'center',
+                marginRight: 12,
+                flexShrink: 0,
+                fontSize: 14,
+                color: selectedStation?.id === station.id ? 'white' : '#666',
               }}>
-                <span style={{ marginRight: '8px' }}>📍</span>
-                {station.name}
+                📍
               </div>
-              <p style={{ 
-                fontSize: '12px', 
-                color: '#6e6e73', 
-                marginTop: '2px',
-                margin: 0
-              }}>
-                {station.address}
-              </p>
-              <div style={{ marginTop: '6px' }}>
-                {station.connectors.map((connector, idx) => (
-                  <span 
-                    key={idx}
-                    style={{
+
+              {/* Station info */}
+              <div style={{ flex: 1 }}>
+                <div style={{ 
+                  fontSize: 14, fontWeight: 600, color: '#1d1d1f'
+                }}>
+                  {station.name}
+                </div>
+                <div style={{ 
+                  fontSize: 12, color: '#6e6e73', marginTop: 2
+                }}>
+                  {station.address}
+                </div>
+                <div style={{ marginTop: 6 }}>
+                  {station.connectors.map((c: string) => (
+                    <span style={{
                       background: '#f0f0f0',
-                      borderRadius: '4px',
+                      borderRadius: 4,
                       padding: '2px 6px',
-                      fontSize: '11px',
+                      fontSize: 11,
+                      marginRight: 4,
                       color: '#555',
-                      marginRight: '4px',
-                      display: 'inline-block'
-                    }}
-                  >
-                    {connector}
-                  </span>
-                ))}
+                    }} key={c}>{c}</span>
+                  ))}
+                </div>
               </div>
             </div>
           ))}
@@ -251,14 +329,10 @@ const EvCharging = () => {
         height: '100%',
         position: 'relative',
       }}>
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d3627968.5!2d84.1240!3d28.3949!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2snp!4v1"
-          width="100%"
-          height="100%"
-          style={{ border: 0, display: 'block' }}
-          allowFullScreen
-          loading="lazy"
-        />
+        <div id="ev-map" style={{ 
+          width: '100%', 
+          height: '100%' 
+        }} />
       </div>
     </div>
   );
