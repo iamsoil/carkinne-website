@@ -265,21 +265,6 @@ const Index = () => {
   
 </section>
         
-        {/* Social proof (desktop only) */}
-        <div className="absolute bottom-10 left-20 hidden md:block">
-          <p className="text-white text-sm font-normal mb-2">Trusted by Nepal's car buyers</p>
-          <div className="flex">
-            {[...Array(3)].map((_, i) => (
-              <div 
-                key={i} 
-                className="w-8 h-8 rounded-full bg-gray-400 border-2 border-white"
-                style={{ marginLeft: i === 0 ? 0 : -8 }}
-              ></div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Popular Brands Carousel */}
       <section className="py-6 md:py-8 bg-white">
         <div className="container mx-auto px-4">
