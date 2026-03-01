@@ -1,12 +1,13 @@
 import { useCompare } from '@/contexts/CompareContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { X, GitCompare } from 'lucide-react'
 
 const CompareBar = () => {
   const { compareList, removeFromCompare, clearCompare } = useCompare()
   const navigate = useNavigate()
+  const location = useLocation()
 
-  if (compareList.length === 0) return null
+  if (compareList.length === 0 || location.pathname === '/compare') return null
 
   return (
     <div style={{
@@ -43,7 +44,7 @@ const CompareBar = () => {
               fontWeight: '700',
               color: '#1d1d1f',
             }}>
-              Compare ({compareList.length}/3)
+              Compare ({compareList.length}/2)
             </span>
           </div>
 
@@ -66,7 +67,11 @@ const CompareBar = () => {
               Clear
             </button>
             <button
-              onClick={() => navigate('/compare')}
+              onClick={() => {
+                navigate('/compare')
+                // bar hides because we navigate away
+                // but also clear on back navigation
+              }}
               disabled={compareList.length < 2}
               style={{
                 background: compareList.length >= 2
@@ -133,7 +138,7 @@ const CompareBar = () => {
           ))}
 
           {/* Empty slots */}
-          {Array.from({ length: 3 - compareList.length }).map((_, i) => (
+          {Array.from({ length: 2 - compareList.length }).map((_, i) => (
             <div key={i} style={{
               display: 'flex',
               alignItems: 'center',
