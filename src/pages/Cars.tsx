@@ -41,7 +41,7 @@ const Cars = () => {
 
   useEffect(() => {
     filterCars();
-  }, [cars, searchQuery, priceRange, selectedBrands, selectedCategories, selectedFuelTypes]);
+  }, [cars, searchQuery, priceRange, selectedBrands, selectedCategories, selectedFuelTypes, sortBy]);
 
   const fetchCars = async () => {
     try {
@@ -71,39 +71,73 @@ const Cars = () => {
   };
 
   const filterCars = () => {
-    let result = [...cars];
+    let result = [...cars]
     
     // Search filter
     if (searchQuery) {
-      result = result.filter(car => 
-        car.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        car.brand.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        car.variant.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      const q = searchQuery.toLowerCase()
+      result = result.filter(car =>
+        (car.name && car.name.toLowerCase().includes(q)) ||
+        (car.brand && car.brand.toLowerCase().includes(q)) ||
+        (car.model && car.model.toLowerCase().includes(q)) ||
+        (car.variant && car.variant.toLowerCase().includes(q)) ||
+        (car.fuel_type && car.fuel_type.toLowerCase().includes(q))
+      )
     }
-    
+
     // Price filter
-    result = result.filter(car => 
-      car.ex_showroom_price >= priceRange[0] && 
+    result = result.filter(car =>
+      car.ex_showroom_price >= priceRange[0] &&
       car.ex_showroom_price <= priceRange[1]
-    );
-    
+    )
+
     // Brand filter
     if (selectedBrands.length > 0) {
-      result = result.filter(car => selectedBrands.includes(car.brand));
+      result = result.filter(car => selectedBrands.includes(car.brand))
     }
-    
+
     // Category filter
     if (selectedCategories.length > 0) {
-      result = result.filter(car => selectedCategories.includes(car.category || 'SUV'));
+      result = result.filter(car => 
+        selectedCategories.includes(car.category || 'SUV')
+      )
     }
-    
+
     // Fuel type filter
     if (selectedFuelTypes.length > 0) {
-      result = result.filter(car => selectedFuelTypes.includes(car.fuel_type));
+      result = result.filter(car => 
+        selectedFuelTypes.includes(car.fuel_type)
+      )
     }
-    
-    setFilteredCars(result);
+
+    // SORT - this was missing entirely!
+    switch (sortBy) {
+      case 'price-low':
+        result.sort((a, b) => 
+          (a.ex_showroom_price || 0) - (b.ex_showroom_price || 0))
+        break
+      case 'price-high':
+        result.sort((a, b) => 
+          (b.ex_showroom_price || 0) - (a.ex_showroom_price || 0))
+        break
+      case 'mileage':
+        result.sort((a, b) => 
+          (b.mileage_kmpl || 0) - (a.mileage_kmpl || 0))
+        break
+      case 'newest':
+        result.sort((a, b) => 
+          new Date(b.created_at).getTime() - 
+          new Date(a.created_at).getTime())
+        break
+      case 'featured':
+        result.sort((a, b) => 
+          (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0))
+        break
+      default:
+        break
+    }
+
+    setFilteredCars(result)
   };
 
   const toggleBrand = (brand: string) => {
