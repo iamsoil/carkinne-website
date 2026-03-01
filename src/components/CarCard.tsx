@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { Heart, Fuel, Settings, Users, Gauge } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useCompare } from '@/contexts/CompareContext';
+import { useNavigate } from 'react-router-dom';
 
 interface CarCardProps {
   id: string;
@@ -42,6 +44,9 @@ const CarCard = ({
   slug
 }: CarCardProps) => {
   const [isSaved, setIsSaved] = useState(false);
+  const { addToCompare, removeFromCompare, isInCompare } = useCompare();
+  const navigate = useNavigate();
+  const inCompare = isInCompare(id);
 
   // Format price in Nepali format
   const formatPrice = (price: number) => {
@@ -163,11 +168,29 @@ const CarCard = ({
           </Link>
           <Button 
             variant="outline" 
-            size="sm" 
-            className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg"
-            onClick={() => alert(`${name} added to compare`)}
+            size="sm"
+            onClick={() => {
+              const carData = {
+                id, name, brand, variant,
+                ex_showroom_price, on_road_price,
+                fuel_type, transmission, seating,
+                engine_cc, is_electric, images,
+                mileage_kmpl, slug
+              }
+              if (inCompare) {
+                removeFromCompare(id)
+              } else {
+                addToCompare(carData)
+              }
+            }}
+            style={{
+              borderColor: inCompare ? '#e8531a' : undefined,
+              background: inCompare ? '#fff8f5' : undefined,
+              color: inCompare ? '#e8531a' : undefined,
+            }}
+            className="border rounded-lg text-sm font-medium"
           >
-            Compare
+            {inCompare ? '✓ Added' : 'Compare'}
           </Button>
         </div>
       </CardContent>
