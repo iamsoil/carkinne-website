@@ -9,13 +9,6 @@ const Compare = () => {
   const navigate = useNavigate()
   const [suggestions, setSuggestions] = useState<any[]>([])
   const { addToCompare } = useCompare()
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768)
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
 
   useEffect(() => {
     if (compareList.length === 0) {
@@ -103,7 +96,7 @@ const Compare = () => {
               <ArrowLeft size={15} /> Back
             </button>
             <h1 style={{
-              fontSize: isMobile ? '18px' : '24px',
+              fontSize: '24px',
               fontWeight: '700',
               color: '#1d1d1f',
               margin: 0,
@@ -133,278 +126,199 @@ const Compare = () => {
       </div>
 
       <div style={{
-        maxWidth: '1200px',
+        maxWidth: '900px',
         margin: '0 auto',
-        padding: isMobile ? '16px' : '32px 24px',
+        padding: '24px 16px',
       }}>
 
-        {/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-            MOBILE LAYOUT
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */}
-        {isMobile ? (
-          <div>
-            {/* Car images side by side at top */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: `repeat(${compareList.length}, 1fr)`,
-              gap: '12px',
-              marginBottom: '20px',
-            }}>
-              {compareList.map(car => (
-                <div key={car.id} style={{
-                  background: 'white',
-                  borderRadius: '12px',
-                  border: '1px solid #e5e5e5',
-                  padding: '12px',
-                  textAlign: 'center',
-                  position: 'relative',
-                }}>
-                  <button
-                    onClick={() => {
-                      removeFromCompare(car.id)
-                      if (compareList.length <= 2) navigate('/cars')
-                    }}
-                    style={{
-                      position: 'absolute',
-                      top: '8px',
-                      right: '8px',
-                      background: '#f5f5f7',
-                      border: 'none',
-                      borderRadius: '50%',
-                      width: '22px',
-                      height: '22px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      color: '#999',
-                    }}
-                  >
-                    <X size={11} />
-                  </button>
-                  <img
-                    src={car.images?.[0] || 'https://placehold.co/200x120/f5f5f7/999?text=Car'}
-                    alt={car.name}
-                    style={{
-                      width: '100%',
-                      height: '80px',
-                      objectFit: 'contain',
-                      background: '#f5f5f7',
-                      borderRadius: '8px',
-                    }}
-                  />
-                  <div style={{
-                    fontSize: '12px',
-                    fontWeight: '700',
-                    color: '#1d1d1f',
-                    marginTop: '8px',
-                    lineHeight: '1.3',
-                  }}>
-                    {car.name}
-                  </div>
-                  <div style={{
-                    fontSize: '13px',
-                    fontWeight: '700',
-                    color: '#e8531a',
-                    marginTop: '4px',
-                  }}>
-                    Rs.{car.ex_showroom_price?.toLocaleString()}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Specs as list rows */}
-            <div style={{
+        {/* Car images side by side at top */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${compareList.length}, 1fr)`,
+          gap: '16px',
+          marginBottom: '24px',
+        }}>
+          {compareList.map(car => (
+            <div key={car.id} style={{
               background: 'white',
-              borderRadius: '12px',
+              borderRadius: '16px',
               border: '1px solid #e5e5e5',
-              overflow: 'hidden',
+              padding: '20px',
+              textAlign: 'center',
+              position: 'relative',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
             }}>
-              {specs.map((spec, i) => (
-                <div key={spec.key} style={{
-                  display: 'grid',
-                  gridTemplateColumns: `120px repeat(${compareList.length}, 1fr)`,
-                  background: i % 2 === 0 ? 'white' : '#fafafa',
-                  borderBottom: '1px solid #f0f0f0',
-                }}>
-                  {/* Spec label */}
-                  <div style={{
-                    padding: '12px 10px',
-                    fontSize: '11px',
-                    fontWeight: '600',
-                    color: '#6e6e73',
-                    background: '#f5f5f7',
-                    display: 'flex',
-                    alignItems: 'center',
-                    borderRight: '1px solid #e5e5e5',
-                  }}>
-                    {spec.label}
-                  </div>
-                  {/* Values */}
-                  {compareList.map(car => (
-                    <div key={car.id} style={{
-                      padding: '12px 8px',
-                      fontSize: '12px',
-                      fontWeight: spec.highlight ? '700' : '400',
-                      color: spec.highlight ? '#e8531a' : '#1d1d1f',
-                      textAlign: 'center',
-                      borderLeft: '1px solid #f0f0f0',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
-                      {spec.format(car[spec.key as keyof typeof car] as any)}
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-
-        ) : (
-          /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-             DESKTOP LAYOUT (keep existing table)
-          ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
-          <div style={{
-            background: 'white',
-            borderRadius: '16px',
-            border: '1px solid #e5e5e5',
-            overflow: 'hidden',
-            boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-          }}>
-            {/* Car cards header */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: `180px repeat(${cols}, 1fr)`,
-              borderBottom: '2px solid #e8531a',
-            }}>
-              <div style={{
-                background: '#f5f5f7',
-                padding: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '12px',
-                fontWeight: '600',
-                color: '#999',
-                textTransform: 'uppercase' as const,
-                letterSpacing: '0.5px',
-              }}>
-                Specifications
-              </div>
-              {compareList.map(car => (
-                <div key={car.id} style={{
-                  padding: '20px',
-                  textAlign: 'center',
-                  borderLeft: '1px solid #f0f0f0',
-                  position: 'relative',
-                }}>
-                  <button
-                    onClick={() => {
-                      removeFromCompare(car.id)
-                      if (compareList.length <= 2) navigate('/cars')
-                    }}
-                    style={{
-                      position: 'absolute',
-                      top: '12px',
-                      right: '12px',
-                      background: '#f5f5f7',
-                      border: 'none',
-                      borderRadius: '50%',
-                      width: '24px',
-                      height: '24px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      color: '#999',
-                    }}
-                  >
-                    <X size={12} />
-                  </button>
-                  <div style={{
-                    width: '100%',
-                    height: '130px',
-                    background: '#f5f5f7',
-                    borderRadius: '12px',
-                    overflow: 'hidden',
-                    marginBottom: '12px',
-                  }}>
-                    <img
-                      src={car.images?.[0] || 'https://placehold.co/400x250/f5f5f7/999?text=No+Image'}
-                      alt={car.name}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'contain',
-                      }}
-                    />
-                  </div>
-                  <div style={{
-                    fontSize: '14px',
-                    fontWeight: '700',
-                    color: '#1d1d1f',
-                    marginBottom: '4px',
-                  }}>
-                    {car.name}
-                  </div>
-                  <div style={{
-                    fontSize: '16px',
-                    fontWeight: '700',
-                    color: '#e8531a',
-                  }}>
-                    Rs. {car.ex_showroom_price?.toLocaleString()}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Spec rows */}
-            {specs.map((spec, i) => (
-              <div key={spec.key} style={{
-                display: 'grid',
-                gridTemplateColumns: `180px repeat(${cols}, 1fr)`,
-                background: i % 2 === 0 ? 'white' : '#fafafa',
-                borderBottom: '1px solid #f0f0f0',
-              }}>
-                <div style={{
-                  padding: '14px 20px',
+              {/* Remove button */}
+              <button
+                onClick={() => {
+                  removeFromCompare(car.id)
+                  if (compareList.length <= 2) navigate('/cars')
+                }}
+                style={{
+                  position: 'absolute',
+                  top: '12px',
+                  right: '12px',
                   background: '#f5f5f7',
-                  fontSize: '13px',
-                  fontWeight: '600',
-                  color: '#6e6e73',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '26px',
+                  height: '26px',
                   display: 'flex',
                   alignItems: 'center',
-                  borderRight: '1px solid #e5e5e5',
-                }}>
-                  {spec.label}
-                </div>
-                {compareList.map(car => (
-                  <div key={car.id} style={{
-                    padding: '14px 20px',
-                    textAlign: 'center',
-                    fontSize: '14px',
-                    fontWeight: spec.highlight ? '700' : '400',
-                    color: spec.highlight ? '#e8531a' : '#1d1d1f',
-                    borderLeft: '1px solid #f0f0f0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                    {spec.format(car[spec.key as keyof typeof car] as any)}
-                  </div>
-                ))}
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  color: '#999',
+                }}
+              >
+                <X size={13} />
+              </button>
+
+              {/* Image */}
+              <img
+                src={car.images?.[0] || 
+                  'https://placehold.co/300x180/f5f5f7/999?text=Car'}
+                alt={car.name}
+                style={{
+                  width: '100%',
+                  height: '160px',
+                  objectFit: 'contain',
+                  background: '#f5f5f7',
+                  borderRadius: '12px',
+                  marginBottom: '14px',
+                }}
+              />
+
+              {/* Name */}
+              <div style={{
+                fontSize: '15px',
+                fontWeight: '700',
+                color: '#1d1d1f',
+                marginBottom: '6px',
+                lineHeight: '1.3',
+              }}>
+                {car.name}
+              </div>
+
+              {/* Brand badge */}
+              <div style={{
+                display: 'inline-block',
+                background: '#f5f5f7',
+                borderRadius: '20px',
+                padding: '3px 10px',
+                fontSize: '11px',
+                fontWeight: '600',
+                color: '#6e6e73',
+                marginBottom: '10px',
+              }}>
+                {car.brand}
+              </div>
+
+              {/* Price */}
+              <div style={{
+                fontSize: '20px',
+                fontWeight: '800',
+                color: '#e8531a',
+              }}>
+                Rs.{car.ex_showroom_price?.toLocaleString()}
+              </div>
+              <div style={{
+                fontSize: '12px',
+                color: '#6e6e73',
+                marginTop: '2px',
+              }}>
+                On-road: Rs.{car.on_road_price?.toLocaleString()}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Specs table below */}
+        <div style={{
+          background: 'white',
+          borderRadius: '16px',
+          border: '1px solid #e5e5e5',
+          overflow: 'hidden',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+          marginBottom: '32px',
+        }}>
+          {/* Table header */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: `160px repeat(${compareList.length}, 1fr)`,
+            background: '#e8531a',
+            padding: '12px 0',
+          }}>
+            <div style={{
+              padding: '0 16px',
+              fontSize: '12px',
+              fontWeight: '700',
+              color: 'white',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px',
+            }}>
+              Spec
+            </div>
+            {compareList.map(car => (
+              <div key={car.id} style={{
+                padding: '0 16px',
+                fontSize: '13px',
+                fontWeight: '700',
+                color: 'white',
+                textAlign: 'center',
+                borderLeft: '1px solid rgba(255,255,255,0.2)',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}>
+                {car.name.split(' ').slice(0,2).join(' ')}
               </div>
             ))}
           </div>
-        )}
 
-        {/* Suggestions - same for both */}
+          {/* Spec rows */}
+          {specs.map((spec, i) => (
+            <div key={spec.key} style={{
+              display: 'grid',
+              gridTemplateColumns: `160px repeat(${compareList.length}, 1fr)`,
+              background: i % 2 === 0 ? 'white' : '#fafafa',
+              borderBottom: '1px solid #f0f0f0',
+            }}>
+              <div style={{
+                padding: '14px 16px',
+                fontSize: '13px',
+                fontWeight: '600',
+                color: '#6e6e73',
+                background: '#f5f5f7',
+                borderRight: '1px solid #e5e5e5',
+                display: 'flex',
+                alignItems: 'center',
+              }}>
+                {spec.label}
+              </div>
+              {compareList.map(car => (
+                <div key={car.id} style={{
+                  padding: '14px 16px',
+                  fontSize: '14px',
+                  fontWeight: spec.highlight ? '700' : '400',
+                  color: spec.highlight ? '#e8531a' : '#1d1d1f',
+                  textAlign: 'center',
+                  borderLeft: '1px solid #f0f0f0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  {spec.format(car[spec.key as keyof typeof car] as any)}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        {/* Suggestions */}
         {suggestions.length > 0 && (
-          <div style={{ marginTop: '32px' }}>
+          <div>
             <h2 style={{
-              fontSize: isMobile ? '16px' : '20px',
+              fontSize: '18px',
               fontWeight: '700',
               color: '#1d1d1f',
               marginBottom: '16px',
@@ -413,9 +327,7 @@ const Compare = () => {
             </h2>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: isMobile 
-                ? 'repeat(2, 1fr)' 
-                : 'repeat(auto-fill, minmax(180px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
               gap: '12px',
             }}>
               {suggestions.map(car => (
@@ -423,26 +335,27 @@ const Compare = () => {
                   background: 'white',
                   borderRadius: '12px',
                   border: '1px solid #e5e5e5',
-                  padding: '12px',
+                  padding: '14px',
                   textAlign: 'center',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
                 }}>
                   <img
-                    src={car.images?.[0] || 'https://placehold.co/200x120/f5f5f7/999?text=Car'}
+                    src={car.images?.[0] || 
+                      'https://placehold.co/200x120/f5f5f7/999?text=Car'}
                     alt={car.name}
                     style={{
                       width: '100%',
-                      height: '70px',
+                      height: '80px',
                       objectFit: 'contain',
                       background: '#f5f5f7',
                       borderRadius: '8px',
+                      marginBottom: '8px',
                     }}
                   />
                   <div style={{
                     fontSize: '12px',
                     fontWeight: '600',
                     color: '#1d1d1f',
-                    marginTop: '8px',
                     marginBottom: '2px',
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -453,8 +366,8 @@ const Compare = () => {
                   <div style={{
                     fontSize: '12px',
                     color: '#e8531a',
-                    fontWeight: '600',
-                    marginBottom: '8px',
+                    fontWeight: '700',
+                    marginBottom: '10px',
                   }}>
                     Rs.{car.ex_showroom_price?.toLocaleString()}
                   </div>
@@ -465,14 +378,14 @@ const Compare = () => {
                       border: '1px solid #e8531a',
                       color: '#e8531a',
                       borderRadius: '8px',
-                      padding: '5px 10px',
+                      padding: '6px 10px',
                       fontSize: '11px',
                       fontWeight: '600',
                       cursor: 'pointer',
                       width: '100%',
                     }}
                   >
-                    + Add
+                    + Add to Compare
                   </button>
                 </div>
               ))}
