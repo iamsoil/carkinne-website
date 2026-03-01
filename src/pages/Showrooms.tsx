@@ -199,16 +199,33 @@ const Showrooms = () => {
     <div style={{
       display: 'flex',
       flexDirection: isMobile ? 'column' : 'row',
-      height: isMobile ? 'auto' : 'calc(100vh - 64px)',
-      minHeight: isMobile ? '100vh' : undefined,
-      overflow: isMobile ? 'auto' : 'hidden',
+      height: 'calc(100vh - 64px)',
+      overflow: 'hidden',
     }}>
-      {/* LEFT PANEL */}
+
+      {/* MAP - top on mobile, right on desktop */}
+      <div style={{
+        position: isMobile ? 'sticky' : 'relative',
+        top: isMobile ? 0 : undefined,
+        zIndex: isMobile ? 10 : undefined,
+        flex: isMobile ? 'unset' : 1,
+        height: isMobile ? '280px' : '100%',
+        width: isMobile ? '100%' : undefined,
+        flexShrink: 0,
+        order: isMobile ? 1 : 2,
+      }}>
+        <div id="showrooms-map"
+          style={{ width: '100%', height: '100%' }}
+        />
+      </div>
+
+      {/* LEFT PANEL - bottom on mobile, left on desktop */}
       <div style={{
         width: isMobile ? '100%' : '380px',
         minWidth: isMobile ? 'unset' : '380px',
-        height: isMobile ? 'auto' : '100%',
-        overflowY: isMobile ? 'visible' : 'auto',
+        flex: isMobile ? 1 : undefined,
+        height: isMobile ? 'calc(100vh - 64px - 280px)' : '100%',
+        overflowY: 'auto',
         borderRight: isMobile ? 'none' : '1px solid #e5e5e5',
         borderTop: isMobile ? '1px solid #e5e5e5' : 'none',
         display: 'flex',
@@ -216,17 +233,18 @@ const Showrooms = () => {
         background: 'white',
         order: isMobile ? 2 : 1,
       }}>
-        {/* Sticky header */}
+
+        {/* Sticky filters header */}
         <div style={{
-          position: isMobile ? 'relative' : 'sticky',
-          top: isMobile ? 'auto' : 0,
+          position: 'sticky',
+          top: 0,
           background: 'white',
           zIndex: 10,
-          padding: '20px 16px 12px',
+          padding: '14px 16px 10px',
           borderBottom: '1px solid #f0f0f0',
         }}>
           <h1 style={{
-            fontSize: '20px',
+            fontSize: isMobile ? '16px' : '20px',
             fontWeight: 700,
             color: '#1d1d1f',
             margin: 0,
@@ -234,7 +252,7 @@ const Showrooms = () => {
             Car Showrooms in Nepal
           </h1>
           <p style={{
-            fontSize: '13px',
+            fontSize: '12px',
             color: '#6e6e73',
             marginTop: '2px',
             marginBottom: 0,
@@ -250,8 +268,8 @@ const Showrooms = () => {
               border: '1px solid #d2d2d7',
               borderRadius: '8px',
               padding: '8px 12px',
-              fontSize: '14px',
-              marginTop: '12px',
+              fontSize: '13px',
+              marginTop: '10px',
               boxSizing: 'border-box',
               outline: 'none',
             }}
@@ -259,59 +277,63 @@ const Showrooms = () => {
             onChange={e => setSearchQuery(e.target.value)}
           />
 
-          <select
-            style={{
-              width: '100%',
-              border: '1px solid #d2d2d7',
-              borderRadius: '8px',
-              padding: '8px 12px',
-              fontSize: '14px',
-              marginTop: '8px',
-              boxSizing: 'border-box',
-              background: 'white',
-              outline: 'none',
-            }}
-            value={selectedBrand}
-            onChange={e => setSelectedBrand(e.target.value)}
-          >
-            {brands.map(b => (
-              <option key={b} value={b}>{b}</option>
-            ))}
-          </select>
+          <div style={{
+            display: 'flex',
+            gap: '8px',
+            marginTop: '8px',
+          }}>
+            <select
+              style={{
+                flex: 1,
+                border: '1px solid #d2d2d7',
+                borderRadius: '8px',
+                padding: '8px 10px',
+                fontSize: '13px',
+                boxSizing: 'border-box',
+                background: 'white',
+                outline: 'none',
+              }}
+              value={selectedBrand}
+              onChange={e => setSelectedBrand(e.target.value)}
+            >
+              {brands.map(b => (
+                <option key={b} value={b}>{b}</option>
+              ))}
+            </select>
 
-          <select
-            style={{
-              width: '100%',
-              border: '1px solid #d2d2d7',
-              borderRadius: '8px',
-              padding: '8px 12px',
-              fontSize: '14px',
-              marginTop: '8px',
-              boxSizing: 'border-box',
-              background: 'white',
-              outline: 'none',
-            }}
-            value={selectedCity}
-            onChange={e => setSelectedCity(e.target.value)}
-          >
-            {cities.map(city => (
-              <option key={city} value={city}>{city}</option>
-            ))}
-          </select>
+            <select
+              style={{
+                flex: 1,
+                border: '1px solid #d2d2d7',
+                borderRadius: '8px',
+                padding: '8px 10px',
+                fontSize: '13px',
+                boxSizing: 'border-box',
+                background: 'white',
+                outline: 'none',
+              }}
+              value={selectedCity}
+              onChange={e => setSelectedCity(e.target.value)}
+            >
+              {cities.map(city => (
+                <option key={city} value={city}>{city}</option>
+              ))}
+            </select>
+          </div>
 
           <p style={{
             fontSize: '12px',
             color: '#6e6e73',
-            padding: '8px 0 0',
+            padding: '6px 0 0',
             margin: 0,
           }}>
-            {loading ? 'Loading...' : 
+            {loading ? 'Loading...' :
               `${filteredShowrooms.length} showrooms found`}
           </p>
         </div>
 
-        {/* List */}
-        <div>
+        {/* Scrollable list only */}
+        <div style={{ flex: 1, overflowY: 'auto' }}>
           {loading ? (
             <div style={{
               padding: '40px 20px',
@@ -366,7 +388,7 @@ const Showrooms = () => {
                     color: isActive ? 'white'
                       : isHovered ? '#e8531a' : '#999',
                   }}>
-                    <svg width="16" height="16" 
+                    <svg width="16" height="16"
                       viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                     </svg>
@@ -410,18 +432,6 @@ const Showrooms = () => {
             })
           )}
         </div>
-      </div>
-
-      {/* MAP */}
-      <div style={{
-        flex: isMobile ? 'unset' : 1,
-        height: isMobile ? '350px' : '100%',
-        position: 'relative',
-        order: isMobile ? 1 : 2,
-      }}>
-        <div id="showrooms-map" 
-          style={{ width: '100%', height: '100%' }} 
-        />
       </div>
     </div>
   )
