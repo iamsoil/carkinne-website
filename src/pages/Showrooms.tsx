@@ -1,136 +1,42 @@
-import { useState, useEffect, useRef } from 'react'
-import { MapPin, Phone, Clock, Search, MessageCircle } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+"use client";
+
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { useState, useEffect, useRef } from 'react'
+import { supabase } from '@/lib/supabase'
 
-// Fix default marker icon
+// Fix default marker icons
 delete (L.Icon.Default.prototype as any)._getIconUrl
-L.Icon.Default.mergeOptions({ iconUrl: '', shadowUrl: '' })
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: '',
+  iconUrl: '',
+  shadowUrl: '',
+})
 
 const Showrooms = () => {
-  const [selectedCity, setSelectedCity] = useState('All')
-  const [selectedBrand, setSelectedBrand] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
-  const [showrooms, setShowrooms] = useState<any[]>([])
+  const [selectedCity, setSelectedCity] = useState('All Cities')
+  const [selectedBrand, setSelectedBrand] = useState('All Brands')
   const [selectedShowroom, setSelectedShowroom] = useState<any>(null)
-  const [hoveredShowroom, setHoveredShowroom] = useState<any>(null)
+  const [hoveredShowroom, setHoveredShowroom] = useState<string|null>(null)
+  const [showrooms, setShowrooms] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const mapRef = useRef<L.Map | null>(null)
   const markersRef = useRef<{[key: string]: L.Marker}>({})
 
-  const cities = ['All', 'Kathmandu', 'Lalitpur', 'Bhaktapur',
-    'Pokhara', 'Biratnagar', 'Butwal', 'Chitwan', 'Dharan']
-  const brands = ['All', 'Toyota', 'Hyundai', 'Kia', 'Suzuki',
-    'Honda', 'MG', 'Tata', 'BYD', 'Mahindra', 'Nissan']
+  const cities = [
+    'All Cities', 'Kathmandu', 'Lalitpur', 'Bhaktapur',
+    'Pokhara', 'Biratnagar', 'Butwal', 'Chitwan', 'Dharan'
+  ]
+
+  const brands = [
+    'All Brands', 'Toyota', 'Hyundai', 'Kia', 'Suzuki',
+    'Honda', 'MG', 'Tata', 'BYD', 'Mahindra', 'Nissan'
+  ]
 
   useEffect(() => {
     fetchShowrooms()
   }, [])
-
-  useEffect(() => {
-    if (showrooms.length === 0) return
-    if (mapRef.current) return
-
-    const map = L.map('showrooms-map', {
-      center: [27.7172, 85.3240],
-      zoom: 12,
-    })
-
-    L.tileLayer(
-      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      { attribution: '© OpenStreetMap contributors', maxZoom: 19 }
-    ).addTo(map)
-
-    // Add markers for all showrooms
-    showrooms.forEach(showroom => {
-      if (!showroom.lat || !showroom.lng) return
-
-      const icon = L.divIcon({
-        className: '',
-        html: `<div style="
-  width: 28px;
-  height: 36px;
-  position: relative;
-">
-  <svg 
-    viewBox="0 0 24 32" 
-    width="28" 
-    height="36"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path 
-      d="M12 0C7.6 0 4 3.6 4 8c0 6 8 16 8 16s8-10 8-16c0-4.4-3.6-8-8-8z" 
-      fill="#e8531a" 
-      stroke="white" 
-      stroke-width="1.5"
-    />
-    <circle cx="12" cy="8" r="3" fill="white"/>
-  </svg>
-</div>`,
-        iconSize: [28, 36],
-        iconAnchor: [14, 36],
-        popupAnchor: [0, -38],
-      })
-
-      const waLink = showroom.whatsapp
-        ? `https://wa.me/${showroom.whatsapp.replace(/[^0-9]/g, '')}`
-        : null
-
-      const mapsLink = showroom.google_maps_url ||
-        `https://maps.google.com/?q=${encodeURIComponent(showroom.name + ' ' + showroom.city + ' Nepal')}`
-
-      const marker = L.marker([showroom.lat, showroom.lng], { icon })
-        .addTo(map)
-        .bindPopup(`
-          <div style="min-width:210px;font-family:sans-serif;padding:4px">
-            <div style="font-size:14px;font-weight:700;color:#1d1d1f;
-              margin-bottom:4px">
-              ${showroom.name}
-            </div>
-            <div style="font-size:11px;color:#e8531a;font-weight:700;
-              margin-bottom:6px;text-transform:uppercase">
-              ${showroom.brand}
-            </div>
-            <div style="font-size:12px;color:#6e6e73;margin-bottom:3px">
-              📍 ${showroom.address}
-            </div>
-            ${showroom.phone ? `
-            <div style="font-size:12px;color:#6e6e73;margin-bottom:3px">
-              📞 ${showroom.phone}
-            </div>` : ''}
-            ${showroom.working_hours ? `
-            <div style="font-size:12px;color:#6e6e73;margin-bottom:10px">
-              🕐 ${showroom.working_hours}
-            </div>` : ''}
-            <div style="display:flex;gap:6px;margin-top:8px">
-              <a href="${mapsLink}" target="_blank"
-                style="flex:1;display:block;background:#e8531a;color:white;
-                  padding:6px 8px;border-radius:6px;font-size:11px;
-                  text-decoration:none;font-weight:600;text-align:center">
-                📍 Directions
-              </a>
-              ${waLink ? `
-              <a href="${waLink}" target="_blank"
-                style="flex:1;display:block;background:#25D366;color:white;
-                  padding:6px 8px;border-radius:6px;font-size:11px;
-                  text-decoration:none;font-weight:600;text-align:center">
-                💬 WhatsApp
-              </a>` : ''}
-            </div>
-          </div>
-        `, { maxWidth: 240 })
-
-      markersRef.current[showroom.id] = marker
-    })
-
-    mapRef.current = map
-
-    return () => {
-      map.remove()
-      mapRef.current = null
-    }
-  }, [showrooms])
 
   const fetchShowrooms = async () => {
     try {
@@ -148,40 +54,149 @@ const Showrooms = () => {
     }
   }
 
+  const filteredShowrooms = showrooms.filter(s => {
+    const matchesSearch =
+      s.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.address?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.brand?.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesCity =
+      selectedCity === 'All Cities' || s.city === selectedCity
+    const matchesBrand =
+      selectedBrand === 'All Brands' || s.brand === selectedBrand
+    return matchesSearch && matchesCity && matchesBrand
+  })
+
+  const createOrangeIcon = () => L.divIcon({
+    className: 'custom-showroom-marker',
+    html: `<div style="
+      position: relative;
+      width: 28px;
+      height: 28px;
+    ">
+      <div style="
+        width: 28px;
+        height: 28px;
+        background: #e8531a;
+        border-radius: 50% 50% 50% 0;
+        transform: rotate(-45deg);
+        border: 2px solid white;
+        box-shadow: 0 2px 6px rgba(232,83,26,0.4);
+      "></div>
+      <span style="
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -60%);
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        pointer-events: none;
+      ">🏢</span>
+    </div>`,
+    iconSize: [28, 28],
+    iconAnchor: [14, 28],
+    popupAnchor: [0, -30],
+  })
+
   const handleShowroomClick = (showroom: any) => {
     setSelectedShowroom(showroom)
-    
-    if (!showroom.lat || !showroom.lng) return
-    
-    if (!mapRef.current) return
-
-    mapRef.current.flyTo(
-      [showroom.lat, showroom.lng], 
-      17,
-      { animate: true, duration: 1 }
-    )
-
-    setTimeout(() => {
-      const marker = markersRef.current[showroom.id]
-      if (marker) marker.openPopup()
-    }, 1100)
+    if (mapRef.current && showroom.lat && showroom.lng) {
+      mapRef.current.flyTo(
+        [showroom.lat, showroom.lng],
+        16,
+        { animate: true, duration: 1 }
+      )
+      markersRef.current[showroom.id]?.openPopup()
+    }
   }
 
-  const filteredShowrooms = showrooms.filter(s => {
-    const cityMatch = selectedCity === 'All' || s.city === selectedCity
-    const brandMatch = selectedBrand === 'All' || s.brand === selectedBrand
-    const searchMatch = !searchQuery ||
-      s.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.brand?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.address?.toLowerCase().includes(searchQuery.toLowerCase())
-    return cityMatch && brandMatch && searchMatch
-  })
+  useEffect(() => {
+    if (mapRef.current) return
+    if (showrooms.length === 0) return
+
+    const map = L.map('showrooms-map', {
+      center: [27.7172, 85.3240],
+      zoom: 12,
+    })
+
+    L.tileLayer(
+      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+      {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19,
+      }
+    ).addTo(map)
+
+    mapRef.current = map
+
+    showrooms.forEach(showroom => {
+      if (!showroom.lat || !showroom.lng) return
+
+      const waLink = showroom.whatsapp
+        ? `https://wa.me/${showroom.whatsapp.replace(/[^0-9]/g, '')}`
+        : null
+
+      const mapsLink = showroom.google_maps_url ||
+        `https://maps.google.com/?q=${encodeURIComponent(showroom.name + ' Nepal')}`
+
+      const marker = L.marker(
+        [showroom.lat, showroom.lng],
+        { icon: createOrangeIcon() }
+      ).addTo(map)
+        .bindPopup(`
+          <div style="min-width:200px;font-family:sans-serif">
+            <div style="font-size:13px;font-weight:700;color:#1d1d1f">
+              ${showroom.name}
+            </div>
+            <div style="font-size:11px;color:#e8531a;font-weight:700;
+              margin-top:2px;margin-bottom:6px;text-transform:uppercase">
+              ${showroom.brand}
+            </div>
+            <div style="font-size:11px;color:#6e6e73;margin-bottom:2px">
+              📍 ${showroom.address}
+            </div>
+            ${showroom.phone ? `
+            <div style="font-size:11px;color:#6e6e73;margin-bottom:2px">
+              📞 ${showroom.phone}
+            </div>` : ''}
+            ${showroom.working_hours ? `
+            <div style="font-size:11px;color:#6e6e73;margin-bottom:8px">
+              🕐 ${showroom.working_hours}
+            </div>` : ''}
+            <div style="display:flex;gap:6px;margin-top:8px">
+              <a href="${mapsLink}" target="_blank"
+                style="flex:1;display:block;text-align:center;
+                  background:#e8531a;color:white;padding:5px 8px;
+                  border-radius:6px;font-size:11px;text-decoration:none;
+                  font-weight:600">
+                📍 Directions
+              </a>
+              ${waLink ? `
+              <a href="${waLink}" target="_blank"
+                style="flex:1;display:block;text-align:center;
+                  background:#25D366;color:white;padding:5px 8px;
+                  border-radius:6px;font-size:11px;text-decoration:none;
+                  font-weight:600">
+                💬 WhatsApp
+              </a>` : ''}
+            </div>
+          </div>
+        `)
+
+      markersRef.current[showroom.id] = marker
+    })
+
+    return () => {
+      map.remove()
+      mapRef.current = null
+    }
+  }, [showrooms])
 
   return (
     <div style={{
       display: 'flex',
       height: 'calc(100vh - 64px)',
-      overflow: 'hidden',
+      overflow: 'hidden'
     }}>
 
       {/* LEFT PANEL */}
@@ -191,9 +206,9 @@ const Showrooms = () => {
         height: '100%',
         overflowY: 'auto',
         borderRight: '1px solid #e5e5e5',
-        background: 'white',
         display: 'flex',
         flexDirection: 'column',
+        background: 'white',
       }}>
 
         {/* Sticky header */}
@@ -207,119 +222,96 @@ const Showrooms = () => {
         }}>
           <h1 style={{
             fontSize: '20px',
-            fontWeight: '700',
+            fontWeight: 700,
             color: '#1d1d1f',
-            margin: '0 0 2px',
+            margin: 0,
           }}>
             Car Showrooms in Nepal
           </h1>
           <p style={{
             fontSize: '13px',
             color: '#6e6e73',
-            margin: '0 0 12px',
+            marginTop: '2px',
+            marginBottom: 0,
           }}>
             Find authorized dealers near you
           </p>
 
-          {/* Search */}
-          <div style={{ position: 'relative', marginBottom: '8px' }}>
-            <Search size={14} style={{
-              position: 'absolute',
-              left: '10px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              color: '#999',
-              pointerEvents: 'none',
-            }} />
-            <input
-              type="text"
-              placeholder="Search showrooms..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '8px 12px 8px 32px',
-                border: '1px solid #d2d2d7',
-                borderRadius: '8px',
-                fontSize: '13px',
-                outline: 'none',
-                boxSizing: 'border-box',
-              }}
-            />
-          </div>
-
-          {/* Brand filter */}
-          <select
-            value={selectedBrand}
-            onChange={e => setSelectedBrand(e.target.value)}
+          <input
+            type="text"
+            placeholder="Search showrooms..."
             style={{
               width: '100%',
-              padding: '8px 12px',
               border: '1px solid #d2d2d7',
               borderRadius: '8px',
-              fontSize: '13px',
-              outline: 'none',
-              background: 'white',
-              marginBottom: '8px',
+              padding: '8px 12px',
+              fontSize: '14px',
+              marginTop: '12px',
               boxSizing: 'border-box',
+              outline: 'none',
             }}
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+          />
+
+          <select
+            style={{
+              width: '100%',
+              border: '1px solid #d2d2d7',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              fontSize: '14px',
+              marginTop: '8px',
+              boxSizing: 'border-box',
+              background: 'white',
+              outline: 'none',
+            }}
+            value={selectedBrand}
+            onChange={e => setSelectedBrand(e.target.value)}
           >
             {brands.map(b => (
-              <option key={b} value={b}>
-                {b === 'All' ? 'All Brands' : b}
-              </option>
+              <option key={b} value={b}>{b}</option>
             ))}
           </select>
 
-          {/* City pills */}
-          <div style={{
-            display: 'flex',
-            gap: '6px',
-            overflowX: 'auto',
-            paddingBottom: '6px',
-          }}>
+          <select
+            style={{
+              width: '100%',
+              border: '1px solid #d2d2d7',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              fontSize: '14px',
+              marginTop: '8px',
+              boxSizing: 'border-box',
+              background: 'white',
+              outline: 'none',
+            }}
+            value={selectedCity}
+            onChange={e => setSelectedCity(e.target.value)}
+          >
             {cities.map(city => (
-              <button
-                key={city}
-                onClick={() => setSelectedCity(city)}
-                style={{
-                  padding: '4px 12px',
-                  borderRadius: '20px',
-                  border: '1px solid',
-                  borderColor: selectedCity === city
-                    ? '#e8531a' : '#d2d2d7',
-                  background: selectedCity === city
-                    ? '#fff8f5' : 'white',
-                  color: selectedCity === city
-                    ? '#e8531a' : '#6e6e73',
-                  fontSize: '12px',
-                  fontWeight: selectedCity === city ? '600' : '400',
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  flexShrink: 0,
-                }}
-              >
-                {city}
-              </button>
+              <option key={city} value={city}>{city}</option>
             ))}
-          </div>
+          </select>
 
           <p style={{
             fontSize: '12px',
             color: '#6e6e73',
-            margin: '8px 0 0',
+            padding: '8px 0 0',
+            margin: 0,
           }}>
-            {filteredShowrooms.length} showrooms found
+            {loading ? 'Loading...' : `${filteredShowrooms.length} showrooms found`}
           </p>
         </div>
 
-        {/* List */}
-        <div style={{ flex: 1 }}>
+        {/* Showroom list */}
+        <div>
           {loading ? (
             <div style={{
               padding: '40px 20px',
               textAlign: 'center',
               color: '#999',
+              fontSize: '14px',
             }}>
               Loading showrooms...
             </div>
@@ -328,175 +320,96 @@ const Showrooms = () => {
               padding: '40px 20px',
               textAlign: 'center',
               color: '#999',
+              fontSize: '14px',
             }}>
               No showrooms found.<br />Try different filters.
             </div>
           ) : (
             filteredShowrooms.map(showroom => {
-              const isSelected = selectedShowroom?.id === showroom.id
-              const isHovered = hoveredShowroom?.id === showroom.id
-              const waLink = showroom.whatsapp
-                ? `https://wa.me/${showroom.whatsapp.replace(/[^0-9]/g, '')}`
-                : null
+              const isActive = selectedShowroom?.id === showroom.id
+              const isHovered = hoveredShowroom === showroom.id
 
               return (
                 <div
                   key={showroom.id}
-                  onClick={() => handleShowroomClick(showroom)}
-                  onMouseEnter={() => setHoveredShowroom(showroom)}
-                  onMouseLeave={() => setHoveredShowroom(null)}
                   style={{
-                    padding: '14px 16px',
-                    borderBottom: '1px solid #f5f5f5',
-                    cursor: 'pointer',
-                    background: isSelected || isHovered
-                      ? '#fff8f5' : 'white',
-                    borderLeft: isSelected || isHovered
-                      ? '3px solid #e8531a'
-                      : '3px solid transparent',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  <div style={{
                     display: 'flex',
                     alignItems: 'flex-start',
-                    gap: '12px',
+                    padding: '12px 16px',
+                    borderBottom: '1px solid #f5f5f5',
+                    cursor: 'pointer',
+                    background: isActive || isHovered ? '#fff8f5' : 'white',
+                    borderLeft: (isActive || isHovered)
+                      ? '3px solid #e8531a'
+                      : '3px solid transparent',
+                  }}
+                  onClick={() => handleShowroomClick(showroom)}
+                  onMouseEnter={() => setHoveredShowroom(showroom.id)}
+                  onMouseLeave={() => setHoveredShowroom(null)}
+                >
+                  {/* Icon circle */}
+                  <div style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: '50%',
+                    background: isActive ? '#e8531a' : isHovered ? '#fff0ea' : '#f0f0f0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: 12,
+                    flexShrink: 0,
+                    color: isActive ? 'white' : isHovered ? '#e8531a' : '#999',
+                    fontWeight: '700',
+                    fontSize: '14px',
                   }}>
-                    {/* Brand initial circle */}
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                    </svg>
+                  </div>
+
+                  {/* Info */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{
-                      width: '36px',
-                      height: '36px',
-                      borderRadius: '50%',
-                      background: isSelected ? '#e8531a' : '#f0f0f0',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      fontSize: '14px',
-                      fontWeight: '700',
-                      color: isSelected ? 'white' : '#666',
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: '#1d1d1f',
                     }}>
-                      {showroom.brand?.charAt(0)}
+                      {showroom.name}
                     </div>
-
-                    <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{
+                      fontSize: 11,
+                      color: '#e8531a',
+                      fontWeight: 600,
+                      marginTop: 2,
+                      textTransform: 'uppercase',
+                    }}>
+                      {showroom.brand}
+                    </div>
+                    <div style={{
+                      fontSize: 12,
+                      color: '#6e6e73',
+                      marginTop: 4,
+                    }}>
+                      📍 {showroom.address}
+                    </div>
+                    {showroom.phone && (
                       <div style={{
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        color: '#1d1d1f',
-                        marginBottom: '2px',
-                      }}>
-                        {showroom.name}
-                      </div>
-                      <div style={{
-                        fontSize: '11px',
-                        color: '#e8531a',
-                        fontWeight: '600',
-                        marginBottom: '6px',
-                        textTransform: 'uppercase',
-                      }}>
-                        {showroom.brand}
-                      </div>
-                      <div style={{
-                        fontSize: '12px',
+                        fontSize: 12,
                         color: '#6e6e73',
-                        display: 'flex',
-                        alignItems: 'flex-start',
-                        gap: '4px',
-                        marginBottom: '3px',
+                        marginTop: 2,
                       }}>
-                        <MapPin size={11} style={{ marginTop: '2px', flexShrink: 0 }} />
-                        <span>{showroom.address}</span>
+                        📞 {showroom.phone}
                       </div>
-                      {showroom.phone && (
-                        <div style={{
-                          fontSize: '12px',
-                          color: '#6e6e73',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          marginBottom: '3px',
-                        }}>
-                          <Phone size={11} />
-                          <a
-                            href={`tel:${showroom.phone}`}
-                            onClick={e => e.stopPropagation()}
-                            style={{
-                              color: '#6e6e73',
-                              textDecoration: 'none',
-                            }}
-                          >
-                            {showroom.phone}
-                          </a>
-                        </div>
-                      )}
-                      {showroom.working_hours && (
-                        <div style={{
-                          fontSize: '12px',
-                          color: '#6e6e73',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          marginBottom: '8px',
-                        }}>
-                          <Clock size={11} />
-                          <span>{showroom.working_hours}</span>
-                        </div>
-                      )}
-
-                      {/* Action buttons */}
+                    )}
+                    {showroom.working_hours && (
                       <div style={{
-                        display: 'flex',
-                        gap: '6px',
-                        marginTop: '4px',
+                        fontSize: 12,
+                        color: '#6e6e73',
+                        marginTop: 2,
                       }}>
-                        <a
-                          href={showroom.google_maps_url ||
-                            `https://maps.google.com/?q=${encodeURIComponent(showroom.name + ' Nepal')}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={e => e.stopPropagation()}
-                          style={{
-                            flex: 1,
-                            display: 'block',
-                            textAlign: 'center',
-                            background: '#fff8f5',
-                            border: '1px solid #e8531a',
-                            color: '#e8531a',
-                            borderRadius: '6px',
-                            padding: '5px 8px',
-                            fontSize: '11px',
-                            fontWeight: '600',
-                            textDecoration: 'none',
-                          }}
-                        >
-                          📍 Directions
-                        </a>
-                        {waLink && (
-                          <a
-                            href={waLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={e => e.stopPropagation()}
-                            style={{
-                              flex: 1,
-                              display: 'block',
-                              textAlign: 'center',
-                              background: '#f0fdf4',
-                              border: '1px solid #25D366',
-                              color: '#25D366',
-                              borderRadius: '6px',
-                              padding: '5px 8px',
-                              fontSize: '11px',
-                              fontWeight: '600',
-                              textDecoration: 'none',
-                            }}
-                          >
-                            💬 WhatsApp
-                          </a>
-                        )}
+                        🕐 {showroom.working_hours}
                       </div>
-                    </div>
+                    )}
                   </div>
                 </div>
               )
@@ -505,8 +418,12 @@ const Showrooms = () => {
         </div>
       </div>
 
-      {/* MAP */}
-      <div style={{ flex: 1, height: '100%' }}>
+      {/* RIGHT PANEL - MAP */}
+      <div style={{
+        flex: 1,
+        height: '100%',
+        position: 'relative',
+      }}>
         <div
           id="showrooms-map"
           style={{ width: '100%', height: '100%' }}
