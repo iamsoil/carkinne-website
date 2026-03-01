@@ -1,7 +1,5 @@
-"use client";
-
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Filter, Grid, List, ChevronDown, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,9 +15,11 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import CarCard from '@/components/CarCard';
 import { supabase } from '@/lib/supabase';
+import { useCompare } from '@/contexts/CompareContext';
 
 const Cars = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const searchFromUrl = searchParams.get('search') || '';
   const [cars, setCars] = useState<any[]>([]);
   const [filteredCars, setFilteredCars] = useState<any[]>([]);
@@ -33,6 +33,7 @@ const Cars = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { addToCompare, removeFromCompare, isInCompare } = useCompare();
 
   useEffect(() => {
     fetchCars();
@@ -396,8 +397,20 @@ const Cars = () => {
                       <Button className="bg-foreground text-white hover:bg-accent rounded-lg">
                         View Details
                       </Button>
-                      <Button variant="outline" className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg">
-                        Compare
+                      <Button 
+                        variant="outline"
+                        onClick={() => isInCompare(car.id) 
+                          ? removeFromCompare(car.id) 
+                          : addToCompare(car)
+                        }
+                        className="border rounded-lg"
+                        style={{
+                          borderColor: isInCompare(car.id) ? '#e8531a' : undefined,
+                          background: isInCompare(car.id) ? '#fff8f5' : undefined,
+                          color: isInCompare(car.id) ? '#e8531a' : undefined,
+                        }}
+                      >
+                        {isInCompare(car.id) ? '✓ Added' : 'Compare'}
                       </Button>
                     </div>
                   </div>
