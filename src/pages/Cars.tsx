@@ -36,6 +36,10 @@ const Cars = () => {
   const { addToCompare, removeFromCompare, isInCompare } = useCompare();
 
   useEffect(() => {
+    setSearchQuery(searchFromUrl);
+  }, [searchFromUrl]);
+
+  useEffect(() => {
     fetchCars();
   }, []);
 
@@ -50,11 +54,6 @@ const Cars = () => {
         .from('cars')
         .select('*')
         .order('created_at', { ascending: false });
-
-      // Apply search filter if present
-      if (searchFromUrl) {
-        query = query.or(`name.ilike.%${searchFromUrl}%,brand.ilike.%${searchFromUrl}%`);
-      }
 
       const { data, error } = await query;
 
