@@ -77,16 +77,20 @@ const Showrooms = () => {
         border: 2px solid white;
         box-shadow: 0 2px 6px rgba(232,83,26,0.4);
       "></div>
-      <span style="
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -60%);
-        color: white;
-        font-size: 12px;
-        font-weight: bold;
-        pointer-events: none;
-      ">🏢</span>
+      <svg style="
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  pointer-events: none;
+" width="13" height="13" viewBox="0 0 24 24" 
+  fill="white" xmlns="http://www.w3.org/2000/svg">
+  <path d="M17 2H7C5.9 2 5 2.9 5 4v16c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-5 2c.83 0 1.5.67 1.5 1.5S12.83 7 12 7s-1.5-.67-1.5-1.5S11.17 4 12 4zm5 16H7V4h2v1c0 1.1.9 2 2 2h2c1.1 0 2-.9 2-2V4h2v16z"/>
+  <rect x="9" y="10" width="2" height="2" fill="white"/>
+  <rect x="13" y="10" width="2" height="2" fill="white"/>
+  <rect x="9" y="14" width="2" height="2" fill="white"/>
+  <rect x="13" y="14" width="2" height="2" fill="white"/>
+</svg>
     </div>`,
     iconSize: [28, 28],
     iconAnchor: [14, 28],
