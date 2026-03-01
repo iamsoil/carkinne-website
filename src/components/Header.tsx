@@ -9,7 +9,9 @@ import { supabase } from '@/lib/supabase';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [showAnnouncement, setShowAnnouncement] = useState(true);
+  const [showAnnouncement, setShowAnnouncement] = useState(() => {
+    return localStorage.getItem('announcement_dismissed') !== 'true'
+  });
   const [announcement, setAnnouncement] = useState<any>(null);
   const location = useLocation();
 
@@ -80,7 +82,10 @@ const Header = () => {
                 )}
                 <button 
                   className="hover:opacity-70 transition-opacity"
-                  onClick={() => setShowAnnouncement(false)}
+                  onClick={() => {
+                    setShowAnnouncement(false)
+                    localStorage.setItem('announcement_dismissed', 'true')
+                  }}
                 >
                   <X className="h-4 w-4" />
                 </button>
