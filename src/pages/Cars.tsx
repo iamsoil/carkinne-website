@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Filter, Grid, List, ChevronDown, SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,9 +19,11 @@ import CarCard from '@/components/CarCard';
 import { supabase } from '@/lib/supabase';
 
 const Cars = () => {
+  const [searchParams] = useSearchParams();
+  const searchFromUrl = searchParams.get('search') || '';
   const [cars, setCars] = useState<any[]>([]);
   const [filteredCars, setFilteredCars] = useState<any[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(searchFromUrl);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 15000000]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
@@ -42,10 +45,17 @@ const Cars = () => {
   const fetchCars = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      let query = supabase
         .from('cars')
         .select('*')
         .order('created_at', { ascending: false });
+
+      // Apply search filter if present
+      if (searchFromUrl) {
+        query = query.or(`name.ilike.%${searchFromUrl}%,brand.ilike.%${searchFromUrl}%`);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       
@@ -84,7 +94,7 @@ const Cars = () => {
     
     // Category filter
     if (selectedCategories.length > 0) {
-      result = result.filter(car => selectedCategories.includes(car.category));
+      result = result.filter(car => selectedCategories.includes(car.category || 'SUV'));
     }
     
     // Fuel type filter
