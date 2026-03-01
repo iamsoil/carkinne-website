@@ -30,6 +30,7 @@ import EvCars from "./pages/EvCars";
 import About from "./pages/About";
 import Advertise from "./pages/Advertise";
 import EvCharging from './pages/EvCharging';
+import CompareBar from './components/CompareBar';
 
 const queryClient = new QueryClient();
 
@@ -76,6 +77,7 @@ const App = () => (
               </Routes>
             </main>
             <Footer />
+            <CompareBar />
           </div>
         </BrowserRouter>
       </TooltipProvider>
