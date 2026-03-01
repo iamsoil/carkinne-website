@@ -573,7 +573,7 @@ const About = () => {
               fontSize: '14px',
               textDecoration: 'none',
             }}>
-              ✉️ Send Email
+               Send Email
             </a>
             <Link to="/advertise" style={{
               background: '#e8531a',
@@ -584,7 +584,7 @@ const About = () => {
               fontSize: '14px',
               textDecoration: 'none',
             }}>
-              📢 Advertise With Us
+               Advertise With Us
             </Link>
           </div>
         </div>
