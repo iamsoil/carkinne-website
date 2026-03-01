@@ -20,8 +20,15 @@ const Showrooms = () => {
   const [hoveredShowroom, setHoveredShowroom] = useState<string|null>(null)
   const [showrooms, setShowrooms] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const mapRef = useRef<L.Map | null>(null)
   const markersRef = useRef<{[key: string]: L.Marker}>({})
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const cities = ['All Cities', 'Kathmandu', 'Lalitpur', 
     'Bhaktapur', 'Pokhara', 'Biratnagar', 'Butwal', 
@@ -191,24 +198,28 @@ const Showrooms = () => {
   return (
     <div style={{
       display: 'flex',
-      height: 'calc(100vh - 64px)',
-      overflow: 'hidden'
+      flexDirection: isMobile ? 'column' : 'row',
+      height: isMobile ? 'auto' : 'calc(100vh - 64px)',
+      minHeight: isMobile ? '100vh' : undefined,
+      overflow: isMobile ? 'auto' : 'hidden',
     }}>
       {/* LEFT PANEL */}
       <div style={{
-        width: '380px',
-        minWidth: '380px',
-        height: '100%',
-        overflowY: 'auto',
-        borderRight: '1px solid #e5e5e5',
+        width: isMobile ? '100%' : '380px',
+        minWidth: isMobile ? 'unset' : '380px',
+        height: isMobile ? 'auto' : '100%',
+        overflowY: isMobile ? 'visible' : 'auto',
+        borderRight: isMobile ? 'none' : '1px solid #e5e5e5',
+        borderTop: isMobile ? '1px solid #e5e5e5' : 'none',
         display: 'flex',
         flexDirection: 'column',
         background: 'white',
+        order: isMobile ? 2 : 1,
       }}>
         {/* Sticky header */}
         <div style={{
-          position: 'sticky',
-          top: 0,
+          position: isMobile ? 'relative' : 'sticky',
+          top: isMobile ? 'auto' : 0,
           background: 'white',
           zIndex: 10,
           padding: '20px 16px 12px',
@@ -402,7 +413,12 @@ const Showrooms = () => {
       </div>
 
       {/* MAP */}
-      <div style={{ flex: 1, height: '100%', position: 'relative' }}>
+      <div style={{
+        flex: isMobile ? 'unset' : 1,
+        height: isMobile ? '350px' : '100%',
+        position: 'relative',
+        order: isMobile ? 1 : 2,
+      }}>
         <div id="showrooms-map" 
           style={{ width: '100%', height: '100%' }} 
         />
