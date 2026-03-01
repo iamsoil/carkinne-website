@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Menu, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
 const Header = () => {
@@ -14,9 +14,36 @@ const Header = () => {
   });
   const [announcement, setAnnouncement] = useState<any>(null);
   const location = useLocation();
+  const navigate = useNavigate();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchRef = useRef<HTMLInputElement>(null);
 
   // Hide header on admin pages
   if (location.pathname.startsWith('/admin')) return null;
+
+  // Focus input when opened
+  useEffect(() => {
+    if (searchOpen && searchRef.current) {
+      searchRef.current.focus();
+    }
+  }, [searchOpen]);
+
+  // Close search when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const header = document.querySelector('header');
+      if (header && !header.contains(e.target as Node)) {
+        setSearchOpen(false);
+      }
+    };
+    if (searchOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [searchOpen]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,6 +71,22 @@ const Header = () => {
       }
     } catch (error) {
       console.error('Error fetching announcement:', error);
+    }
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/cars?search=${encodeURIComponent(searchQuery)}`);
+      setSearchOpen(false);
+      setSearchQuery('');
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setSearchOpen(false);
+      setSearchQuery('');
     }
   };
 
@@ -83,8 +126,8 @@ const Header = () => {
                 <button 
                   className="hover:opacity-70 transition-opacity"
                   onClick={() => {
-                    setShowAnnouncement(false)
-                    localStorage.setItem('announcement_dismissed', 'true')
+                    setShowAnnouncement(false);
+                    localStorage.setItem('announcement_dismissed', 'true');
                   }}
                 >
                   <X className="h-4 w-4" />
@@ -121,22 +164,91 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Mobile Menu Button */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="md:hidden text-foreground hover:text-white"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
-            <span className="sr-only">Toggle menu</span>
-          </Button>
+          {/* Right Icons */}
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setSearchOpen(!searchOpen)}
+              className="p-2 rounded-full hover:bg-gray-100 transition-colors text-[#1d1d1f]"
+              aria-label="Search"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+            
+            {/* Mobile Menu Button */}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="md:hidden text-foreground hover:text-white"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? (
+                <X className="h-5 w-5" />
+              ) : (
+                <Menu className="h-5 w-5" />
+              )}
+              <span className="sr-only">Toggle menu</span>
+            </Button>
+          </div>
         </div>
       </div>
+
+      {/* Search Overlay */}
+      {searchOpen && (
+        <div className="border-t border-gray-100 bg-white shadow-lg">
+          <div className="container mx-auto px-4 py-4">
+            <form onSubmit={handleSearch}>
+              <div className="flex items-center gap-3 max-w-2xl mx-auto">
+                <Search className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                <input
+                  ref={searchRef}
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Search cars, blogs, brands..."
+                  className="flex-1 text-base outline-none text-[#1d1d1f] placeholder:text-gray-400"
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  className="bg-[#e8531a] text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-[#e8531a]/90 transition-colors flex-shrink-0"
+                >
+                  Search
+                </button>
+              </div>
+
+              {/* Quick links below search */}
+              <div className="max-w-2xl mx-auto mt-3 flex flex-wrap gap-2">
+                <span className="text-xs text-gray-400">
+                  Quick:
+                </span>
+                {['Toyota', 'Hyundai', 'Kia', 'Electric', 'SUV', 'Under 30L'].map(q => (
+                  <button
+                    key={q}
+                    type="button"
+                    onClick={() => {
+                      navigate(`/cars?search=${encodeURIComponent(q)}`);
+                      setSearchOpen(false);
+                      setSearchQuery('');
+                    }}
+                    className="text-xs text-[#e8531a] bg-[#fff8f5] px-3 py-1 rounded-full hover:bg-[#e8531a] hover:text-white transition-colors"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Mobile Menu */}
       {isMenuOpen && (
