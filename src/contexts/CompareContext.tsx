@@ -38,8 +38,8 @@ export const CompareProvider = ({ children }: { children: ReactNode }) => {
   const [compareList, setCompareList] = useState<Car[]>([])
 
   const addToCompare = (car: Car) => {
-    if (compareList.length >= 3) {
-      alert('Maximum 3 cars can be compared at once!')
+    if (compareList.length >= 2) {
+      alert('You can compare maximum 2 cars at a time')
       return
     }
     if (!compareList.find(c => c.id === car.id)) {
