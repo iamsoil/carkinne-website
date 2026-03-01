@@ -107,12 +107,26 @@ const Showrooms = () => {
   const handleShowroomClick = (showroom: any) => {
     setSelectedShowroom(showroom)
     if (mapRef.current && showroom.lat && showroom.lng) {
-      mapRef.current.flyTo(
-        [showroom.lat, showroom.lng],
-        16,
-        { animate: true, duration: 1 }
-      )
-      markersRef.current[showroom.id]?.openPopup()
+      
+      // Offset the center point upward so popup 
+      // appears in the middle of the visible map
+      const map = mapRef.current
+      const targetLatLng = L.latLng(showroom.lat, showroom.lng)
+      
+      // Calculate offset in pixels to move center down
+      // so marker sits lower and popup shows in middle
+      const targetPoint = map.project(targetLatLng, 16)
+      const offsetPoint = targetPoint.subtract([0, -120])
+      const offsetLatLng = map.unproject(offsetPoint, 16)
+
+      map.flyTo(offsetLatLng, 16, {
+        animate: true,
+        duration: 1,
+      })
+
+      setTimeout(() => {
+        markersRef.current[showroom.id]?.openPopup()
+      }, 1100)
     }
   }
 
