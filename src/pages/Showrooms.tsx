@@ -42,8 +42,6 @@ const Showrooms = () => {
       { attribution: '© OpenStreetMap contributors', maxZoom: 19 }
     ).addTo(map)
 
-    mapRef.current = map
-
     // Add markers for all showrooms
     showrooms.forEach(showroom => {
       if (!showroom.lat || !showroom.lng) return
@@ -51,32 +49,28 @@ const Showrooms = () => {
       const icon = L.divIcon({
         className: '',
         html: `<div style="
-          position: relative;
-          width: 32px;
-          height: 32px;
-        ">
-          <div style="
-            width: 32px;
-            height: 32px;
-            background: #e8531a;
-            border-radius: 50% 50% 50% 0;
-            transform: rotate(-45deg);
-            border: 2px solid white;
-            box-shadow: 0 2px 8px rgba(232,83,26,0.5);
-          "></div>
-          <span style="
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -60%);
-            color: white;
-            font-size: 13px;
-            pointer-events: none;
-          ">🏢</span>
-        </div>`,
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -34],
+  width: 28px;
+  height: 36px;
+  position: relative;
+">
+  <svg 
+    viewBox="0 0 24 32" 
+    width="28" 
+    height="36"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path 
+      d="M12 0C7.6 0 4 3.6 4 8c0 6 8 16 8 16s8-10 8-16c0-4.4-3.6-8-8-8z" 
+      fill="#e8531a" 
+      stroke="white" 
+      stroke-width="1.5"
+    />
+    <circle cx="12" cy="8" r="3" fill="white"/>
+  </svg>
+</div>`,
+        iconSize: [28, 36],
+        iconAnchor: [14, 36],
+        popupAnchor: [0, -38],
       })
 
       const waLink = showroom.whatsapp
@@ -130,6 +124,8 @@ const Showrooms = () => {
       markersRef.current[showroom.id] = marker
     })
 
+    mapRef.current = map
+
     return () => {
       map.remove()
       mapRef.current = null
@@ -154,15 +150,21 @@ const Showrooms = () => {
 
   const handleShowroomClick = (showroom: any) => {
     setSelectedShowroom(showroom)
-    if (mapRef.current && showroom.lat && showroom.lng) {
-      mapRef.current.flyTo([showroom.lat, showroom.lng], 17, {
-        animate: true,
-        duration: 1.2,
-      })
-      setTimeout(() => {
-        markersRef.current[showroom.id]?.openPopup()
-      }, 1300)
-    }
+    
+    if (!showroom.lat || !showroom.lng) return
+    
+    if (!mapRef.current) return
+
+    mapRef.current.flyTo(
+      [showroom.lat, showroom.lng], 
+      17,
+      { animate: true, duration: 1 }
+    )
+
+    setTimeout(() => {
+      const marker = markersRef.current[showroom.id]
+      if (marker) marker.openPopup()
+    }, 1100)
   }
 
   const filteredShowrooms = showrooms.filter(s => {
