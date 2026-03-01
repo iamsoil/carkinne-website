@@ -1,16 +1,12 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { Moon, Sun, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
 const Header = () => {
-  const [isDark, setIsDark] = useState(() => {
-    return localStorage.getItem('theme') === 'dark' ||
-      document.documentElement.classList.contains('dark')
-  })
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showAnnouncement, setShowAnnouncement] = useState(true);
@@ -49,18 +45,6 @@ const Header = () => {
     }
   };
 
-  const toggleTheme = () => {
-    const newDark = !isDark
-    setIsDark(newDark)
-    if (newDark) {
-      document.documentElement.classList.add('dark')
-      localStorage.setItem('theme', 'dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-      localStorage.setItem('theme', 'light')
-    }
-  };
-
   const navItems = [
     { name: 'Cars', href: '/cars' },
     { name: 'Budget Finder', href: '/budget-finder' },
@@ -72,7 +56,7 @@ const Header = () => {
   ];
 
   return (
-    <header className={`sticky top-0 z-50 backdrop-blur-xl transition-all duration-300 ${isScrolled ? 'bg-white/85 border-b border-border' : 'bg-white/85'} dark:bg-[#1a1a1a] dark:border-gray-800`}>
+    <header className={`sticky top-0 z-50 backdrop-blur-xl transition-all duration-300 ${isScrolled ? 'bg-white/85 border-b border-border' : 'bg-white/85'}`}>
       {/* Announcement Bar */}{
         showAnnouncement && announcement && (
           <div 
@@ -112,7 +96,7 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center">
             <h1 className="text-2xl font-bold">
-              <a href="/" className="text-foreground hover:text-accent transition-colors dark:text-white">
+              <a href="/" className="text-foreground hover:text-accent transition-colors">
                 Car<span className="text-accent">Kinne</span>
               </a>
             </h1>
@@ -124,7 +108,7 @@ const Header = () => {
               <a
                 key={item.name}
                 href={item.href}
-                className="text-sm font-medium text-foreground hover:text-accent transition-colors relative group dark:text-white"
+                className="text-sm font-medium text-foreground hover:text-accent transition-colors relative group"
               >
                 {item.name}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"></span>
@@ -132,44 +116,32 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Right Icons */}
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" onClick={toggleTheme} className="text-foreground hover:text-white">
-              {isDark ? (
-                <Sun className="h-5 w-5 text-yellow-400" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
-              <span className="sr-only">Toggle theme</span>
-            </Button>
-
-            {/* Mobile Menu Button */}
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="md:hidden text-foreground hover:text-white"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? (
-                <X className="h-5 w-5" />
-              ) : (
-                <Menu className="h-5 w-5" />
-              )}
-              <span className="sr-only">Toggle menu</span>
-            </Button>
-          </div>
+          {/* Mobile Menu Button */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="md:hidden text-foreground hover:text-white"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            {isMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
+            <span className="sr-only">Toggle menu</span>
+          </Button>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-t border-border dark:bg-[#1a1a1a] dark:border-gray-800">
+        <div className="md:hidden bg-white border-t border-border">
           <div className="container mx-auto px-4 py-4 space-y-4">
             {navItems.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
-                className="block py-2 text-base font-medium text-foreground hover:text-accent transition-colors dark:text-white"
+                className="block py-2 text-base font-medium text-foreground hover:text-accent transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.name}
