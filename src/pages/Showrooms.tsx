@@ -5,7 +5,6 @@ import 'leaflet/dist/leaflet.css'
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 
-// Fix default marker icons
 delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: '',
@@ -24,15 +23,11 @@ const Showrooms = () => {
   const mapRef = useRef<L.Map | null>(null)
   const markersRef = useRef<{[key: string]: L.Marker}>({})
 
-  const cities = [
-    'All Cities', 'Kathmandu', 'Lalitpur', 'Bhaktapur',
-    'Pokhara', 'Biratnagar', 'Butwal', 'Chitwan', 'Dharan'
-  ]
-
-  const brands = [
-    'All Brands', 'Toyota', 'Hyundai', 'Kia', 'Suzuki',
-    'Honda', 'MG', 'Tata', 'BYD', 'Mahindra', 'Nissan'
-  ]
+  const cities = ['All Cities', 'Kathmandu', 'Lalitpur', 
+    'Bhaktapur', 'Pokhara', 'Biratnagar', 'Butwal', 
+    'Chitwan', 'Dharan']
+  const brands = ['All Brands', 'Toyota', 'Hyundai', 'Kia', 
+    'Suzuki', 'Honda', 'MG', 'Tata', 'BYD', 'Mahindra', 'Nissan']
 
   useEffect(() => {
     fetchShowrooms()
@@ -121,10 +116,7 @@ const Showrooms = () => {
 
     L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 19,
-      }
+      { attribution: '© OpenStreetMap contributors', maxZoom: 19 }
     ).addTo(map)
 
     mapRef.current = map
@@ -167,16 +159,16 @@ const Showrooms = () => {
               <a href="${mapsLink}" target="_blank"
                 style="flex:1;display:block;text-align:center;
                   background:#e8531a;color:white;padding:5px 8px;
-                  border-radius:6px;font-size:11px;text-decoration:none;
-                  font-weight:600">
+                  border-radius:6px;font-size:11px;
+                  text-decoration:none;font-weight:600">
                 📍 Directions
               </a>
               ${waLink ? `
               <a href="${waLink}" target="_blank"
                 style="flex:1;display:block;text-align:center;
                   background:#25D366;color:white;padding:5px 8px;
-                  border-radius:6px;font-size:11px;text-decoration:none;
-                  font-weight:600">
+                  border-radius:6px;font-size:11px;
+                  text-decoration:none;font-weight:600">
                 💬 WhatsApp
               </a>` : ''}
             </div>
@@ -198,7 +190,6 @@ const Showrooms = () => {
       height: 'calc(100vh - 64px)',
       overflow: 'hidden'
     }}>
-
       {/* LEFT PANEL */}
       <div style={{
         width: '380px',
@@ -210,7 +201,6 @@ const Showrooms = () => {
         flexDirection: 'column',
         background: 'white',
       }}>
-
         {/* Sticky header */}
         <div style={{
           position: 'sticky',
@@ -300,11 +290,12 @@ const Showrooms = () => {
             padding: '8px 0 0',
             margin: 0,
           }}>
-            {loading ? 'Loading...' : `${filteredShowrooms.length} showrooms found`}
+            {loading ? 'Loading...' : 
+              `${filteredShowrooms.length} showrooms found`}
           </p>
         </div>
 
-        {/* Showroom list */}
+        {/* List */}
         <div>
           {loading ? (
             <div style={{
@@ -328,7 +319,6 @@ const Showrooms = () => {
             filteredShowrooms.map(showroom => {
               const isActive = selectedShowroom?.id === showroom.id
               const isHovered = hoveredShowroom === showroom.id
-
               return (
                 <div
                   key={showroom.id}
@@ -338,7 +328,8 @@ const Showrooms = () => {
                     padding: '12px 16px',
                     borderBottom: '1px solid #f5f5f5',
                     cursor: 'pointer',
-                    background: isActive || isHovered ? '#fff8f5' : 'white',
+                    background: isActive || isHovered
+                      ? '#fff8f5' : 'white',
                     borderLeft: (isActive || isHovered)
                       ? '3px solid #e8531a'
                       : '3px solid transparent',
@@ -347,65 +338,53 @@ const Showrooms = () => {
                   onMouseEnter={() => setHoveredShowroom(showroom.id)}
                   onMouseLeave={() => setHoveredShowroom(null)}
                 >
-                  {/* Icon circle */}
                   <div style={{
-                    width: 32,
-                    height: 32,
+                    width: 32, height: 32,
                     borderRadius: '50%',
-                    background: isActive ? '#e8531a' : isHovered ? '#fff0ea' : '#f0f0f0',
+                    background: isActive ? '#e8531a'
+                      : isHovered ? '#fff0ea' : '#f0f0f0',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     marginRight: 12,
                     flexShrink: 0,
-                    color: isActive ? 'white' : isHovered ? '#e8531a' : '#999',
-                    fontWeight: '700',
-                    fontSize: '14px',
+                    color: isActive ? 'white'
+                      : isHovered ? '#e8531a' : '#999',
                   }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <svg width="16" height="16" 
+                      viewBox="0 0 24 24" fill="currentColor">
                       <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
                     </svg>
                   </div>
 
-                  {/* Info */}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{
-                      fontSize: 14,
-                      fontWeight: 600,
-                      color: '#1d1d1f',
+                      fontSize: 14, fontWeight: 600, color: '#1d1d1f'
                     }}>
                       {showroom.name}
                     </div>
                     <div style={{
-                      fontSize: 11,
-                      color: '#e8531a',
-                      fontWeight: 600,
-                      marginTop: 2,
+                      fontSize: 11, color: '#e8531a',
+                      fontWeight: 600, marginTop: 2,
                       textTransform: 'uppercase',
                     }}>
                       {showroom.brand}
                     </div>
                     <div style={{
-                      fontSize: 12,
-                      color: '#6e6e73',
-                      marginTop: 4,
+                      fontSize: 12, color: '#6e6e73', marginTop: 4
                     }}>
                       📍 {showroom.address}
                     </div>
                     {showroom.phone && (
                       <div style={{
-                        fontSize: 12,
-                        color: '#6e6e73',
-                        marginTop: 2,
+                        fontSize: 12, color: '#6e6e73', marginTop: 2
                       }}>
                         📞 {showroom.phone}
                       </div>
                     )}
                     {showroom.working_hours && (
                       <div style={{
-                        fontSize: 12,
-                        color: '#6e6e73',
-                        marginTop: 2,
+                        fontSize: 12, color: '#6e6e73', marginTop: 2
                       }}>
                         🕐 {showroom.working_hours}
                       </div>
@@ -418,15 +397,10 @@ const Showrooms = () => {
         </div>
       </div>
 
-      {/* RIGHT PANEL - MAP */}
-      <div style={{
-        flex: 1,
-        height: '100%',
-        position: 'relative',
-      }}>
-        <div
-          id="showrooms-map"
-          style={{ width: '100%', height: '100%' }}
+      {/* MAP */}
+      <div style={{ flex: 1, height: '100%', position: 'relative' }}>
+        <div id="showrooms-map" 
+          style={{ width: '100%', height: '100%' }} 
         />
       </div>
     </div>
