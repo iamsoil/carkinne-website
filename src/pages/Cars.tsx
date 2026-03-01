@@ -24,6 +24,7 @@ const Cars = () => {
   const [cars, setCars] = useState<any[]>([]);
   const [filteredCars, setFilteredCars] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState(searchFromUrl);
+  useEffect(() => { setSearchQuery(searchFromUrl) }, [searchFromUrl]);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 15000000]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
@@ -34,10 +35,6 @@ const Cars = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { addToCompare, removeFromCompare, isInCompare } = useCompare();
-
-  useEffect(() => {
-    setSearchQuery(searchFromUrl);
-  }, [searchFromUrl]);
 
   useEffect(() => {
     fetchCars();
