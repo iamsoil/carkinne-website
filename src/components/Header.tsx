@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { Moon, Sun, Menu, X } from 'lucide-react';
-import { useTheme } from 'next-themes';
 import { Button } from '@/components/ui/button';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
 const Header = () => {
-  const { theme, setTheme } = useTheme();
+  const [isDark, setIsDark] = useState(() => {
+    return localStorage.getItem('theme') === 'dark' ||
+      document.documentElement.classList.contains('dark')
+  })
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [showAnnouncement, setShowAnnouncement] = useState(true);
@@ -48,7 +50,15 @@ const Header = () => {
   };
 
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+    const newDark = !isDark
+    setIsDark(newDark)
+    if (newDark) {
+      document.documentElement.classList.add('dark')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
+    }
   };
 
   const navItems = [
@@ -62,38 +72,39 @@ const Header = () => {
   ];
 
   return (
-    <header className={`sticky top-0 z-50 backdrop-blur-xl transition-all duration-300 ${isScrolled ? 'bg-white/85 border-b border-border' : 'bg-white/85'}`}>
-      {/* Announcement Bar */}
-      {showAnnouncement && announcement && (
-        <div 
-          className="text-center py-2 text-xs tracking-wide"
-          style={{ 
-            backgroundColor: announcement.bg_color || '#1d1d1f',
-            color: announcement.text_color || '#ffffff'
-          }}
-        >
-          <div className="container mx-auto px-4 flex justify-between items-center">
-            <div></div>
-            <span>{announcement.message}</span>
-            <div className="flex items-center">
-              {announcement.link_text && (
-                <a 
-                  href={announcement.link_url || '#'} 
-                  className="hover:opacity-70 transition-opacity mr-3"
+    <header className={`sticky top-0 z-50 backdrop-blur-xl transition-all duration-300 ${isScrolled ? 'bg-white/85 border-b border-border' : 'bg-white/85'} dark:bg-[#1a1a1a] dark:border-gray-800`}>
+      {/* Announcement Bar */}{
+        showAnnouncement && announcement && (
+          <div 
+            className="text-center py-2 text-xs tracking-wide"
+            style={{ 
+              backgroundColor: announcement.bg_color || '#1d1d1f',
+              color: announcement.text_color || '#ffffff'
+            }}
+          >
+            <div className="container mx-auto px-4 flex justify-between items-center">
+              <div></div>
+              <span>{announcement.message}</span>
+              <div className="flex items-center">
+                {announcement.link_text && (
+                  <a 
+                    href={announcement.link_url || '#'} 
+                    className="hover:opacity-70 transition-opacity mr-3"
+                  >
+                    {announcement.link_text}
+                  </a>
+                )}
+                <button 
+                  className="hover:opacity-70 transition-opacity"
+                  onClick={() => setShowAnnouncement(false)}
                 >
-                  {announcement.link_text}
-                </a>
-              )}
-              <button 
-                className="hover:opacity-70 transition-opacity"
-                onClick={() => setShowAnnouncement(false)}
-              >
-                <X className="h-4 w-4" />
-              </button>
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }
 
       {/* Main Navigation */}
       <div className="container mx-auto px-4">
@@ -101,7 +112,7 @@ const Header = () => {
           {/* Logo */}
           <div className="flex items-center">
             <h1 className="text-2xl font-bold">
-              <a href="/" className="text-foreground hover:text-accent transition-colors">
+              <a href="/" className="text-foreground hover:text-accent transition-colors dark:text-white">
                 Car<span className="text-accent">Kinne</span>
               </a>
             </h1>
@@ -113,7 +124,7 @@ const Header = () => {
               <a
                 key={item.name}
                 href={item.href}
-                className="text-sm font-medium text-foreground hover:text-accent transition-colors relative group"
+                className="text-sm font-medium text-foreground hover:text-accent transition-colors relative group dark:text-white"
               >
                 {item.name}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"></span>
@@ -124,8 +135,8 @@ const Header = () => {
           {/* Right Icons */}
           <div className="flex items-center space-x-4">
             <Button variant="ghost" size="icon" onClick={toggleTheme} className="text-foreground hover:text-white">
-              {theme === 'dark' ? (
-                <Sun className="h-5 w-5" />
+              {isDark ? (
+                <Sun className="h-5 w-5 text-yellow-400" />
               ) : (
                 <Moon className="h-5 w-5" />
               )}
@@ -152,13 +163,13 @@ const Header = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden bg-white border-t border-border">
+        <div className="md:hidden bg-white border-t border-border dark:bg-[#1a1a1a] dark:border-gray-800">
           <div className="container mx-auto px-4 py-4 space-y-4">
             {navItems.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
-                className="block py-2 text-base font-medium text-foreground hover:text-accent transition-colors"
+                className="block py-2 text-base font-medium text-foreground hover:text-accent transition-colors dark:text-white"
                 onClick={() => setIsMenuOpen(false)}
               >
                 {item.name}
