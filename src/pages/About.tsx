@@ -844,19 +844,33 @@ const About = () => {
                 </div>
               ))}
 
-              <Link to="/advertise" style={{
-                display: 'inline-block',
-                background: '#e8531a',
-                color: 'white',
-                padding: '12px 24px',
-                borderRadius: '10px',
-                fontWeight: '700',
-                fontSize: '14px',
-                textDecoration: 'none',
-                marginTop: '20px',
-                width: isMobile ? '100%' : undefined,
-                textAlign: isMobile ? 'center' : undefined,
-              }}>
+              <Link to="/advertise"
+                style={{
+                  display: isMobile ? 'block' : 'inline-block',
+                  background: '#e8531a',
+                  color: 'white',
+                  padding: '12px 24px',
+                  borderRadius: '10px',
+                  fontWeight: '700',
+                  fontSize: '14px',
+                  textDecoration: 'none',
+                  marginTop: '20px',
+                  position: 'relative',
+                  textAlign: isMobile ? 'center' : undefined,
+                  transition: 'all 0.2s',
+                  boxSizing: 'border-box',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = '#c94415'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.35)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = '#e8531a'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
+              >
                 View Advertising Options →
               </Link>
             </div>
