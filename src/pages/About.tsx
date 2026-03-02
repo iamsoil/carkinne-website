@@ -170,7 +170,11 @@ const About = () => {
             for every Nepali.
           </p>
 
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <div style={{
+            display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
+            gap: '10px',
+          }}>
             <Link to="/cars" style={{
               background: '#e8531a',
               color: 'white',
@@ -179,6 +183,8 @@ const About = () => {
               fontWeight: '700',
               fontSize: '14px',
               textDecoration: 'none',
+              width: isMobile ? '100%' : undefined,
+              textAlign: isMobile ? 'center' : undefined,
             }}>
               Browse Cars
             </Link>
@@ -191,6 +197,8 @@ const About = () => {
               fontSize: '14px',
               textDecoration: 'none',
               border: '1px solid #d2d2d7',
+              width: isMobile ? '100%' : undefined,
+              textAlign: isMobile ? 'center' : undefined,
             }}>
               Partner With Us
             </Link>
@@ -213,11 +221,11 @@ const About = () => {
               background: '#fff8f5',
               border: '1.5px solid #e8531a',
               borderRadius: '16px',
-              padding: '28px 20px',
+              padding: isMobile ? '20px 14px' : '28px 20px',
               textAlign: 'left',
             }}>
               <div style={{
-                fontSize: '42px',
+                fontSize: isMobile ? '32px' : '42px',
                 fontWeight: '800',
                 color: '#e8531a',
                 letterSpacing: '-2px',
@@ -239,122 +247,124 @@ const About = () => {
       </div>
 
       {/* MISSION */}
-      <div style={{
-        maxWidth: '1000px',
-        margin: '0 auto',
-        padding: isMobile ? '48px 16px' : '80px 24px',
-        display: 'grid',
-        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-        gap: isMobile ? '32px' : '60px',
-        alignItems: 'center',
-      }}>
-        <div>
-          <div style={{
-            display: 'inline-block',
-            background: '#fff8f5',
-            border: '1px solid #e8531a',
-            borderRadius: '6px',
-            padding: '4px 12px',
-            fontSize: '12px',
-            fontWeight: '700',
-            color: '#e8531a',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            marginBottom: '20px',
-          }}>
-            Our Mission
-          </div>
-          <h2 style={{
-            fontSize: '36px',
-            fontWeight: '800',
-            color: '#1d1d1f',
-            margin: '0 0 20px',
-            lineHeight: 1.2,
-            letterSpacing: '-1px',
-          }}>
-            Solving Nepal's Car Buying Problem
-          </h2>
-          <p style={{
-            fontSize: '16px',
-            color: '#6e6e73',
-            lineHeight: 1.8,
-            margin: '0 0 16px',
-          }}>
-            Buying a car in Nepal is confusing. Prices are
-            scattered, information is outdated, and there's
-            no single trusted source to compare options.
-          </p>
-          <p style={{
-            fontSize: '16px',
-            color: '#6e6e73',
-            lineHeight: 1.8,
-            margin: 0,
-          }}>
-            We built CarKinne to change that — real prices,
-            honest comparisons, EMI calculators, showroom
-            locations and expert guides all in one place.
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {[
-            { Icon: IconCar, title: 'Real Nepal Prices', desc: 'Ex-showroom & on-road prices updated regularly' },
-            { Icon: IconBolt, title: 'EV Coverage', desc: 'Complete electric vehicle listings for Nepal' },
-            { Icon: IconMap, title: 'Find Showrooms', desc: 'Interactive map of all authorized dealers' },
-            { Icon: IconCalc, title: 'EMI Calculator', desc: 'Calculate monthly payments with Nepal bank rates' },
-          ].map((item, i) => (
-            <div key={i} style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '14px',
-              background: 'white',
-              border: '1px solid #e5e5e5',
-              borderRadius: '12px',
-              padding: '14px 18px',
-              boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+      <div style={{ background: '#f5f5f7' }}>
+        <div style={{
+          maxWidth: '1000px',
+          margin: '0 auto',
+          padding: isMobile ? '48px 16px' : '80px 24px',
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: isMobile ? '32px' : '60px',
+          alignItems: 'center',
+        }}>
+          <div>
+            <div style={{
+              display: 'inline-block',
+              background: '#fff8f5',
+              border: '1px solid #e8531a',
+              borderRadius: '6px',
+              padding: '4px 12px',
+              fontSize: '12px',
+              fontWeight: '700',
+              color: '#e8531a',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+              marginBottom: '20px',
             }}>
-              <div style={{
-                width: '40px', height: '40px',
-                background: '#fff8f5',
-                borderRadius: '10px',
+              Our Mission
+            </div>
+            <h2 style={{
+              fontSize: '36px',
+              fontWeight: '800',
+              color: '#1d1d1f',
+              margin: '0 0 20px',
+              lineHeight: 1.2,
+              letterSpacing: '-1px',
+            }}>
+              Solving Nepal's Car Buying Problem
+            </h2>
+            <p style={{
+              fontSize: '16px',
+              color: '#6e6e73',
+              lineHeight: 1.8,
+              margin: '0 0 16px',
+            }}>
+              Buying a car in Nepal is confusing. Prices are
+              scattered, information is outdated, and there's
+              no single trusted source to compare options.
+            </p>
+            <p style={{
+              fontSize: '16px',
+              color: '#6e6e73',
+              lineHeight: 1.8,
+              margin: 0,
+            }}>
+              We built CarKinne to change that — real prices,
+              honest comparisons, EMI calculators, showroom
+              locations and expert guides all in one place.
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {[
+              { Icon: IconCar, title: 'Real Nepal Prices', desc: 'Ex-showroom & on-road prices updated regularly' },
+              { Icon: IconBolt, title: 'EV Coverage', desc: 'Complete electric vehicle listings for Nepal' },
+              { Icon: IconMap, title: 'Find Showrooms', desc: 'Interactive map of all authorized dealers' },
+              { Icon: IconCalc, title: 'EMI Calculator', desc: 'Calculate monthly payments with Nepal bank rates' },
+            ].map((item, i) => (
+              <div key={i} style={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                color: '#e8531a',
-                flexShrink: 0,
+                gap: '14px',
+                background: 'white',
+                border: '1px solid #e5e5e5',
+                borderRadius: '12px',
+                padding: '14px 18px',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
               }}>
-                <item.Icon />
-              </div>
-              <div>
                 <div style={{
-                  fontSize: '14px',
-                  fontWeight: '700',
-                  color: '#1d1d1f',
+                  width: '40px', height: '40px',
+                  background: '#fff8f5',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#e8531a',
+                  flexShrink: 0,
                 }}>
-                  {item.title}
+                  <item.Icon />
+                </div>
+                <div>
+                  <div style={{
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    color: '#1d1d1f',
+                  }}>
+                    {item.title}
+                  </div>
+                  <div style={{
+                    fontSize: '12px',
+                    color: '#6e6e73',
+                    marginTop: '2px',
+                  }}>
+                    {item.desc}
+                  </div>
                 </div>
                 <div style={{
-                  fontSize: '12px',
-                  color: '#6e6e73',
-                  marginTop: '2px',
-                }}>
-                  {item.desc}
-                </div>
+                  marginLeft: 'auto',
+                  width: '8px', height: '8px',
+                  background: '#e8531a',
+                  borderRadius: '50%',
+                  flexShrink: 0,
+                }} />
               </div>
-              <div style={{
-                marginLeft: 'auto',
-                width: '8px', height: '8px',
-                background: '#e8531a',
-                borderRadius: '50%',
-                flexShrink: 0,
-              }} />
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
       {/* FEATURES - small cards left aligned */}
-      <div style={{ background: '#f5f5f7', padding: isMobile ? '48px 16px' : '80px 24px' }}>
+      <div style={{ background: 'white', padding: isMobile ? '48px 16px' : '80px 24px' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{
             display: 'inline-block',
@@ -409,7 +419,7 @@ const About = () => {
                   background: 'white',
                   border: '1px solid #e5e5e5',
                   borderRadius: '14px',
-                  padding: '20px',
+                  padding: isMobile ? '14px' : '20px',
                   textDecoration: 'none',
                   transition: 'all 0.2s',
                   cursor: 'pointer',
@@ -428,7 +438,8 @@ const About = () => {
                 }}
               >
                 <div style={{
-                  width: '40px', height: '40px',
+                  width: isMobile ? '34px' : '40px',
+                  height: isMobile ? '34px' : '40px',
                   background: '#fff8f5',
                   borderRadius: '10px',
                   display: 'flex',
@@ -440,7 +451,7 @@ const About = () => {
                   <item.Icon />
                 </div>
                 <div style={{
-                  fontSize: '14px',
+                  fontSize: isMobile ? '13px' : '14px',
                   fontWeight: '700',
                   color: '#1d1d1f',
                   marginBottom: '4px',
@@ -448,7 +459,7 @@ const About = () => {
                   {item.title}
                 </div>
                 <div style={{
-                  fontSize: '12px',
+                  fontSize: isMobile ? '11px' : '12px',
                   color: '#6e6e73',
                   lineHeight: 1.5,
                   marginBottom: '12px',
@@ -469,139 +480,141 @@ const About = () => {
       </div>
 
       {/* TEAM - simple */}
-      <div style={{
-        maxWidth: '1000px',
-        margin: '0 auto',
-        padding: isMobile ? '48px 16px' : '80px 24px',
-      }}>
+      <div style={{ background: '#f5f5f7' }}>
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-          gap: isMobile ? '32px' : '60px',
-          alignItems: 'center',
+          maxWidth: '1000px',
+          margin: '0 auto',
+          padding: isMobile ? '48px 16px' : '80px 24px',
         }}>
-          <div>
-            <div style={{
-              display: 'inline-block',
-              background: '#fff8f5',
-              border: '1px solid #e8531a',
-              borderRadius: '6px',
-              padding: '4px 12px',
-              fontSize: '12px',
-              fontWeight: '700',
-              color: '#e8531a',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              marginBottom: '20px',
-            }}>
-              Our Team
-            </div>
-            <h2 style={{
-              fontSize: '36px',
-              fontWeight: '800',
-              color: '#1d1d1f',
-              margin: '0 0 20px',
-              lineHeight: 1.2,
-              letterSpacing: '-1px',
-            }}>
-              Built in Nepal for Nepal
-            </h2>
-            <p style={{
-              fontSize: '16px',
-              color: '#6e6e73',
-              lineHeight: 1.8,
-              margin: '0 0 16px',
-            }}>
-              We are car enthusiasts and tech builders based
-              in Kathmandu who got tired of the confusion in
-              Nepal's car market.
-            </p>
-            <p style={{
-              fontSize: '16px',
-              color: '#6e6e73',
-              lineHeight: 1.8,
-              margin: 0,
-            }}>
-              So we built the resource we always wished
-              existed — transparent, accurate and free.
-            </p>
-          </div>
-
           <div style={{
-            background: '#f5f5f7',
-            borderRadius: '20px',
-            padding: '32px',
-            border: '1px solid #e5e5e5',
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: isMobile ? '32px' : '60px',
+            alignItems: 'center',
           }}>
+            <div>
+              <div style={{
+                display: 'inline-block',
+                background: '#fff8f5',
+                border: '1px solid #e8531a',
+                borderRadius: '6px',
+                padding: '4px 12px',
+                fontSize: '12px',
+                fontWeight: '700',
+                color: '#e8531a',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                marginBottom: '20px',
+              }}>
+                Our Team
+              </div>
+              <h2 style={{
+                fontSize: '36px',
+                fontWeight: '800',
+                color: '#1d1d1f',
+                margin: '0 0 20px',
+                lineHeight: 1.2,
+                letterSpacing: '-1px',
+              }}>
+                Built in Nepal for Nepal
+              </h2>
+              <p style={{
+                fontSize: '16px',
+                color: '#6e6e73',
+                lineHeight: 1.8,
+                margin: '0 0 16px',
+              }}>
+                We are car enthusiasts and tech builders based
+                in Kathmandu who got tired of the confusion in
+                Nepal's car market.
+              </p>
+              <p style={{
+                fontSize: '16px',
+                color: '#6e6e73',
+                lineHeight: 1.8,
+                margin: 0,
+              }}>
+                So we built the resource we always wished
+                existed — transparent, accurate and free.
+              </p>
+            </div>
+
             <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '14px',
-              marginBottom: '24px',
-              paddingBottom: '20px',
-              borderBottom: '1px solid #e5e5e5',
+              background: '#f5f5f7',
+              borderRadius: '20px',
+              padding: '32px',
+              border: '1px solid #e5e5e5',
             }}>
               <div style={{
-                width: '52px', height: '52px',
-                background: '#e8531a',
-                borderRadius: '14px',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '16px',
-                fontWeight: '800',
-                color: 'white',
-                flexShrink: 0,
+                gap: '14px',
+                marginBottom: '24px',
+                paddingBottom: '20px',
+                borderBottom: '1px solid #e5e5e5',
               }}>
-                CK
-              </div>
-              <div>
                 <div style={{
+                  width: '52px', height: '52px',
+                  background: '#e8531a',
+                  borderRadius: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   fontSize: '16px',
-                  fontWeight: '700',
-                  color: '#1d1d1f',
+                  fontWeight: '800',
+                  color: 'white',
+                  flexShrink: 0,
                 }}>
-                  CarKinne Team
+                  CK
                 </div>
-                <div style={{
-                  fontSize: '13px',
-                  color: '#e8531a',
-                  fontWeight: '600',
-                  marginTop: '2px',
-                }}>
-                  Kathmandu, Nepal
+                <div>
+                  <div style={{
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    color: '#1d1d1f',
+                  }}>
+                    CarKinne Team
+                  </div>
+                  <div style={{
+                    fontSize: '13px',
+                    color: '#e8531a',
+                    fontWeight: '600',
+                    marginTop: '2px',
+                  }}>
+                    Kathmandu, Nepal
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {[
-              { Icon: IconCar, label: 'Car data researchers' },
-              { Icon: IconCode, label: 'Tech builders' },
-              { Icon: IconChart, label: 'Market analysts' },
-              { Icon: IconFlag, label: 'Nepal focused' },
-            ].map((item, i) => (
-              <div key={i} style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                padding: '10px 0',
-                borderBottom: i < 3 ? '1px solid #e5e5e5' : 'none',
-                fontSize: '14px',
-                color: '#1d1d1f',
-                fontWeight: '500',
-              }}>
-                <div style={{ color: '#e8531a' }}>
-                  <item.Icon />
+              {[
+                { Icon: IconCar, label: 'Car data researchers' },
+                { Icon: IconCode, label: 'Tech builders' },
+                { Icon: IconChart, label: 'Market analysts' },
+                { Icon: IconFlag, label: 'Nepal focused' },
+              ].map((item, i) => (
+                <div key={i} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '10px 0',
+                  borderBottom: i < 3 ? '1px solid #e5e5e5' : 'none',
+                  fontSize: '14px',
+                  color: '#1d1d1f',
+                  fontWeight: '500',
+                }}>
+                  <div style={{ color: '#e8531a' }}>
+                    <item.Icon />
+                  </div>
+                  {item.label}
                 </div>
-                {item.label}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
       {/* CONTACT */}
-      <div style={{ background: '#f5f5f7', padding: isMobile ? '48px 16px' : '80px 24px' }}>
+      <div style={{ background: 'white', padding: isMobile ? '48px 16px' : '80px 24px' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{
             display: 'grid',
@@ -779,6 +792,8 @@ const About = () => {
                 fontSize: '14px',
                 textDecoration: 'none',
                 marginTop: '20px',
+                width: isMobile ? '100%' : undefined,
+                textAlign: isMobile ? 'center' : undefined,
               }}>
                 View Advertising Options →
               </Link>
