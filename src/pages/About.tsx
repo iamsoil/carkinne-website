@@ -175,31 +175,64 @@ const About = () => {
             flexDirection: isMobile ? 'column' : 'row',
             gap: '10px',
           }}>
-            <Link to="/cars" style={{
-              background: '#e8531a',
-              color: 'white',
-              padding: '13px 28px',
-              borderRadius: '10px',
-              fontWeight: '700',
-              fontSize: '14px',
-              textDecoration: 'none',
-              width: isMobile ? '100%' : undefined,
-              textAlign: isMobile ? 'center' : undefined,
-            }}>
+            <Link to="/cars"
+              style={{
+                background: '#e8531a',
+                color: 'white',
+                padding: '13px 28px',
+                borderRadius: '10px',
+                fontWeight: '700',
+                fontSize: '14px',
+                textDecoration: 'none',
+                width: isMobile ? '100%' : undefined,
+                textAlign: isMobile ? 'center' : undefined,
+                display: isMobile ? 'block' : 'inline-block',
+                transition: 'all 0.2s',
+                boxSizing: 'border-box',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = '#c94415'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.35)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = '#e8531a'
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            >
               Browse Cars
             </Link>
-            <Link to="/advertise" style={{
-              background: 'white',
-              color: '#1d1d1f',
-              padding: '13px 28px',
-              borderRadius: '10px',
-              fontWeight: '600',
-              fontSize: '14px',
-              textDecoration: 'none',
-              border: '1px solid #d2d2d7',
-              width: isMobile ? '100%' : undefined,
-              textAlign: isMobile ? 'center' : undefined,
-            }}>
+
+            <Link to="/advertise"
+              style={{
+                background: 'white',
+                color: '#1d1d1f',
+                padding: '13px 28px',
+                borderRadius: '10px',
+                fontWeight: '600',
+                fontSize: '14px',
+                textDecoration: 'none',
+                border: '1px solid #d2d2d7',
+                width: isMobile ? '100%' : undefined,
+                textAlign: isMobile ? 'center' : undefined,
+                display: isMobile ? 'block' : 'inline-block',
+                transition: 'all 0.2s',
+                boxSizing: 'border-box',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = '#e8531a'
+                e.currentTarget.style.color = '#e8531a'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.08)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = '#d2d2d7'
+                e.currentTarget.style.color = '#1d1d1f'
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            >
               Partner With Us
             </Link>
           </div>
@@ -217,28 +250,57 @@ const About = () => {
             { value: '8+', label: 'Cities Covered' },
             { value: '19+', label: 'Showrooms' },
           ].map((stat, i) => (
-            <div key={i} style={{
-              background: '#fff8f5',
-              border: '1.5px solid #e8531a',
-              borderRadius: '16px',
-              padding: isMobile ? '20px 14px' : '28px 20px',
-              textAlign: 'left',
-            }}>
-              <div style={{
-                fontSize: isMobile ? '32px' : '42px',
-                fontWeight: '800',
-                color: '#e8531a',
-                letterSpacing: '-2px',
-                lineHeight: 1,
-                marginBottom: '8px',
-              }}>
+            <div
+              key={i}
+              style={{
+                background: '#fff8f5',
+                border: '1.5px solid #e8531a',
+                borderRadius: '16px',
+                padding: isMobile ? '20px 14px' : '28px 20px',
+                textAlign: 'left',
+                cursor: 'default',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => {
+                const el = e.currentTarget
+                el.style.background = '#e8531a'
+                el.style.transform = 'translateY(-3px)'
+                el.style.boxShadow = '0 8px 24px rgba(232,83,26,0.25)'
+                el.querySelectorAll('[data-stat-value]').forEach((n: any) => n.style.color = 'white')
+                el.querySelectorAll('[data-stat-label]').forEach((n: any) => n.style.color = 'rgba(255,255,255,0.8)')
+              }}
+              onMouseLeave={e => {
+                const el = e.currentTarget
+                el.style.background = '#fff8f5'
+                el.style.transform = 'translateY(0)'
+                el.style.boxShadow = 'none'
+                el.querySelectorAll('[data-stat-value]').forEach((n: any) => n.style.color = '#e8531a')
+                el.querySelectorAll('[data-stat-label]').forEach((n: any) => n.style.color = '#6e6e73')
+              }}
+            >
+              <div
+                data-stat-value
+                style={{
+                  fontSize: isMobile ? '32px' : '42px',
+                  fontWeight: '800',
+                  color: '#e8531a',
+                  letterSpacing: '-2px',
+                  lineHeight: 1,
+                  marginBottom: '8px',
+                  transition: 'color 0.2s',
+                }}
+              >
                 {stat.value}
               </div>
-              <div style={{
-                fontSize: '13px',
-                color: '#6e6e73',
-                fontWeight: '500',
-              }}>
+              <div
+                data-stat-label
+                style={{
+                  fontSize: '13px',
+                  color: '#6e6e73',
+                  fontWeight: '500',
+                  transition: 'color 0.2s',
+                }}
+              >
                 {stat.label}
               </div>
             </div>
