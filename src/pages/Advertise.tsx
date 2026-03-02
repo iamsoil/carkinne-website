@@ -249,14 +249,12 @@ const Advertise = () => {
         {/* Stats 2x2 */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
+          gridTemplateColumns: '1fr',
           gap: '12px',
         }}>
           {[
             { value: '50K+', label: 'Monthly Visitors' },
-            { value: '9+', label: 'Top Brands' },
             { value: '8+', label: 'Cities Reached' },
-            { value: '50+', label: 'Cars Listed' },
           ].map((stat, i) => (
             <div
               key={i}
@@ -313,98 +311,124 @@ const Advertise = () => {
       <div style={{ background: '#f5f5f7', padding: isMobile ? '48px 16px' : '80px 24px' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{
-            display: 'inline-block',
-            background: '#fff8f5',
-            border: '1px solid #e8531a',
-            borderRadius: '6px',
-            padding: '4px 12px',
-            fontSize: '12px',
-            fontWeight: '700',
-            color: '#e8531a',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            marginBottom: '12px',
-          }}>
-            Why CarKinne
-          </div>
-          <h2 style={{
-            fontSize: isMobile ? '28px' : '36px',
-            fontWeight: '800',
-            color: '#1d1d1f',
-            margin: '0 0 8px',
-            letterSpacing: '-1px',
-          }}>
-            Why Advertise on CarKinne?
-          </h2>
-          <p style={{
-            fontSize: '15px',
-            color: '#6e6e73',
-            margin: '0 0 40px',
-          }}>
-            Reach buyers at exactly the right moment.
-          </p>
-
-          <div style={{
             display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)',
-            gap: '12px',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: isMobile ? '32px' : '60px',
+            alignItems: 'center',
           }}>
-            {[
-              { Icon: IconTarget, title: 'Targeted Audience', desc: 'People on CarKinne are actively looking to buy — not casual browsers.' },
-              { Icon: IconMap, title: 'Nepal Focused', desc: '100% Nepal traffic. Reach buyers in Kathmandu, Pokhara and beyond.' },
-              { Icon: IconLayout, title: 'Multiple Formats', desc: 'Banners, featured listings, sponsored content and newsletter placements.' },
-              { Icon: IconTag, title: 'Affordable Rates', desc: 'Flexible packages for dealerships, banks, insurance companies and brands.' },
-            ].map((item, i) => (
-              <div
-                key={i}
-                style={{
-                  background: 'white',
-                  border: '1px solid #e5e5e5',
-                  borderRadius: '14px',
-                  padding: '20px',
-                  transition: 'all 0.2s',
-                  cursor: 'default',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = '#e8531a'
-                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(232,83,26,0.12)'
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = '#e5e5e5'
-                  e.currentTarget.style.boxShadow = 'none'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                }}
-              >
-                <div style={{
-                  width: '40px', height: '40px',
-                  background: '#fff8f5',
-                  borderRadius: '10px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#e8531a',
-                  marginBottom: '14px',
-                }}>
-                  <item.Icon />
+            {/* Left - feature cards */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '12px',
+            }}>
+              {[
+                { Icon: IconTarget, title: 'Targeted Audience', desc: 'People actively looking to buy — not casual browsers.' },
+                { Icon: IconMap, title: 'Nepal Focused', desc: '100% Nepal traffic across Kathmandu, Pokhara and beyond.' },
+                { Icon: IconLayout, title: 'Multiple Formats', desc: 'Banners, featured listings, sponsored content and newsletters.' },
+                { Icon: IconTag, title: 'Affordable Rates', desc: 'Flexible packages for dealerships, banks and auto brands.' },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  style={{
+                    background: 'white',
+                    border: '1px solid #e5e5e5',
+                    borderRadius: '14px',
+                    padding: '18px',
+                    transition: 'all 0.2s',
+                    cursor: 'default',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = '#e8531a'
+                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(232,83,26,0.12)'
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = '#e5e5e5'
+                    e.currentTarget.style.boxShadow = 'none'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                  }}
+                >
+                  <div style={{
+                    width: '36px', height: '36px',
+                    background: '#fff8f5',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#e8531a',
+                    marginBottom: '12px',
+                  }}>
+                    <item.Icon />
+                  </div>
+                  <div style={{
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    color: '#1d1d1f',
+                    marginBottom: '4px',
+                  }}>
+                    {item.title}
+                  </div>
+                  <div style={{
+                    fontSize: '11px',
+                    color: '#6e6e73',
+                    lineHeight: 1.6,
+                  }}>
+                    {item.desc}
+                  </div>
                 </div>
-                <div style={{
-                  fontSize: '14px',
-                  fontWeight: '700',
-                  color: '#1d1d1f',
-                  marginBottom: '6px',
-                }}>
-                  {item.title}
-                </div>
-                <div style={{
-                  fontSize: '12px',
-                  color: '#6e6e73',
-                  lineHeight: 1.6,
-                }}>
-                  {item.desc}
-                </div>
+              ))}
+            </div>
+
+            {/* Right - text */}
+            <div>
+              <div style={{
+                display: 'inline-block',
+                background: '#fff8f5',
+                border: '1px solid #e8531a',
+                borderRadius: '6px',
+                padding: '4px 12px',
+                fontSize: '12px',
+                fontWeight: '700',
+                color: '#e8531a',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                marginBottom: '20px',
+              }}>
+                Why CarKinne
               </div>
-            ))}
+              <h2 style={{
+                fontSize: isMobile ? '28px' : '36px',
+                fontWeight: '800',
+                color: '#1d1d1f',
+                margin: '0 0 20px',
+                letterSpacing: '-1px',
+                lineHeight: 1.2,
+              }}>
+                Why Advertise on CarKinne?
+              </h2>
+              <p style={{
+                fontSize: '16px',
+                color: '#6e6e73',
+                lineHeight: 1.8,
+                margin: '0 0 16px',
+              }}>
+                People on CarKinne are actively 
+                researching their next car purchase — 
+                comparing prices, calculating EMI and 
+                finding showrooms.
+              </p>
+              <p style={{
+                fontSize: '16px',
+                color: '#6e6e73',
+                lineHeight: 1.8,
+                margin: 0,
+              }}>
+                That means your ad reaches buyers 
+                at exactly the right moment — when 
+                they're ready to make a decision.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -590,7 +614,7 @@ const Advertise = () => {
               <div
                 key={i}
                 style={{
-                  background: pkg.popular ? '#1d1d1f' : 'white',
+                  background: pkg.popular ? '#fff8f5' : 'white',
                   border: pkg.popular
                     ? '2px solid #e8531a'
                     : '1px solid #e5e5e5',
@@ -632,7 +656,7 @@ const Advertise = () => {
                 <div style={{
                   fontSize: '18px',
                   fontWeight: '800',
-                  color: pkg.popular ? 'white' : '#1d1d1f',
+                  color: '#1d1d1f',
                   marginBottom: '8px',
                   letterSpacing: '-0.5px',
                 }}>
@@ -650,7 +674,7 @@ const Advertise = () => {
                   </span>
                   <span style={{
                     fontSize: '13px',
-                    color: pkg.popular ? 'rgba(255,255,255,0.5)' : '#6e6e73',
+                    color: '#6e6e73',
                     marginLeft: '4px',
                   }}>
                     /month
@@ -658,7 +682,7 @@ const Advertise = () => {
                 </div>
 
                 <div style={{
-                  borderTop: `1px solid ${pkg.popular ? 'rgba(255,255,255,0.1)' : '#f0f0f0'}`,
+                  borderTop: '1px solid #fde8da',
                   paddingTop: '20px',
                   marginBottom: '24px',
                 }}>
@@ -669,9 +693,9 @@ const Advertise = () => {
                       gap: '10px',
                       marginBottom: '12px',
                       fontSize: '14px',
-                      color: pkg.popular ? 'rgba(255,255,255,0.8)' : '#6e6e73',
+                      color: '#6e6e73',
                     }}>
-                      {pkg.popular ? <IconCheckWhite /> : <IconCheck />}
+                      <IconCheck />
                       {f}
                     </div>
                   ))}
