@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const IconCar = () => (
@@ -102,6 +103,14 @@ const IconFlag = () => (
 )
 
 const About = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -109,89 +118,90 @@ const About = () => {
       fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif',
     }}>
 
-      {/* HERO - clean left aligned */}
+      {/* HERO */}
       <div style={{
         maxWidth: '1000px',
         margin: '0 auto',
-        padding: '80px 24px 60px',
+        padding: isMobile ? '48px 16px' : '80px 24px 60px',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+        gap: isMobile ? '32px' : '60px',
+        alignItems: 'center',
       }}>
-        <div style={{
-          display: 'inline-block',
-          background: '#fff8f5',
-          border: '1px solid #e8531a',
-          borderRadius: '6px',
-          padding: '4px 14px',
-          fontSize: '12px',
-          fontWeight: '700',
-          color: '#e8531a',
-          textTransform: 'uppercase',
-          letterSpacing: '1px',
-          marginBottom: '24px',
-        }}>
-          About CarKinne
-        </div>
-
-        <h1 style={{
-          fontSize: '56px',
-          fontWeight: '800',
-          color: '#1d1d1f',
-          margin: '0 0 20px',
-          lineHeight: 1.1,
-          letterSpacing: '-2px',
-          maxWidth: '600px',
-        }}>
-          Nepal's Smartest
-          <span style={{ color: '#e8531a' }}> Car</span>
-          <br />Buying Guide
-        </h1>
-
-        <p style={{
-          fontSize: '18px',
-          color: '#6e6e73',
-          lineHeight: 1.7,
-          maxWidth: '520px',
-          margin: '0 0 40px',
-        }}>
-          We're making car buying in Nepal transparent,
-          simple and stress-free for every Nepali.
-        </p>
-
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-          <Link to="/cars" style={{
-            background: '#e8531a',
-            color: 'white',
-            padding: '13px 28px',
-            borderRadius: '10px',
+        {/* Left - text */}
+        <div>
+          <div style={{
+            display: 'inline-block',
+            background: '#fff8f5',
+            border: '1px solid #e8531a',
+            borderRadius: '6px',
+            padding: '4px 14px',
+            fontSize: '12px',
             fontWeight: '700',
-            fontSize: '14px',
-            textDecoration: 'none',
-            letterSpacing: '-0.2px',
+            color: '#e8531a',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            marginBottom: '24px',
           }}>
-            Browse Cars
-          </Link>
-          <Link to="/advertise" style={{
-            background: 'white',
-            color: '#1d1d1f',
-            padding: '13px 28px',
-            borderRadius: '10px',
-            fontWeight: '600',
-            fontSize: '14px',
-            textDecoration: 'none',
-            border: '1px solid #d2d2d7',
-          }}>
-            Partner With Us
-          </Link>
-        </div>
-      </div>
+            About CarKinne
+          </div>
 
-      {/* STATS - big numbers, orange border */}
-      <div style={{ background: '#f5f5f7', padding: '48px 24px' }}>
+          <h1 style={{
+            fontSize: isMobile ? '38px' : '52px',
+            fontWeight: '800',
+            color: '#1d1d1f',
+            margin: '0 0 20px',
+            lineHeight: 1.1,
+            letterSpacing: '-2px',
+          }}>
+            Nepal's Smartest
+            <span style={{ color: '#e8531a' }}> Car</span>
+            <br />Buying Guide
+          </h1>
+
+          <p style={{
+            fontSize: '17px',
+            color: '#6e6e73',
+            lineHeight: 1.7,
+            margin: '0 0 36px',
+          }}>
+            We're making car buying in Nepal 
+            transparent, simple and stress-free 
+            for every Nepali.
+          </p>
+
+          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <Link to="/cars" style={{
+              background: '#e8531a',
+              color: 'white',
+              padding: '13px 28px',
+              borderRadius: '10px',
+              fontWeight: '700',
+              fontSize: '14px',
+              textDecoration: 'none',
+            }}>
+              Browse Cars
+            </Link>
+            <Link to="/advertise" style={{
+              background: 'white',
+              color: '#1d1d1f',
+              padding: '13px 28px',
+              borderRadius: '10px',
+              fontWeight: '600',
+              fontSize: '14px',
+              textDecoration: 'none',
+              border: '1px solid #d2d2d7',
+            }}>
+              Partner With Us
+            </Link>
+          </div>
+        </div>
+
+        {/* Right - 2x2 stats grid */}
         <div style={{
-          maxWidth: '1000px',
-          margin: '0 auto',
           display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: '16px',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '12px',
         }}>
           {[
             { value: '50+', label: 'Cars Listed' },
@@ -203,11 +213,11 @@ const About = () => {
               background: '#fff8f5',
               border: '1.5px solid #e8531a',
               borderRadius: '16px',
-              padding: '28px 24px',
+              padding: '28px 20px',
               textAlign: 'left',
             }}>
               <div style={{
-                fontSize: '44px',
+                fontSize: '42px',
                 fontWeight: '800',
                 color: '#e8531a',
                 letterSpacing: '-2px',
@@ -232,10 +242,10 @@ const About = () => {
       <div style={{
         maxWidth: '1000px',
         margin: '0 auto',
-        padding: '80px 24px',
+        padding: isMobile ? '48px 16px' : '80px 24px',
         display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: '60px',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+        gap: isMobile ? '32px' : '60px',
         alignItems: 'center',
       }}>
         <div>
@@ -344,7 +354,7 @@ const About = () => {
       </div>
 
       {/* FEATURES - small cards left aligned */}
-      <div style={{ background: '#f5f5f7', padding: '80px 24px' }}>
+      <div style={{ background: '#f5f5f7', padding: isMobile ? '48px 16px' : '80px 24px' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{
             display: 'inline-block',
@@ -380,7 +390,7 @@ const About = () => {
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
+            gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
             gap: '12px',
           }}>
             {[
@@ -462,12 +472,12 @@ const About = () => {
       <div style={{
         maxWidth: '1000px',
         margin: '0 auto',
-        padding: '80px 24px',
+        padding: isMobile ? '48px 16px' : '80px 24px',
       }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '60px',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: isMobile ? '32px' : '60px',
           alignItems: 'center',
         }}>
           <div>
@@ -591,12 +601,12 @@ const About = () => {
       </div>
 
       {/* CONTACT */}
-      <div style={{ background: '#f5f5f7', padding: '80px 24px' }}>
+      <div style={{ background: '#f5f5f7', padding: isMobile ? '48px 16px' : '80px 24px' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '60px',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: isMobile ? '32px' : '60px',
             alignItems: 'flex-start',
           }}>
             <div>
