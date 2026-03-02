@@ -1,339 +1,861 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+const IconTarget = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+  </svg>
+)
+
+const IconMap = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+    <circle cx="12" cy="9" r="2.5"/>
+  </svg>
+)
+
+const IconLayout = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+  </svg>
+)
+
+const IconTag = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/>
+    <line x1="7" y1="7" x2="7.01" y2="7"/>
+  </svg>
+)
+
+const IconCar = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v7a2 2 0 01-2 2h-1"/>
+    <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+  </svg>
+)
+
+const IconBank = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2L2 7h20L12 2z"/>
+  </svg>
+)
+
+const IconShield = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+  </svg>
+)
+
+const IconCheck = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#e8531a" strokeWidth="2.5">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+)
+
+const IconCheckWhite = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+)
 
 const Advertise = () => {
   const [formData, setFormData] = useState({
-    fullName: '',
-    company: '',
-    email: '',
-    phone: '',
-    package: 'Basic',
-    message: ''
-  });
-  const [submitted, setSubmitted] = useState(false);
+    fullName: '', company: '', email: '',
+    phone: '', package: 'Basic', message: ''
+  })
+  const [submitted, setSubmitted] = useState(false)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitted(true);
-    // In a real app, you would send this data to your backend here
-  };
+    e.preventDefault()
+    setSubmitted(true)
+  }
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-6 py-20">
-        <div className="max-w-md text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
+      }}>
+        <div style={{ textAlign: 'center', maxWidth: '400px' }}>
+          <div style={{
+            width: '72px', height: '72px',
+            background: '#fff8f5',
+            border: '2px solid #e8531a',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 24px',
+          }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#e8531a" strokeWidth="2.5">
+              <polyline points="20 6 9 17 4 12"/>
             </svg>
           </div>
-          <h2 className="text-2xl font-semibold text-[#1d1d1f] mb-4">Thank You!</h2>
-          <p className="text-[#6e6e73]">
-            We'll contact you within 24 hours.
+          <h2 style={{
+            fontSize: '28px', fontWeight: '800',
+            color: '#1d1d1f', margin: '0 0 12px',
+            letterSpacing: '-1px',
+          }}>
+            Thank You!
+          </h2>
+          <p style={{ fontSize: '16px', color: '#6e6e73', lineHeight: 1.7 }}>
+            We'll contact you within 24 hours to discuss your advertising options.
           </p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <div className="w-full bg-[#1d1d1f] py-20 px-6 text-center relative">
-        <div className="absolute inset-0 bg-black/50"></div>
-        <div className="max-w-4xl mx-auto relative z-10">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Reach Nepal's Car Buyers
+    <div style={{
+      minHeight: '100vh',
+      background: 'white',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
+    }}>
+
+      {/* HERO - left aligned clean */}
+      <div style={{
+        maxWidth: '1000px',
+        margin: '0 auto',
+        padding: isMobile ? '48px 16px 40px' : '80px 24px 60px',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+        gap: isMobile ? '32px' : '60px',
+        alignItems: 'center',
+      }}>
+        <div>
+          <div style={{
+            display: 'inline-block',
+            background: '#fff8f5',
+            border: '1px solid #e8531a',
+            borderRadius: '6px',
+            padding: '4px 14px',
+            fontSize: '12px',
+            fontWeight: '700',
+            color: '#e8531a',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            marginBottom: '24px',
+          }}>
+            Advertise
+          </div>
+          <h1 style={{
+            fontSize: isMobile ? '38px' : '52px',
+            fontWeight: '800',
+            color: '#1d1d1f',
+            margin: '0 0 20px',
+            lineHeight: 1.1,
+            letterSpacing: '-2px',
+          }}>
+            Reach Nepal's
+            <span style={{ color: '#e8531a' }}> Active</span>
+            <br />Car Buyers
           </h1>
-          <p className="text-lg text-[#a0a0a0] max-w-2xl mx-auto">
-            Advertise on CarKinne and connect with thousands of Nepalis actively searching for their next car.
+          <p style={{
+            fontSize: '17px',
+            color: '#6e6e73',
+            lineHeight: 1.7,
+            margin: '0 0 36px',
+          }}>
+            Connect with thousands of Nepalis 
+            actively searching for their next car 
+            — right when they're ready to buy.
           </p>
-          
-          <div className="flex flex-col md:flex-row justify-center items-center gap-8 mt-12">
-            <div>
-              <p className="text-2xl font-bold text-[#e8531a]">50,000+</p>
-              <p className="text-sm text-white">Monthly Visitors</p>
+          <div style={{
+            display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
+            gap: '10px',
+          }}>
+            <a
+              href="#packages"
+              style={{
+                background: '#e8531a',
+                color: 'white',
+                padding: '13px 28px',
+                borderRadius: '10px',
+                fontWeight: '700',
+                fontSize: '14px',
+                textDecoration: 'none',
+                textAlign: 'center',
+                transition: 'all 0.2s',
+                display: 'block',
+                boxSizing: 'border-box',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = '#c94415'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.35)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = '#e8531a'
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            >
+              View Packages
+            </a>
+            
+            <a
+              href="#contact"
+              style={{
+                background: 'white',
+                color: '#1d1d1f',
+                padding: '13px 28px',
+                borderRadius: '10px',
+                fontWeight: '600',
+                fontSize: '14px',
+                textDecoration: 'none',
+                border: '1px solid #d2d2d7',
+                textAlign: 'center',
+                transition: 'all 0.2s',
+                display: 'block',
+                boxSizing: 'border-box',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = '#e8531a'
+                e.currentTarget.style.color = '#e8531a'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.08)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = '#d2d2d7'
+                e.currentTarget.style.color = '#1d1d1f'
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            >
+              Contact Us
+            </a>
+          </div>
+        </div>
+
+        {/* Stats 2x2 */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '12px',
+        }}>
+          {[
+            { value: '50K+', label: 'Monthly Visitors' },
+            { value: '9+', label: 'Top Brands' },
+            { value: '8+', label: 'Cities Reached' },
+            { value: '50+', label: 'Cars Listed' },
+          ].map((stat, i) => (
+            <div
+              key={i}
+              style={{
+                background: '#fff8f5',
+                border: '1.5px solid #e8531a',
+                borderRadius: '16px',
+                padding: isMobile ? '20px 14px' : '28px 20px',
+                cursor: 'default',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => {
+                const el = e.currentTarget
+                el.style.background = '#e8531a'
+                el.style.transform = 'translateY(-3px)'
+                el.style.boxShadow = '0 8px 24px rgba(232,83,26,0.25)'
+                el.querySelectorAll('[data-val]').forEach((n: any) => n.style.color = 'white')
+                el.querySelectorAll('[data-label]').forEach((n: any) => n.style.color = 'rgba(255,255,255,0.8)')
+              }}
+              onMouseLeave={e => {
+                const el = e.currentTarget
+                el.style.background = '#fff8f5'
+                el.style.transform = 'translateY(0)'
+                el.style.boxShadow = 'none'
+                el.querySelectorAll('[data-val]').forEach((n: any) => n.style.color = '#e8531a')
+                el.querySelectorAll('[data-label]').forEach((n: any) => n.style.color = '#6e6e73')
+              }}
+            >
+              <div data-val style={{
+                fontSize: isMobile ? '32px' : '42px',
+                fontWeight: '800',
+                color: '#e8531a',
+                letterSpacing: '-2px',
+                lineHeight: 1,
+                marginBottom: '8px',
+                transition: 'color 0.2s',
+              }}>
+                {stat.value}
+              </div>
+              <div data-label style={{
+                fontSize: '13px',
+                color: '#6e6e73',
+                fontWeight: '500',
+                transition: 'color 0.2s',
+              }}>
+                {stat.label}
+              </div>
             </div>
-            <div className="h-12 w-px bg-[#333] hidden md:block"></div>
-            <div>
-              <p className="text-2xl font-bold text-[#e8531a]">8+</p>
-              <p className="text-sm text-white">Cities Reached</p>
-            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* WHY ADVERTISE */}
+      <div style={{ background: '#f5f5f7', padding: isMobile ? '48px 16px' : '80px 24px' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{
+            display: 'inline-block',
+            background: '#fff8f5',
+            border: '1px solid #e8531a',
+            borderRadius: '6px',
+            padding: '4px 12px',
+            fontSize: '12px',
+            fontWeight: '700',
+            color: '#e8531a',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            marginBottom: '12px',
+          }}>
+            Why CarKinne
+          </div>
+          <h2 style={{
+            fontSize: isMobile ? '28px' : '36px',
+            fontWeight: '800',
+            color: '#1d1d1f',
+            margin: '0 0 8px',
+            letterSpacing: '-1px',
+          }}>
+            Why Advertise on CarKinne?
+          </h2>
+          <p style={{
+            fontSize: '15px',
+            color: '#6e6e73',
+            margin: '0 0 40px',
+          }}>
+            Reach buyers at exactly the right moment.
+          </p>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)',
+            gap: '12px',
+          }}>
+            {[
+              { Icon: IconTarget, title: 'Targeted Audience', desc: 'People on CarKinne are actively looking to buy — not casual browsers.' },
+              { Icon: IconMap, title: 'Nepal Focused', desc: '100% Nepal traffic. Reach buyers in Kathmandu, Pokhara and beyond.' },
+              { Icon: IconLayout, title: 'Multiple Formats', desc: 'Banners, featured listings, sponsored content and newsletter placements.' },
+              { Icon: IconTag, title: 'Affordable Rates', desc: 'Flexible packages for dealerships, banks, insurance companies and brands.' },
+            ].map((item, i) => (
+              <div
+                key={i}
+                style={{
+                  background: 'white',
+                  border: '1px solid #e5e5e5',
+                  borderRadius: '14px',
+                  padding: '20px',
+                  transition: 'all 0.2s',
+                  cursor: 'default',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = '#e8531a'
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(232,83,26,0.12)'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = '#e5e5e5'
+                  e.currentTarget.style.boxShadow = 'none'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                }}
+              >
+                <div style={{
+                  width: '40px', height: '40px',
+                  background: '#fff8f5',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#e8531a',
+                  marginBottom: '14px',
+                }}>
+                  <item.Icon />
+                </div>
+                <div style={{
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  color: '#1d1d1f',
+                  marginBottom: '6px',
+                }}>
+                  {item.title}
+                </div>
+                <div style={{
+                  fontSize: '12px',
+                  color: '#6e6e73',
+                  lineHeight: 1.6,
+                }}>
+                  {item.desc}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Why Advertise Section */}
-      <div className="max-w-5xl mx-auto px-6 py-20">
-        <h2 className="text-3xl font-semibold text-center text-[#1d1d1f] mb-16">
-          Why Advertise on CarKinne?
-        </h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white border border-[#d2d2d7] rounded-2xl p-7">
-            <h3 className="text-base font-semibold text-[#1d1d1f] mb-3">Targeted Audience</h3>
-            <p className="text-sm text-[#6e6e73]">
-              People on CarKinne are actively looking to buy a car — not casual browsers.
-            </p>
+      {/* WHO IS IT FOR */}
+      <div style={{ padding: isMobile ? '48px 16px' : '80px 24px' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{
+            display: 'inline-block',
+            background: '#fff8f5',
+            border: '1px solid #e8531a',
+            borderRadius: '6px',
+            padding: '4px 12px',
+            fontSize: '12px',
+            fontWeight: '700',
+            color: '#e8531a',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            marginBottom: '12px',
+          }}>
+            Who Is It For
           </div>
-          <div className="bg-white border border-[#d2d2d7] rounded-2xl p-7">
-            <h3 className="text-base font-semibold text-[#1d1d1f] mb-3">Nepal-Focused</h3>
-            <p className="text-sm text-[#6e6e73]">
-              100% Nepal traffic. Reach buyers in Kathmandu, Pokhara, Biratnagar and beyond.
-            </p>
-          </div>
-          <div className="bg-white border border-[#d2d2d7] rounded-2xl p-7">
-            <h3 className="text-base font-semibold text-[#1d1d1f] mb-3">Multiple Formats</h3>
-            <p className="text-sm text-[#6e6e73]">
-              Banner ads, featured listings, sponsored content and newsletter placements.
-            </p>
-          </div>
-          <div className="bg-white border border-[#d2d2d7] rounded-2xl p-7">
-            <h3 className="text-base font-semibold text-[#1d1d1f] mb-3">Affordable Rates</h3>
-            <p className="text-sm text-[#6e6e73]">
-              Flexible packages for dealerships, banks, insurance companies and auto brands.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Who Is It For Section */}
-      <div className="w-full bg-[#f5f5f7] py-20 px-6">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-semibold text-center text-[#1d1d1f] mb-16">
+          <h2 style={{
+            fontSize: isMobile ? '28px' : '36px',
+            fontWeight: '800',
+            color: '#1d1d1f',
+            margin: '0 0 8px',
+            letterSpacing: '-1px',
+          }}>
             Who Should Advertise?
           </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white border border-[#d2d2d7] rounded-2xl p-7">
-              <h3 className="text-base font-semibold text-[#1d1d1f] mb-3">Car Dealerships</h3>
-              <p className="text-sm text-[#6e6e73]">
-                Promote your showroom, feature your inventory and drive footfall from active buyers.
-              </p>
-            </div>
-            <div className="bg-white border border-[#d2d2d7] rounded-2xl p-7">
-              <h3 className="text-base font-semibold text-[#1d1d1f] mb-3">Banks & Finance</h3>
-              <p className="text-sm text-[#6e6e73]">
-                Reach people calculating EMIs and comparing car loan rates — your ideal customers.
-              </p>
-            </div>
-            <div className="bg-white border border-[#d2d2d7] rounded-2xl p-7">
-              <h3 className="text-base font-semibold text-[#1d1d1f] mb-3">Insurance Companies</h3>
-              <p className="text-sm text-[#6e6e73]">
-                Connect with new car buyers at the exact moment they need vehicle insurance.
-              </p>
-            </div>
+          <p style={{
+            fontSize: '15px',
+            color: '#6e6e73',
+            margin: '0 0 40px',
+          }}>
+            Perfect for businesses targeting Nepal car buyers.
+          </p>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+            gap: '12px',
+          }}>
+            {[
+              { Icon: IconCar, title: 'Car Dealerships', desc: 'Promote your showroom, feature your inventory and drive footfall from active buyers.' },
+              { Icon: IconBank, title: 'Banks & Finance', desc: 'Reach people calculating EMIs and comparing car loan rates — your ideal customers.' },
+              { Icon: IconShield, title: 'Insurance Companies', desc: 'Connect with new car buyers at the exact moment they need vehicle insurance.' },
+            ].map((item, i) => (
+              <div
+                key={i}
+                style={{
+                  background: 'white',
+                  border: '1px solid #e5e5e5',
+                  borderRadius: '16px',
+                  padding: '28px 24px',
+                  transition: 'all 0.2s',
+                  cursor: 'default',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = '#e8531a'
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(232,83,26,0.12)'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = '#e5e5e5'
+                  e.currentTarget.style.boxShadow = 'none'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                }}
+              >
+                <div style={{
+                  width: '48px', height: '48px',
+                  background: '#fff8f5',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#e8531a',
+                  marginBottom: '16px',
+                }}>
+                  <item.Icon />
+                </div>
+                <div style={{
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  color: '#1d1d1f',
+                  marginBottom: '8px',
+                }}>
+                  {item.title}
+                </div>
+                <div style={{
+                  fontSize: '14px',
+                  color: '#6e6e73',
+                  lineHeight: 1.7,
+                }}>
+                  {item.desc}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Packages Section */}
-      <div className="max-w-4xl mx-auto px-6 py-20">
-        <h2 className="text-3xl font-semibold text-center text-[#1d1d1f] mb-4">
-          Advertising Packages
-        </h2>
-        <p className="text-center text-[#6e6e73] mb-16">
-          Simple, transparent pricing
-        </p>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Basic Package */}
-          <div className="border border-[#d2d2d7] rounded-2xl p-7">
-            <h3 className="text-xl font-semibold text-[#1d1d1f] mb-2">Basic</h3>
-            <div className="mb-6">
-              <span className="text-3xl font-bold text-[#e8531a]">Rs. 15,000</span>
-              <span className="text-sm text-[#6e6e73]">/month</span>
-            </div>
-            <div className="border-t border-[#d2d2d7] my-4"></div>
-            <ul className="space-y-3 mb-8">
-              <li className="flex items-start">
-                <span className="text-[#e8531a] mr-2">✓</span>
-                <span className="text-sm text-[#6e6e73]">Homepage banner (300x250)</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-[#e8531a] mr-2">✓</span>
-                <span className="text-sm text-[#6e6e73]">30 days placement</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-[#e8531a] mr-2">✓</span>
-                <span className="text-sm text-[#6e6e73]">10,000+ impressions</span>
-              </li>
-            </ul>
-            <button className="w-full border border-[#1d1d1f] text-[#1d1d1f] py-3 rounded-lg font-medium hover:bg-[#1d1d1f] hover:text-white transition-colors">
-              Get Started
-            </button>
+      {/* PACKAGES */}
+      <div id="packages" style={{
+        background: '#f5f5f7',
+        padding: isMobile ? '48px 16px' : '80px 24px',
+      }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{
+            display: 'inline-block',
+            background: '#fff8f5',
+            border: '1px solid #e8531a',
+            borderRadius: '6px',
+            padding: '4px 12px',
+            fontSize: '12px',
+            fontWeight: '700',
+            color: '#e8531a',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            marginBottom: '12px',
+          }}>
+            Packages
           </div>
-          
-          {/* Featured Package */}
-          <div className="border-2 border-[#e8531a] rounded-2xl p-7 bg-[#fff8f5] relative">
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <span className="bg-[#e8531a] text-white text-xs font-semibold px-3 py-1 rounded-full">
-                Most Popular
-              </span>
-            </div>
-            <h3 className="text-xl font-semibold text-[#1d1d1f] mb-2">Featured</h3>
-            <div className="mb-6">
-              <span className="text-3xl font-bold text-[#e8531a]">Rs. 35,000</span>
-              <span className="text-sm text-[#6e6e73]">/month</span>
-            </div>
-            <div className="border-t border-[#d2d2d7] my-4"></div>
-            <ul className="space-y-3 mb-8">
-              <li className="flex items-start">
-                <span className="text-[#e8531a] mr-2">✓</span>
-                <span className="text-sm text-[#6e6e73]">Homepage hero banner</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-[#e8531a] mr-2">✓</span>
-                <span className="text-sm text-[#6e6e73]">Featured car listing (top of results)</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-[#e8531a] mr-2">✓</span>
-                <span className="text-sm text-[#6e6e73]">Newsletter mention</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-[#e8531a] mr-2">✓</span>
-                <span className="text-sm text-[#6e6e73]">25,000+ impressions</span>
-              </li>
-            </ul>
-            <button className="w-full border border-[#1d1d1f] text-[#1d1d1f] py-3 rounded-lg font-medium hover:bg-[#1d1d1f] hover:text-white transition-colors">
-              Get Started
-            </button>
-          </div>
-          
-          {/* Premium Package */}
-          <div className="border border-[#d2d2d7] rounded-2xl p-7">
-            <h3 className="text-xl font-semibold text-[#1d1d1f] mb-2">Premium</h3>
-            <div className="mb-6">
-              <span className="text-3xl font-bold text-[#e8531a]">Rs. 75,000</span>
-              <span className="text-sm text-[#6e6e73]">/month</span>
-            </div>
-            <div className="border-t border-[#d2d2d7] my-4"></div>
-            <ul className="space-y-3 mb-8">
-              <li className="flex items-start">
-                <span className="text-[#e8531a] mr-2">✓</span>
-                <span className="text-sm text-[#6e6e73]">All Featured benefits</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-[#e8531a] mr-2">✓</span>
-                <span className="text-sm text-[#6e6e73]">Sponsored blog post</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-[#e8531a] mr-2">✓</span>
-                <span className="text-sm text-[#6e6e73]">Social media mention</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-[#e8531a] mr-2">✓</span>
-                <span className="text-sm text-[#6e6e73]">Dedicated landing page</span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-[#e8531a] mr-2">✓</span>
-                <span className="text-sm text-[#6e6e73]">60,000+ impressions</span>
-              </li>
-            </ul>
-            <button className="w-full border border-[#1d1d1f] text-[#1d1d1f] py-3 rounded-lg font-medium hover:bg-[#1d1d1f] hover:text-white transition-colors">
-              Get Started
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Contact Form Section */}
-      <div className="w-full bg-[#f5f5f7] py-20 px-6">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-3xl font-semibold text-center text-[#1d1d1f] mb-4">
-            Get In Touch
+          <h2 style={{
+            fontSize: isMobile ? '28px' : '36px',
+            fontWeight: '800',
+            color: '#1d1d1f',
+            margin: '0 0 8px',
+            letterSpacing: '-1px',
+          }}>
+            Advertising Packages
           </h2>
-          <p className="text-center text-[#6e6e73] mb-16">
+          <p style={{
+            fontSize: '15px',
+            color: '#6e6e73',
+            margin: '0 0 40px',
+          }}>
+            Simple, transparent pricing for every budget.
+          </p>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+            gap: '16px',
+            alignItems: 'start',
+          }}>
+            {[
+              {
+                name: 'Basic',
+                price: 'Rs. 15,000',
+                popular: false,
+                features: [
+                  'Homepage banner (300x250)',
+                  '30 days placement',
+                  '10,000+ impressions',
+                ],
+              },
+              {
+                name: 'Featured',
+                price: 'Rs. 35,000',
+                popular: true,
+                features: [
+                  'Homepage hero banner',
+                  'Featured car listing (top)',
+                  'Newsletter mention',
+                  '25,000+ impressions',
+                ],
+              },
+              {
+                name: 'Premium',
+                price: 'Rs. 75,000',
+                popular: false,
+                features: [
+                  'All Featured benefits',
+                  'Sponsored blog post',
+                  'Social media mention',
+                  'Dedicated landing page',
+                  '60,000+ impressions',
+                ],
+              },
+            ].map((pkg, i) => (
+              <div
+                key={i}
+                style={{
+                  background: pkg.popular ? '#1d1d1f' : 'white',
+                  border: pkg.popular
+                    ? '2px solid #e8531a'
+                    : '1px solid #e5e5e5',
+                  borderRadius: '20px',
+                  padding: '32px 28px',
+                  position: 'relative',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.transform = 'translateY(-4px)'
+                  e.currentTarget.style.boxShadow = pkg.popular
+                    ? '0 12px 32px rgba(232,83,26,0.3)'
+                    : '0 12px 32px rgba(0,0,0,0.1)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
+              >
+                {pkg.popular && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '-13px',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    background: '#e8531a',
+                    color: 'white',
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    padding: '4px 14px',
+                    borderRadius: '20px',
+                    whiteSpace: 'nowrap',
+                    letterSpacing: '0.5px',
+                  }}>
+                    MOST POPULAR
+                  </div>
+                )}
+
+                <div style={{
+                  fontSize: '18px',
+                  fontWeight: '800',
+                  color: pkg.popular ? 'white' : '#1d1d1f',
+                  marginBottom: '8px',
+                  letterSpacing: '-0.5px',
+                }}>
+                  {pkg.name}
+                </div>
+
+                <div style={{ marginBottom: '24px' }}>
+                  <span style={{
+                    fontSize: '32px',
+                    fontWeight: '800',
+                    color: '#e8531a',
+                    letterSpacing: '-1px',
+                  }}>
+                    {pkg.price}
+                  </span>
+                  <span style={{
+                    fontSize: '13px',
+                    color: pkg.popular ? 'rgba(255,255,255,0.5)' : '#6e6e73',
+                    marginLeft: '4px',
+                  }}>
+                    /month
+                  </span>
+                </div>
+
+                <div style={{
+                  borderTop: `1px solid ${pkg.popular ? 'rgba(255,255,255,0.1)' : '#f0f0f0'}`,
+                  paddingTop: '20px',
+                  marginBottom: '24px',
+                }}>
+                  {pkg.features.map((f, j) => (
+                    <div key={j} style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '10px',
+                      marginBottom: '12px',
+                      fontSize: '14px',
+                      color: pkg.popular ? 'rgba(255,255,255,0.8)' : '#6e6e73',
+                    }}>
+                      {pkg.popular ? <IconCheckWhite /> : <IconCheck />}
+                      {f}
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => {
+                    setFormData(prev => ({ ...prev, package: pkg.name }))
+                    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
+                  }}
+                  style={{
+                    width: '100%',
+                    background: pkg.popular ? '#e8531a' : 'white',
+                    color: pkg.popular ? 'white' : '#1d1d1f',
+                    border: pkg.popular ? 'none' : '1.5px solid #1d1d1f',
+                    borderRadius: '10px',
+                    padding: '12px',
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={e => {
+                    if (pkg.popular) {
+                      e.currentTarget.style.background = '#c94415'
+                    } else {
+                      e.currentTarget.style.background = '#1d1d1f'
+                      e.currentTarget.style.color = 'white'
+                    }
+                    e.currentTarget.style.transform = 'translateY(-1px)'
+                  }}
+                  onMouseLeave={e => {
+                    if (pkg.popular) {
+                      e.currentTarget.style.background = '#e8531a'
+                    } else {
+                      e.currentTarget.style.background = 'white'
+                      e.currentTarget.style.color = '#1d1d1f'
+                    }
+                    e.currentTarget.style.transform = 'translateY(0)'
+                  }}
+                >
+                  Get Started
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* CONTACT FORM */}
+      <div id="contact" style={{
+        padding: isMobile ? '48px 16px' : '80px 24px',
+      }}>
+        <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+          <div style={{
+            display: 'inline-block',
+            background: '#fff8f5',
+            border: '1px solid #e8531a',
+            borderRadius: '6px',
+            padding: '4px 12px',
+            fontSize: '12px',
+            fontWeight: '700',
+            color: '#e8531a',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            marginBottom: '12px',
+          }}>
+            Get In Touch
+          </div>
+          <h2 style={{
+            fontSize: isMobile ? '28px' : '36px',
+            fontWeight: '800',
+            color: '#1d1d1f',
+            margin: '0 0 8px',
+            letterSpacing: '-1px',
+          }}>
+            Start Advertising Today
+          </h2>
+          <p style={{
+            fontSize: '15px',
+            color: '#6e6e73',
+            margin: '0 0 40px',
+          }}>
             Fill out the form and we'll get back to you within 24 hours.
           </p>
-          
-          <div className="bg-white border border-[#d2d2d7] rounded-2xl p-10">
+
+          <div style={{
+            background: 'white',
+            border: '1px solid #e5e5e5',
+            borderRadius: '20px',
+            padding: isMobile ? '24px 16px' : '40px',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+          }}>
             <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border border-[#d2d2d7] rounded-lg focus:outline-none focus:border-[#e8531a]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
-                    Company/Showroom Name *
-                  </label>
-                  <input
-                    type="text"
-                    name="company"
-                    value={formData.company}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border border-[#d2d2d7] rounded-lg focus:outline-none focus:border-[#e8531a]"
-                  />
-                </div>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                gap: '16px',
+                marginBottom: '16px',
+              }}>
+                {[
+                  { label: 'Full Name *', name: 'fullName', type: 'text', required: true },
+                  { label: 'Company / Showroom *', name: 'company', type: 'text', required: true },
+                  { label: 'Email *', name: 'email', type: 'email', required: true },
+                  { label: 'Phone', name: 'phone', type: 'text', required: false },
+                ].map((field, i) => (
+                  <div key={i}>
+                    <label style={{
+                      display: 'block',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      color: '#1d1d1f',
+                      marginBottom: '8px',
+                    }}>
+                      {field.label}
+                    </label>
+                    <input
+                      type={field.type}
+                      name={field.name}
+                      value={formData[field.name as keyof typeof formData]}
+                      onChange={handleChange}
+                      required={field.required}
+                      style={{
+                        width: '100%',
+                        padding: '11px 14px',
+                        border: '1px solid #d2d2d7',
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        outline: 'none',
+                        boxSizing: 'border-box',
+                        transition: 'border-color 0.2s',
+                        fontFamily: 'inherit',
+                      }}
+                      onFocus={e => e.target.style.borderColor = '#e8531a'}
+                      onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                    />
+                  </div>
+                ))}
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                  <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 border border-[#d2d2d7] rounded-lg focus:outline-none focus:border-[#e8531a]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
-                    Phone
-                  </label>
-                  <input
-                    type="text"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-[#d2d2d7] rounded-lg focus:outline-none focus:border-[#e8531a]"
-                  />
-                </div>
-              </div>
-              
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
+
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  color: '#1d1d1f',
+                  marginBottom: '8px',
+                }}>
                   Package Interest
                 </label>
                 <select
                   name="package"
                   value={formData.package}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-[#d2d2d7] rounded-lg focus:outline-none focus:border-[#e8531a]"
+                  style={{
+                    width: '100%',
+                    padding: '11px 14px',
+                    border: '1px solid #d2d2d7',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    outline: 'none',
+                    background: 'white',
+                    boxSizing: 'border-box',
+                    fontFamily: 'inherit',
+                    transition: 'border-color 0.2s',
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#e8531a'}
+                  onBlur={e => e.target.style.borderColor = '#d2d2d7'}
                 >
-                  <option value="Basic">Basic</option>
-                  <option value="Featured">Featured</option>
-                  <option value="Premium">Premium</option>
-                  <option value="Custom">Custom</option>
+                  <option value="Basic">Basic — Rs. 15,000/month</option>
+                  <option value="Featured">Featured — Rs. 35,000/month</option>
+                  <option value="Premium">Premium — Rs. 75,000/month</option>
+                  <option value="Custom">Custom Package</option>
                 </select>
               </div>
-              
-              <div className="mb-8">
-                <label className="block text-sm font-medium text-[#1d1d1f] mb-2">
+
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  color: '#1d1d1f',
+                  marginBottom: '8px',
+                }}>
                   Message
                 </label>
                 <textarea
@@ -342,22 +864,57 @@ const Advertise = () => {
                   onChange={handleChange}
                   rows={4}
                   placeholder="Tell us about your business and advertising goals..."
-                  className="w-full px-4 py-3 border border-[#d2d2d7] rounded-lg focus:outline-none focus:border-[#e8531a]"
-                ></textarea>
+                  style={{
+                    width: '100%',
+                    padding: '11px 14px',
+                    border: '1px solid #d2d2d7',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    resize: 'vertical',
+                    fontFamily: 'inherit',
+                    transition: 'border-color 0.2s',
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#e8531a'}
+                  onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                />
               </div>
-              
+
               <button
                 type="submit"
-                className="w-full bg-[#e8531a] text-white py-3.5 rounded-lg font-medium hover:bg-[#e8531a]/90 transition-colors"
+                style={{
+                  width: '100%',
+                  background: '#e8531a',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '10px',
+                  padding: '14px',
+                  fontSize: '15px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  fontFamily: 'inherit',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = '#c94415'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.35)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = '#e8531a'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
               >
-                Send Enquiry
+                Send Enquiry →
               </button>
             </form>
           </div>
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Advertise;
+export default Advertise
