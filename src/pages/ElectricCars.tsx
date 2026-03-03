@@ -179,21 +179,6 @@ const ElectricCars = () => {
 
             {/* Left - Why Electric */}
             <div>
-              <div style={{
-                display: 'inline-block',
-                background: '#fff8f5',
-                border: '1px solid #e8531a',
-                borderRadius: '6px',
-                padding: '3px 10px',
-                fontSize: '11px',
-                fontWeight: '700',
-                color: '#e8531a',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                marginBottom: '8px',
-              }}>
-                Why Electric
-              </div>
               <h2 style={{
                 fontSize: '15px',
                 fontWeight: '800',
@@ -269,21 +254,6 @@ const ElectricCars = () => {
 
             {/* Right - Government Incentives */}
             <div>
-              <div style={{
-                display: 'inline-block',
-                background: '#fff8f5',
-                border: '1px solid #e8531a',
-                borderRadius: '6px',
-                padding: '3px 10px',
-                fontSize: '11px',
-                fontWeight: '700',
-                color: '#e8531a',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                marginBottom: '8px',
-              }}>
-                Government Policy
-              </div>
               <h2 style={{
                 fontSize: '15px',
                 fontWeight: '800',
