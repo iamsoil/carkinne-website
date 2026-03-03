@@ -1136,7 +1136,15 @@ const CarDetail = () => {
                       <span>{showroom.working_hours}</span>
                     </div>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="outline" className="flex-1 border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="flex-1 border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg"
+                        onClick={() => window.open(
+                          `https://www.google.com/maps/dir/?api=1&destination=${showroom.lat},${showroom.lng}`,
+                          '_blank'
+                        )}
+                      >
                         Directions
                       </Button>
                       <Button size="sm" className="flex-1 bg-foreground text-white hover:bg-accent rounded-lg">
