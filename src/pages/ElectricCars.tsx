@@ -368,10 +368,10 @@ const ElectricCars = () => {
 
             {/* LEFT SIDEBAR */}
             <div style={{
-              position: 'sticky',
-              top: '24px',
+              position: isMobile ? 'relative' : 'sticky',
+              top: isMobile ? 'auto' : '24px',
               display: 'flex',
-              flexDirection: 'column',
+              flexDirection: 'column' as const,
               gap: '16px',
             }}>
 
