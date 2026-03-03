@@ -342,7 +342,7 @@ const BudgetFinder = () => {
       fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
     }}>
       <div style={{
-        maxWidth: '640px',
+        maxWidth: '1000px',
         margin: '0 auto',
         padding: isMobile ? '24px 16px' : '40px 24px',
       }}>
@@ -379,124 +379,262 @@ const BudgetFinder = () => {
 
         {step === 1 && (
           <div style={{
-            background: 'white',
-            border: '1px solid #e5e5e5',
-            borderRadius: '20px',
-            padding: isMobile ? '24px 20px' : '40px',
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: '32px',
+            alignItems: 'start',
           }}>
-            <div style={{ textAlign: 'center' }}>
-              <h1 style={{
-                fontSize: isMobile ? '22px' : '28px',
-                fontWeight: '800',
-                letterSpacing: '-0.5px',
-                margin: 0,
+            {/* LEFT COLUMN */}
+            <div>
+              <div style={{
+                display: 'inline-block',
+                background: '#fff8f5',
+                border: '1px solid #e8531a',
+                borderRadius: '6px',
+                padding: '4px 12px',
+                fontSize: '12px',
+                fontWeight: '700',
+                color: '#e8531a',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                marginBottom: '16px',
               }}>
-                What's your budget?
+                BUDGET FINDER
+              </div>
+              <h1 style={{
+                fontSize: isMobile ? '28px' : '36px',
+                fontWeight: '800',
+                color: '#1d1d1f',
+                margin: '12px 0 12px',
+                letterSpacing: '-1px',
+                lineHeight: '1.2',
+              }}>
+                Find Your<br />
+                <span style={{ color: '#e8531a' }}>"Perfect Car"</span>
               </h1>
               <p style={{
                 fontSize: '13px',
                 color: '#6e6e73',
-                margin: '8px 0 28px',
+                lineHeight: '1.7',
+                margin: '0 0 28px',
               }}>
-                We'll only show cars within your range
+                Answer 4 quick questions and we'll match you with the best cars within your budget in Nepal.
               </p>
-              
-              <div style={{
-                fontSize: isMobile ? '28px' : '36px',
-                fontWeight: '800',
-                color: '#e8531a',
-                margin: '0 0 20px',
-              }}>
-                {formatPrice(budget)}
-              </div>
-              
-              <div style={{ marginBottom: '8px' }}>
-                <input
-                  type="range"
-                  min="500000"
-                  max="20000000"
-                  step="100000"
-                  value={budget}
-                  onChange={(e) => setBudget(Number(e.target.value))}
-                  style={{
-                    width: '100%',
-                    height: '4px',
-                    accentColor: '#e8531a',
-                  }}
-                />
-              </div>
+
               <div style={{
                 display: 'flex',
-                justifyContent: 'space-between',
-                fontSize: '11px',
-                color: '#6e6e73',
-                marginBottom: '24px',
-              }}>
-                <span>Rs. 5 Lakh</span>
-                <span>Rs. 2 Crore</span>
-              </div>
-              
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(6, 1fr)',
-                gap: '8px',
+                flexDirection: 'column',
+                gap: '16px',
                 marginBottom: '28px',
               }}>
-                {budgetRanges.map((range) => (
-                  <button
-                    key={range.label}
-                    onClick={() => handleBudgetSelect(range.min, range.max)}
+                {[
+                  { title: 'Set your budget', desc: 'Choose your max price range' },
+                  { title: 'Tell us your needs', desc: 'City, family, business or off-road' },
+                  { title: 'Set preferences', desc: 'Fuel type, transmission and features' },
+                  { title: 'Get matched', desc: 'See ranked cars tailored to you' }
+                ].map((stepItem, index) => (
+                  <div 
+                    key={index}
                     style={{
-                      border: '1px solid #d2d2d7',
-                      borderRadius: '20px',
-                      padding: '8px 4px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: '#1d1d1f',
-                      background: 'white',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.borderColor = '#e8531a';
-                      e.currentTarget.style.color = '#e8531a';
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.borderColor = '#d2d2d7';
-                      e.currentTarget.style.color = '#1d1d1f';
+                      display: 'flex',
+                      gap: '12px',
+                      alignItems: 'flex-start',
                     }}
                   >
-                    {range.label}
-                  </button>
+                    <div style={{
+                      width: '28px',
+                      height: '28px',
+                      borderRadius: '50%',
+                      background: '#fff8f5',
+                      border: '1px solid #fde8da',
+                      color: '#e8531a',
+                      fontSize: '12px',
+                      fontWeight: '800',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: '0',
+                    }}>
+                      {index + 1}
+                    </div>
+                    <div>
+                      <div style={{
+                        fontSize: '13px',
+                        fontWeight: '700',
+                        color: '#1d1d1f',
+                        marginBottom: '2px',
+                      }}>
+                        {stepItem.title}
+                      </div>
+                      <div style={{
+                        fontSize: '11px',
+                        color: '#6e6e73',
+                        lineHeight: '1.5',
+                      }}>
+                        {stepItem.desc}
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
-              
-              <button
-                onClick={() => setStep(2)}
-                style={{
-                  width: '100%',
-                  background: '#1d1d1f',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '12px',
-                  padding: '14px',
-                  fontSize: '14px',
-                  fontWeight: '700',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = '#e8531a';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = '#1d1d1f';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                Continue
-              </button>
+
+              <div style={{
+                background: '#fff8f5',
+                border: '1px solid #fde8da',
+                borderRadius: '14px',
+                padding: '16px',
+              }}>
+                <div style={{
+                  fontSize: '13px',
+                  fontWeight: '800',
+                  color: '#1d1d1f',
+                  marginBottom: '10px',
+                }}>
+                  Smart Buying Tips
+                </div>
+                {[
+                  "Add 10–15% to ex-showroom for on-road costs",
+                  "Factor in insurance, fuel and service costs",
+                  "Check resale value before buying"
+                ].map((tip, index) => (
+                  <div 
+                    key={index}
+                    style={{
+                      fontSize: '12px',
+                      color: '#6e6e73',
+                      lineHeight: '1.5',
+                      paddingLeft: '12px',
+                      borderLeft: '2px solid #e8531a',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    {tip}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* RIGHT COLUMN - BUDGET CARD */}
+            <div style={{
+              background: 'white',
+              border: '1px solid #e5e5e5',
+              borderRadius: '20px',
+              padding: isMobile ? '24px 20px' : '40px',
+            }}>
+              <div style={{ textAlign: 'center' }}>
+                <h2 style={{
+                  fontSize: isMobile ? '22px' : '28px',
+                  fontWeight: '800',
+                  letterSpacing: '-0.5px',
+                  margin: 0,
+                }}>
+                  What's your budget?
+                </h2>
+                <p style={{
+                  fontSize: '13px',
+                  color: '#6e6e73',
+                  margin: '8px 0 28px',
+                }}>
+                  We'll only show cars within your range
+                </p>
+                
+                <div style={{
+                  fontSize: isMobile ? '28px' : '36px',
+                  fontWeight: '800',
+                  color: '#e8531a',
+                  margin: '0 0 20px',
+                }}>
+                  {formatPrice(budget)}
+                </div>
+                
+                <div style={{ marginBottom: '8px' }}>
+                  <input
+                    type="range"
+                    min="500000"
+                    max="20000000"
+                    step="100000"
+                    value={budget}
+                    onChange={(e) => setBudget(Number(e.target.value))}
+                    style={{
+                      width: '100%',
+                      height: '4px',
+                      accentColor: '#e8531a',
+                    }}
+                  />
+                </div>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  fontSize: '11px',
+                  color: '#6e6e73',
+                  marginBottom: '24px',
+                }}>
+                  <span>Rs. 5 Lakh</span>
+                  <span>Rs. 2 Crore</span>
+                </div>
+                
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(6, 1fr)',
+                  gap: '8px',
+                  marginBottom: '28px',
+                }}>
+                  {budgetRanges.map((range) => (
+                    <button
+                      key={range.label}
+                      onClick={() => handleBudgetSelect(range.min, range.max)}
+                      style={{
+                        border: '1px solid #d2d2d7',
+                        borderRadius: '20px',
+                        padding: '8px 4px',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        color: '#1d1d1f',
+                        background: 'white',
+                        cursor: 'pointer',
+                        fontFamily: 'inherit',
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.borderColor = '#e8531a';
+                        e.currentTarget.style.color = '#e8531a';
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.borderColor = '#d2d2d7';
+                        e.currentTarget.style.color = '#1d1d1f';
+                      }}
+                    >
+                      {range.label}
+                    </button>
+                  ))}
+                </div>
+                
+                <button
+                  onClick={() => setStep(2)}
+                  style={{
+                    width: '100%',
+                    background: '#1d1d1f',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '14px',
+                    fontSize: '14px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = '#e8531a';
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = '#1d1d1f';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  Continue
+                </button>
+              </div>
             </div>
           </div>
         )}
