@@ -170,206 +170,195 @@ const ElectricCars = () => {
       {/* COMBINED WHY EV + INCENTIVES */}
       <div style={{ background: '#f5f5f7', padding: isMobile ? '20px 16px' : '24px 24px' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-
-          {/* Why Electric - compact row */}
-          <div style={{
-            display: 'inline-block',
-            background: '#fff8f5',
-            border: '1px solid #e8531a',
-            borderRadius: '6px',
-            padding: '4px 12px',
-            fontSize: '12px',
-            fontWeight: '700',
-            color: '#e8531a',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            marginBottom: '6px',
-          }}>
-            Why Electric
-          </div>
-          <h2 style={{
-            fontSize: isMobile ? '13px' : '14px',
-            fontWeight: '800',
-            color: '#1d1d1f',
-            margin: '0 0 10px',
-            letterSpacing: '-1px',
-          }}>
-            Why Choose an Electric Car?
-          </h2>
-
           <div style={{
             display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
-            gap: '8px',
-            marginBottom: '20px',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: '24px',
+            alignItems: 'start',
           }}>
-            {[
-              {
-                Icon: IconLeaf,
-                title: 'Zero Emissions',
-                desc: 'Drive clean with no harmful emissions, contributing to cleaner air across Nepal.',
-              },
-              {
-                Icon: IconZap,
-                title: 'Lower Running Costs',
-                desc: 'Save significantly on fuel — electricity is far cheaper than petrol in Nepal.',
-              },
-              {
-                Icon: IconBattery,
-                title: 'Advanced Technology',
-                desc: 'Experience instant torque, smart features and a superior driving experience.',
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
-                style={{
-                  background: 'white',
-                  border: '1px solid #e5e5e5',
-                  borderRadius: '14px',
-                  padding: '12px 14px',
-                  transition: 'all 0.2s',
-                  cursor: 'default',
-                  display: 'flex',
-                  gap: '14px',
-                  alignItems: 'flex-start',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = '#e8531a'
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.1)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = '#e5e5e5'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = 'none'
-                }}
-              >
-                <div style={{
-                  width: '30px', height: '30px',
-                  background: '#fff8f5',
-                  borderRadius: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#e8531a',
-                  flexShrink: 0,
-                }}>
-                  <item.Icon />
-                </div>
-                <div>
-                  <div style={{
-                    fontSize: '12px', fontWeight: '700',
-                    color: '#1d1d1f', marginBottom: '4px',
-                  }}>
-                    {item.title}
-                  </div>
-                  <div style={{
-                    fontSize: '11px', color: '#6e6e73', lineHeight: 1.6,
-                  }}>
-                    {item.desc}
-                  </div>
-                </div>
+
+            {/* Left - Why Electric */}
+            <div>
+              <div style={{
+                display: 'inline-block',
+                background: '#fff8f5',
+                border: '1px solid #e8531a',
+                borderRadius: '6px',
+                padding: '3px 10px',
+                fontSize: '11px',
+                fontWeight: '700',
+                color: '#e8531a',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                marginBottom: '8px',
+              }}>
+                Why Electric
               </div>
-            ))}
-          </div>
-
-          {/* Divider */}
-          <div style={{
-            height: '1px',
-            background: '#e5e5e5',
-            margin: '0 0 20px',
-          }} />
-
-          {/* Government Incentives - compact */}
-          <div style={{
-            display: 'inline-block',
-            background: '#fff8f5',
-            border: '1px solid #e8531a',
-            borderRadius: '6px',
-            padding: '4px 12px',
-            fontSize: '12px',
-            fontWeight: '700',
-            color: '#e8531a',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            marginBottom: '6px',
-          }}>
-            Government Policy
-          </div>
-          <h2 style={{
-            fontSize: isMobile ? '13px' : '14px',
-            fontWeight: '800',
-            color: '#1d1d1f',
-            margin: '0 0 10px',
-            letterSpacing: '-1px',
-          }}>
-            Government Incentives for EVs
-          </h2>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(4, 1fr)',
-            gap: '8px',
-          }}>
-            {[
-              { Icon: IconTag, title: 'Tax Benefits', desc: 'Reduced customs duty and VAT on EVs' },
-              { Icon: IconShield, title: 'Subsidies', desc: 'Government subsidies for EV purchases' },
-              { Icon: IconMap, title: 'Charging Infrastructure', desc: 'Expanding public charging stations' },
-              { Icon: IconTruck, title: 'Import Facilitation', desc: 'Streamlined import procedures for EVs' },
-            ].map((item, i) => (
-              <div
-                key={i}
-                style={{
-                  background: 'white',
-                  border: '1px solid #e5e5e5',
-                  borderRadius: '12px',
-                  padding: '10px 12px',
-                  transition: 'all 0.2s',
-                  cursor: 'default',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = '#e8531a'
-                  e.currentTarget.style.background = '#fff8f5'
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = '#e5e5e5'
-                  e.currentTarget.style.background = 'white'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                }}
-              >
-                <div style={{
-                  width: '28px', height: '28px',
-                  background: '#fff8f5',
-                  borderRadius: '7px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#e8531a',
-                  marginBottom: '8px',
-                }}>
-                  <item.Icon />
-                </div>
-                <div style={{
-                  fontSize: '11px', fontWeight: '700',
-                  color: '#1d1d1f', marginBottom: '3px',
-                }}>
-                  {item.title}
-                </div>
-                <div style={{
-                  fontSize: '10px', color: '#6e6e73', lineHeight: 1.5,
-                }}>
-                  {item.desc}
-                </div>
+              <h2 style={{
+                fontSize: '15px',
+                fontWeight: '800',
+                color: '#1d1d1f',
+                margin: '0 0 12px',
+                letterSpacing: '-0.3px',
+              }}>
+                Why Choose an Electric Car?
+              </h2>
+              <div style={{
+                display: 'flex',
+                flexDirection: 'column' as const,
+                gap: '8px',
+              }}>
+                {[
+                  { Icon: IconLeaf, title: 'Zero Emissions', desc: 'No harmful emissions, cleaner air across Nepal.' },
+                  { Icon: IconZap, title: 'Lower Running Costs', desc: 'Electricity is far cheaper than petrol in Nepal.' },
+                  { Icon: IconBattery, title: 'Advanced Technology', desc: 'Instant torque, smart features, superior driving.' },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      background: 'white',
+                      border: '1px solid #e5e5e5',
+                      borderRadius: '10px',
+                      padding: '10px 12px',
+                      display: 'flex',
+                      gap: '10px',
+                      alignItems: 'center',
+                      transition: 'all 0.2s',
+                      cursor: 'default',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.borderColor = '#e8531a'
+                      e.currentTarget.style.transform = 'translateY(-1px)'
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(232,83,26,0.1)'
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.borderColor = '#e5e5e5'
+                      e.currentTarget.style.transform = 'translateY(0)'
+                      e.currentTarget.style.boxShadow = 'none'
+                    }}
+                  >
+                    <div style={{
+                      width: '30px', height: '30px',
+                      background: '#fff8f5',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#e8531a',
+                      flexShrink: 0,
+                    }}>
+                      <item.Icon />
+                    </div>
+                    <div>
+                      <div style={{
+                        fontSize: '12px', fontWeight: '700',
+                        color: '#1d1d1f', marginBottom: '2px',
+                      }}>
+                        {item.title}
+                      </div>
+                      <div style={{
+                        fontSize: '11px', color: '#6e6e73', lineHeight: 1.5,
+                      }}>
+                        {item.desc}
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
 
+            {/* Right - Government Incentives */}
+            <div>
+              <div style={{
+                display: 'inline-block',
+                background: '#fff8f5',
+                border: '1px solid #e8531a',
+                borderRadius: '6px',
+                padding: '3px 10px',
+                fontSize: '11px',
+                fontWeight: '700',
+                color: '#e8531a',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                marginBottom: '8px',
+              }}>
+                Government Policy
+              </div>
+              <h2 style={{
+                fontSize: '15px',
+                fontWeight: '800',
+                color: '#1d1d1f',
+                margin: '0 0 12px',
+                letterSpacing: '-0.3px',
+              }}>
+                Government Incentives for EVs
+              </h2>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '8px',
+              }}>
+                {[
+                  { Icon: IconTag, title: 'Tax Benefits', desc: 'Reduced customs duty and VAT on EVs' },
+                  { Icon: IconShield, title: 'Subsidies', desc: 'Government subsidies for EV purchases' },
+                  { Icon: IconMap, title: 'Charging Infrastructure', desc: 'Expanding public charging stations' },
+                  { Icon: IconTruck, title: 'Import Facilitation', desc: 'Streamlined import procedures for EVs' },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      background: 'white',
+                      border: '1px solid #e5e5e5',
+                      borderRadius: '10px',
+                      padding: '10px 12px',
+                      transition: 'all 0.2s',
+                      cursor: 'default',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.borderColor = '#e8531a'
+                      e.currentTarget.style.background = '#fff8f5'
+                      e.currentTarget.style.transform = 'translateY(-1px)'
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.borderColor = '#e5e5e5'
+                      e.currentTarget.style.background = 'white'
+                      e.currentTarget.style.transform = 'translateY(0)'
+                    }}
+                  >
+                    <div style={{
+                      width: '28px', height: '28px',
+                      background: '#fff8f5',
+                      borderRadius: '7px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#e8531a',
+                      marginBottom: '8px',
+                    }}>
+                      <item.Icon />
+                    </div>
+                    <div style={{
+                      fontSize: '11px', fontWeight: '700',
+                      color: '#1d1d1f', marginBottom: '2px',
+                    }}>
+                      {item.title}
+                    </div>
+                    <div style={{
+                      fontSize: '10px', color: '#6e6e73', lineHeight: 1.5,
+                    }}>
+                      {item.desc}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
         </div>
       </div>
 
       {/* AVAILABLE ELECTRIC CARS */}
-      <div style={{ background: '#f5f5f7', padding: isMobile ? '48px 16px' : '64px 24px' }}>
+      <div style={{ background: 'white', padding: isMobile ? '48px 16px' : '64px 24px' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{
             display: 'flex',
@@ -484,201 +473,203 @@ const ElectricCars = () => {
 
       {/* CHARGING YOUR EV */}
       <div style={{ padding: isMobile ? '48px 16px' : '64px 24px' }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <div style={{
-            display: 'inline-block',
-            background: '#fff8f5',
-            border: '1px solid #e8531a',
-            borderRadius: '6px',
-            padding: '4px 12px',
-            fontSize: '12px',
-            fontWeight: '700',
-            color: '#e8531a',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            marginBottom: '12px',
-          }}>
-            Charging Guide
-          </div>
-          <h2 style={{
-            fontSize: isMobile ? '26px' : '32px',
-            fontWeight: '800',
-            color: '#1d1d1f',
-            margin: '0 0 32px',
-            letterSpacing: '-1px',
-          }}>
-            Charging Your EV in Nepal
-          </h2>
+        <div style={{ background: '#f5f5f7', padding: isMobile ? '48px 16px' : '64px 24px' }}>
+          <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+            <div style={{
+              display: 'inline-block',
+              background: '#fff8f5',
+              border: '1px solid #e8531a',
+              borderRadius: '6px',
+              padding: '4px 12px',
+              fontSize: '12px',
+              fontWeight: '700',
+              color: '#e8531a',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+              marginBottom: '12px',
+            }}>
+              Charging Guide
+            </div>
+            <h2 style={{
+              fontSize: isMobile ? '26px' : '32px',
+              fontWeight: '800',
+              color: '#1d1d1f',
+              margin: '0 0 32px',
+              letterSpacing: '-1px',
+            }}>
+              Charging Your EV in Nepal
+            </h2>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
-            gap: '16px',
-            marginBottom: '40px',
-          }}>
-            {[
-              {
-                Icon: IconHome,
-                title: 'Home Charging',
-                points: [
-                  'Use standard 16A power outlet',
-                  'Full charge in 8–12 hours',
-                  'Ideal for overnight charging',
-                  'Lowest cost per km',
-                ],
-              },
-              {
-                Icon: IconMap,
-                title: 'Public Charging',
-                points: [
-                  'Available in major cities',
-                  'NEA, MG, BYD, Tata stations',
-                  'CCS2 and CHAdeMO connectors',
-                  'Growing network across Nepal',
-                ],
-              },
-              {
-                Icon: IconClock,
-                title: 'Charging Time',
-                points: [
-                  'Fast DC: 30–60 minutes',
-                  'AC public: 3–5 hours',
-                  'Home AC: 8–12 hours',
-                  'Depends on battery size',
-                ],
-              },
-            ].map((item, i) => (
-              <div
-                key={i}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+              gap: '16px',
+              marginBottom: '40px',
+            }}>
+              {[
+                {
+                  Icon: IconHome,
+                  title: 'Home Charging',
+                  points: [
+                    'Use standard 16A power outlet',
+                    'Full charge in 8–12 hours',
+                    'Ideal for overnight charging',
+                    'Lowest cost per km',
+                  ],
+                },
+                {
+                  Icon: IconMap,
+                  title: 'Public Charging',
+                  points: [
+                    'Available in major cities',
+                    'NEA, MG, BYD, Tata stations',
+                    'CCS2 and CHAdeMO connectors',
+                    'Growing network across Nepal',
+                  ],
+                },
+                {
+                  Icon: IconClock,
+                  title: 'Charging Time',
+                  points: [
+                    'Fast DC: 30–60 minutes',
+                    'AC public: 3–5 hours',
+                    'Home AC: 8–12 hours',
+                    'Depends on battery size',
+                  ],
+                },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  style={{
+                    background: 'white',
+                    border: '1px solid #e5e5e5',
+                    borderRadius: '16px',
+                    padding: '24px',
+                    transition: 'all 0.2s',
+                    cursor: 'default',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = '#e8531a'
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.1)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = '#e5e5e5'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.boxShadow = 'none'
+                  }}
+                >
+                  <div style={{
+                    width: '44px', height: '44px',
+                    background: '#fff8f5',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#e8531a',
+                    marginBottom: '16px',
+                  }}>
+                    <item.Icon />
+                  </div>
+                  <h3 style={{
+                    fontSize: '15px',
+                    fontWeight: '700',
+                    color: '#1d1d1f',
+                    margin: '0 0 14px',
+                  }}>
+                    {item.title}
+                  </h3>
+                  <div style={{
+                    display: 'flex',
+                    flexDirection: 'column' as const,
+                    gap: '8px',
+                  }}>
+                    {item.points.map((point, j) => (
+                      <div key={j} style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        fontSize: '13px',
+                        color: '#6e6e73',
+                      }}>
+                        <div style={{
+                          width: '5px', height: '5px',
+                          background: '#e8531a',
+                          borderRadius: '50%',
+                          flexShrink: 0,
+                        }} />
+                        {point}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA */}
+            <div style={{
+              background: '#fff8f5',
+              border: '1.5px solid #e8531a',
+              borderRadius: '16px',
+              padding: isMobile ? '24px' : '32px 40px',
+              display: 'flex',
+              alignItems: isMobile ? 'flex-start' : 'center',
+              justifyContent: 'space-between',
+              flexDirection: isMobile ? 'column' : 'row',
+              gap: '20px',
+            }}>
+              <div>
+                <h3 style={{
+                  fontSize: '20px',
+                  fontWeight: '800',
+                  color: '#1d1d1f',
+                  margin: '0 0 6px',
+                  letterSpacing: '-0.5px',
+                }}>
+                  Find Charging Stations Near You
+                </h3>
+                <p style={{
+                  fontSize: '14px',
+                  color: '#6e6e73',
+                  margin: 0,
+                }}>
+                  Interactive map of all EV charging points across Nepal
+                </p>
+              </div>
+              <button
+                onClick={() => navigate('/ev-charging')}
                 style={{
-                  background: 'white',
-                  border: '1px solid #e5e5e5',
-                  borderRadius: '16px',
-                  padding: '24px',
+                  background: '#e8531a',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '12px',
+                  padding: '13px 28px',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  whiteSpace: 'nowrap',
                   transition: 'all 0.2s',
-                  cursor: 'default',
+                  fontFamily: 'inherit',
+                  flexShrink: 0,
                 }}
                 onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = '#e8531a'
+                  e.currentTarget.style.background = '#c94415'
                   e.currentTarget.style.transform = 'translateY(-2px)'
-                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.1)'
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.35)'
                 }}
                 onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = '#e5e5e5'
+                  e.currentTarget.style.background = '#e8531a'
                   e.currentTarget.style.transform = 'translateY(0)'
                   e.currentTarget.style.boxShadow = 'none'
                 }}
               >
-                <div style={{
-                  width: '44px', height: '44px',
-                  background: '#fff8f5',
-                  borderRadius: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#e8531a',
-                  marginBottom: '16px',
-                }}>
-                  <item.Icon />
-                </div>
-                <h3 style={{
-                  fontSize: '15px',
-                  fontWeight: '700',
-                  color: '#1d1d1f',
-                  margin: '0 0 14px',
-                }}>
-                  {item.title}
-                </h3>
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'column' as const,
-                  gap: '8px',
-                }}>
-                  {item.points.map((point, j) => (
-                    <div key={j} style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      fontSize: '13px',
-                      color: '#6e6e73',
-                    }}>
-                      <div style={{
-                        width: '5px', height: '5px',
-                        background: '#e8531a',
-                        borderRadius: '50%',
-                        flexShrink: 0,
-                      }} />
-                      {point}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA */}
-          <div style={{
-            background: '#fff8f5',
-            border: '1.5px solid #e8531a',
-            borderRadius: '16px',
-            padding: isMobile ? '24px' : '32px 40px',
-            display: 'flex',
-            alignItems: isMobile ? 'flex-start' : 'center',
-            justifyContent: 'space-between',
-            flexDirection: isMobile ? 'column' : 'row',
-            gap: '20px',
-          }}>
-            <div>
-              <h3 style={{
-                fontSize: '20px',
-                fontWeight: '800',
-                color: '#1d1d1f',
-                margin: '0 0 6px',
-                letterSpacing: '-0.5px',
-              }}>
-                Find Charging Stations Near You
-              </h3>
-              <p style={{
-                fontSize: '14px',
-                color: '#6e6e73',
-                margin: 0,
-              }}>
-                Interactive map of all EV charging points across Nepal
-              </p>
+                View Charging Map
+                <IconArrow />
+              </button>
             </div>
-            <button
-              onClick={() => navigate('/ev-charging')}
-              style={{
-                background: '#e8531a',
-                color: 'white',
-                border: 'none',
-                borderRadius: '12px',
-                padding: '13px 28px',
-                fontSize: '14px',
-                fontWeight: '700',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                whiteSpace: 'nowrap',
-                transition: 'all 0.2s',
-                fontFamily: 'inherit',
-                flexShrink: 0,
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = '#c94415'
-                e.currentTarget.style.transform = 'translateY(-2px)'
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.35)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = '#e8531a'
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = 'none'
-              }}
-            >
-              View Charging Map
-              <IconArrow />
-            </button>
           </div>
         </div>
       </div>
