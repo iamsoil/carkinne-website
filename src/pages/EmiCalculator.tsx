@@ -936,6 +936,132 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
         </div>
       </div>
 
+      {/* DISCLAIMER */}
+      <div style={{ 
+        background: '#1d1d1f', 
+        padding: isMobile ? '40px 16px' : '48px 24px' 
+      }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'flex-start', 
+            gap: '16px',
+            marginBottom: '24px',
+          }}>
+            <div style={{
+              width: '40px', height: '40px',
+              background: 'rgba(232,83,26,0.2)',
+              border: '1px solid rgba(232,83,26,0.4)',
+              borderRadius: '10px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#e8531a',
+              flexShrink: 0,
+            }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" 
+                fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+            </div>
+            <div>
+              <h3 style={{
+                fontSize: '16px',
+                fontWeight: '700',
+                color: 'white',
+                margin: '0 0 4px',
+                letterSpacing: '-0.3px',
+              }}>
+                Important Disclaimer
+              </h3>
+              <p style={{
+                fontSize: '13px',
+                color: 'rgba(255,255,255,0.5)',
+                margin: 0,
+              }}>
+                Please read before making any financial decisions
+              </p>
+            </div>
+          </div>
+
+          <div style={{
+            height: '1px',
+            background: 'rgba(255,255,255,0.08)',
+            marginBottom: '24px',
+          }} />
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+            gap: '16px',
+            marginBottom: '24px',
+          }}>
+            {[
+              {
+                title: 'Indicative Rates Only',
+                desc: 'All interest rates shown on this calculator are indicative and for reference purposes only. Actual rates offered by banks may differ based on your credit profile, loan amount, and current NRB directives.',
+              },
+              {
+                title: 'Rates Change Monthly',
+                desc: 'Nepal bank interest rates fluctuate based on the Base Rate plus a premium set by individual banks, and can change monthly following Nepal Rastra Bank (NRB) policy updates.',
+              },
+              {
+                title: 'Not Financial Advice',
+                desc: 'CarKinne is an informational platform. Nothing on this page constitutes financial advice. Always consult directly with your bank or a licensed financial advisor before making any loan decisions.',
+              },
+              {
+                title: 'Verify With Your Bank',
+                desc: 'Always get an official loan quote directly from the bank before committing. The EMI shown here may differ from your actual bank quote due to processing fees, insurance requirements and other charges.',
+              },
+            ].map((item, i) => (
+              <div key={i} style={{
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: '12px',
+                padding: '18px 20px',
+              }}>
+                <div style={{
+                  fontSize: '13px',
+                  fontWeight: '700',
+                  color: '#e8531a',
+                  marginBottom: '6px',
+                }}>
+                  {item.title}
+                </div>
+                <div style={{
+                  fontSize: '13px',
+                  color: 'rgba(255,255,255,0.55)',
+                  lineHeight: 1.7,
+                }}>
+                  {item.desc}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{
+            background: 'rgba(232,83,26,0.08)',
+            border: '1px solid rgba(232,83,26,0.2)',
+            borderRadius: '10px',
+            padding: '14px 18px',
+            fontSize: '13px',
+            color: 'rgba(255,255,255,0.5)',
+            lineHeight: 1.7,
+            textAlign: 'center',
+          }}>
+            © CarKinne {new Date().getFullYear()} — This calculator is provided for 
+            informational purposes only. CarKinne is not a bank, financial institution, 
+            or licensed financial advisor. All calculations are estimates based on 
+            the inputs provided. Verify all figures with your bank before making 
+            any financial commitments. CarKinne accepts no liability for financial 
+            decisions made based on this tool.
+          </div>
+
+        </div>
+      </div>
     </div>
   );
 };
