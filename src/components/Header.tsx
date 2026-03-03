@@ -156,10 +156,35 @@ const Header = () => {
               <a
                 key={item.name}
                 href={item.href}
-                className="text-sm font-medium text-foreground hover:text-accent transition-colors relative group"
+                style={{
+                  fontSize: '14px',
+                  fontWeight: location.pathname === item.href ? '700' : '500',
+                  color: location.pathname === item.href ? '#e8531a' : '#1d1d1f',
+                  textDecoration: 'none',
+                  position: 'relative',
+                  paddingBottom: '4px',
+                  transition: 'color 0.2s',
+                }}
+                onMouseEnter={e => {
+                  if (location.pathname !== item.href)
+                    e.currentTarget.style.color = '#e8531a'
+                }}
+                onMouseLeave={e => {
+                  if (location.pathname !== item.href)
+                    e.currentTarget.style.color = '#1d1d1f'
+                }}
               >
                 {item.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover:w-full"></span>
+                <span style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                  height: '2px',
+                  width: location.pathname === item.href ? '100%' : '0',
+                  background: '#e8531a',
+                  transition: 'width 0.3s',
+                  borderRadius: '2px',
+                }} />
               </a>
             ))}
           </nav>
@@ -258,8 +283,18 @@ const Header = () => {
               <a
                 key={item.name}
                 href={item.href}
-                className="block py-2 text-base font-medium text-foreground hover:text-accent transition-colors"
                 onClick={() => setIsMenuOpen(false)}
+                style={{
+                  display: 'block',
+                  padding: '8px 0',
+                  fontSize: '15px',
+                  fontWeight: location.pathname === item.href ? '700' : '500',
+                  color: location.pathname === item.href ? '#e8531a' : '#1d1d1f',
+                  textDecoration: 'none',
+                  borderLeft: location.pathname === item.href ? '3px solid #e8531a' : 'none',
+                  paddingLeft: location.pathname === item.href ? '10px' : '0',
+                  transition: 'all 0.2s',
+                }}
               >
                 {item.name}
               </a>
