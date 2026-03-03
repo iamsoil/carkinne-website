@@ -67,6 +67,10 @@ const BudgetFinder = () => {
   const [error, setError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
@@ -214,6 +218,7 @@ const BudgetFinder = () => {
 
       if (!cars || cars.length === 0) {
         setResults([]);
+        scrollToTop();
         setStep(5);
         return;
       }
@@ -228,6 +233,7 @@ const BudgetFinder = () => {
         .sort((a, b) => b.score - a.score);
 
       setResults(scoredCars);
+      scrollToTop();
       setStep(5);
     } catch (err) {
       console.error('Error fetching budget results:', err);
@@ -609,7 +615,7 @@ const BudgetFinder = () => {
                 </div>
                 
                 <button
-                  onClick={() => setStep(2)}
+                  onClick={() => { scrollToTop(); setStep(2); }}
                   style={{
                     width: '100%',
                     background: '#1d1d1f',
@@ -725,7 +731,7 @@ const BudgetFinder = () => {
                 alignItems: 'center',
               }}>
                 <button 
-                  onClick={() => setStep(1)}
+                  onClick={() => { scrollToTop(); setStep(1); }}
                   style={{
                     color: '#6e6e73',
                     fontSize: '13px',
@@ -739,7 +745,7 @@ const BudgetFinder = () => {
                   Back
                 </button>
                 <button
-                  onClick={() => setStep(3)}
+                  onClick={() => { scrollToTop(); setStep(3); }}
                   style={{
                     background: '#1d1d1f',
                     color: 'white',
@@ -944,7 +950,7 @@ const BudgetFinder = () => {
                 alignItems: 'center',
               }}>
                 <button 
-                  onClick={() => setStep(2)}
+                  onClick={() => { scrollToTop(); setStep(2); }}
                   style={{
                     color: '#6e6e73',
                     fontSize: '13px',
@@ -958,7 +964,7 @@ const BudgetFinder = () => {
                   Back
                 </button>
                 <button
-                  onClick={() => setStep(4)}
+                  onClick={() => { scrollToTop(); setStep(4); }}
                   style={{
                     background: '#1d1d1f',
                     color: 'white',
@@ -1071,7 +1077,7 @@ const BudgetFinder = () => {
                 alignItems: 'center',
               }}>
                 <button 
-                  onClick={() => setStep(3)}
+                  onClick={() => { scrollToTop(); setStep(3); }}
                   style={{
                     color: '#6e6e73',
                     fontSize: '13px',
@@ -1389,7 +1395,7 @@ const BudgetFinder = () => {
                     </h3>
                     <div style={{
                       display: 'grid',
-                      gridTemplateColumns: 'repeat(2, 1fr)',
+                      gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
                       gap: '10px',
                     }}>
                       {results.slice(2, 6).map((car) => (
@@ -1413,12 +1419,13 @@ const BudgetFinder = () => {
                             src={car.images?.[0] || 'https://placehold.co/120x80/f5f5f7/6e6e73?text=Car'} 
                             alt={car.name} 
                             style={{
-                              width: '90px',
+                              width: isMobile ? '80px' : '90px',
+                              minWidth: isMobile ? '80px' : '90px',
                               flexShrink: 0,
                               objectFit: 'cover',
                             }}
                           />
-                          <div style={{ padding: '10px 12px' }}>
+                          <div style={{ padding: isMobile ? '8px 10px' : '10px 12px' }}>
                             <p style={{
                               fontSize: '10px',
                               textTransform: 'uppercase',
@@ -1472,7 +1479,7 @@ const BudgetFinder = () => {
                     borderTop: '1px solid #f0f0f0',
                   }}>
                     <button 
-                      onClick={() => setStep(1)}
+                      onClick={() => { scrollToTop(); setStep(1); }}
                       style={{
                         color: '#6e6e73',
                         fontSize: '13px',
@@ -1550,7 +1557,7 @@ const BudgetFinder = () => {
                     Try increasing your budget or adjusting your preferences
                   </p>
                   <button
-                    onClick={() => setStep(1)}
+                    onClick={() => { scrollToTop(); setStep(1); }}
                     style={{
                       background: '#e8531a',
                       color: 'white',
