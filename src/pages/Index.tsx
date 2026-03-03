@@ -217,7 +217,7 @@ const Index = () => {
           }}>
             Find Your<br />
             Perfect Car<br />
-            <span style={{ color: '#e8531a' }}>in Nepal</span>
+            <span style={{ color: 'white' }}>in Nepal</span>
           </h1>
 
           <p style={{
