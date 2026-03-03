@@ -176,7 +176,7 @@ const Index = () => {
       {/* ━━━━━━━━━━ HERO ━━━━━━━━━━ */}
       <section style={{
         position: 'relative',
-        height: isMobile ? '85vh' : '80vh',
+        height: isMobile ? '75vh' : '70vh',
         backgroundImage: 'url(https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/Blog-Images/Hero-image/hero.jpg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -184,12 +184,6 @@ const Index = () => {
         alignItems: 'center',
         overflow: 'hidden',
       }}>
-        {/* Dark overlay */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          background: 'linear-gradient(90deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 100%)',
-        }} />
-
         <div style={{
           position: 'relative', zIndex: 10,
           padding: isMobile ? '0 20px' : '0 80px',
@@ -516,25 +510,50 @@ const Index = () => {
 
             {!isMobile && (
               <div style={{
-                background: '#fff8f5', border: '1px solid #fde8da',
-                borderRadius: '16px', padding: '24px',
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '10px',
               }}>
-                {[...Array(4)].map((_, i) => (
-                  <div key={i} style={{
-                    display: 'flex', alignItems: 'center',
-                    gap: '12px', marginBottom: i < 3 ? '16px' : 0,
-                  }}>
+                {[
+                  "Tell us your budget",
+                  "Share how you'll use it",
+                  "Pick your preferences",
+                  "Get matched instantly"
+                ].map((text, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      background: 'white',
+                      border: '1px solid #e5e5e5',
+                      borderRadius: '10px',
+                      padding: '12px 14px',
+                      transition: 'all 0.2s',
+                      cursor: 'default',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.borderColor = '#e8531a';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(232,83,26,0.12)';
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.borderColor = '#e5e5e5';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = 'none';
+                    }}
+                  >
                     <div style={{
-                      width: '6px', height: '6px',
-                      borderRadius: '50%', background: '#e8531a',
+                      width: '7px',
+                      height: '7px',
+                      background: '#e8531a',
+                      borderRadius: '50%',
+                      marginBottom: '8px',
                     }} />
-                    <div style={{ fontSize: '14px', color: '#1d1d1f' }}>
-                      {[
-                        "Tell us your budget",
-                        "Share how you'll use it",
-                        "Pick your preferences",
-                        "Get matched instantly"
-                      ][i]}
+                    <div style={{
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#1d1d1f',
+                    }}>
+                      {text}
                     </div>
                   </div>
                 ))}
@@ -640,6 +659,9 @@ const Index = () => {
               >
                 Open Full Calculator →
               </button>
+              <p style={{ fontSize: '11px', color: '#6e6e73', textAlign: 'center', marginTop: '12px', lineHeight: 1.6 }}>
+                EMI figures are estimates only. Actual rates and terms may vary by bank. Consult your lender for accurate calculations.
+              </p>
             </div>
           </div>
         </div>
@@ -1072,7 +1094,7 @@ const Index = () => {
 
       {/* ━━━━━━━━━━ BOTTOM CTA ━━━━━━━━━━ */}
       <section style={{
-        background: '#1d1d1f',
+        background: '#fff8f5',
         padding: isMobile ? '32px 20px' : '56px 24px',
         textAlign: 'center' as const,
       }}>
@@ -1090,13 +1112,13 @@ const Index = () => {
           </div>
           <h2 style={{
             fontSize: isMobile ? '24px' : '36px',
-            fontWeight: '800', color: 'white',
+            fontWeight: '800', color: '#1d1d1f',
             margin: '0 0 12px',
           }}>
             Going Electric?
           </h2>
           <p style={{
-            fontSize: '14px', color: 'rgba(255,255,255,0.6)',
+            fontSize: '14px', color: '#6e6e73',
             margin: '0 0 28px', lineHeight: 1.6,
           }}>
             Explore Nepal's best electric vehicles and find
@@ -1127,8 +1149,8 @@ const Index = () => {
             <button
               onClick={() => navigate('/ev-charging')}
               style={{
-                background: 'transparent', color: 'white',
-                border: '1px solid rgba(255,255,255,0.3)',
+                background: '#e8531a', color: 'white',
+                border: '1px solid #e8531a',
                 borderRadius: '12px', padding: '14px 28px',
                 fontSize: '14px', fontWeight: '700',
                 cursor: 'pointer', fontFamily: 'inherit',
@@ -1136,11 +1158,11 @@ const Index = () => {
                 display: 'flex', alignItems: 'center', gap: '8px',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.borderColor = 'white'
+                e.currentTarget.style.background = '#c94415'
                 e.currentTarget.style.transform = 'translateY(-2px)'
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'
+                e.currentTarget.style.background = '#e8531a'
                 e.currentTarget.style.transform = 'translateY(0)'
               }}
             >
