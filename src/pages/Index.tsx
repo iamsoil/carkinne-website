@@ -903,7 +903,7 @@ const Index = () => {
                   </div>
                 </div>
 
-                
+                <a
                   href={showroom.google_maps_url || `https://maps.google.com/?q=${showroom.name}+${showroom.city}+Nepal`}
                   target="_blank"
                   rel="noopener noreferrer"
