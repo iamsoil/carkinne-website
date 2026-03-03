@@ -142,7 +142,6 @@ const ElectricCars = () => {
       fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
       background: 'white',
       minHeight: '100vh',
-      overflow: 'hidden',
     }}>
 
       {/* HERO */}
