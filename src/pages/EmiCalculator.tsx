@@ -464,52 +464,6 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
           <div style={{ height: '1px', background: '#f0f0f0', margin: '20px 0' }} />
 
           <button
-            onClick={() => setShowAmort(!showAmort)}
-            style={{
-              background: 'none', border: 'none', cursor: 'pointer',
-              fontSize: '14px', color: '#e8531a', padding: 0,
-              display: 'flex', alignItems: 'center', gap: '6px',
-              fontFamily: 'inherit', fontWeight: '600',
-            }}
-          >
-            <IconChevron open={showAmort} />
-            Year-by-year breakdown
-          </button>
-
-          {showAmort && (
-            <div style={{ marginTop: '16px', overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
-                <thead>
-                  <tr style={{ background: '#fff8f5' }}>
-                    {['Year', 'Opening', 'EMI', 'Interest', 'Principal', 'Closing'].map(h => (
-                      <th key={h} style={{
-                        padding: '8px 6px', textAlign: 'right',
-                        color: '#6e6e73', fontWeight: '600',
-                      }}>
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {amortRows.map((row, i) => (
-                    <tr key={row.year} style={{ background: i % 2 === 0 ? '#fff' : '#f9f9f9' }}>
-                      <td style={{ padding: '6px', textAlign: 'right' }}>{row.year}</td>
-                      <td style={{ padding: '6px', textAlign: 'right' }}>{formatNPR(Math.round(row.opening))}</td>
-                      <td style={{ padding: '6px', textAlign: 'right' }}>{formatNPR(Math.round(row.emiPaid))}</td>
-                      <td style={{ padding: '6px', textAlign: 'right', color: '#e8531a' }}>{formatNPR(Math.round(row.interest))}</td>
-                      <td style={{ padding: '6px', textAlign: 'right' }}>{formatNPR(Math.round(row.principal))}</td>
-                      <td style={{ padding: '6px', textAlign: 'right' }}>{formatNPR(Math.round(row.closing))}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          <div style={{ height: '1px', background: '#f0f0f0', margin: '20px 0' }} />
-
-          <button
             onClick={copyResult}
             style={{
               background: 'none', border: 'none', cursor: 'pointer',
@@ -521,6 +475,30 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
             {copied ? <IconCheck /> : <IconCopy />}
             {copied ? 'Copied!' : 'Copy Result'}
           </button>
+
+          {/* Small disclaimer below Copy Result button */}
+          <div style={{
+            marginTop: '16px',
+            padding: '12px 14px',
+            background: '#fff8f5',
+            border: '1px solid #fde8da',
+            borderRadius: '8px',
+            fontSize: '11px',
+            color: '#6e6e73',
+            lineHeight: 1.6,
+          }}>
+            <span style={{ 
+              fontWeight: '700', 
+              color: '#e8531a' 
+            }}>
+              Disclaimer:
+            </span>{' '}
+            These figures are indicative estimates only. 
+            Actual EMI and interest rates may vary based 
+            on bank policies, your credit score, and 
+            current NRB regulations. Please consult the 
+            respective bank for a formal quote.
+          </div>
         </div>
       </div>
 
@@ -938,7 +916,7 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
 
       {/* DISCLAIMER */}
       <div style={{ 
-        background: '#1d1d1f', 
+        background: '#fff8f5', 
         padding: isMobile ? '40px 16px' : '48px 24px' 
       }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
@@ -951,8 +929,8 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
           }}>
             <div style={{
               width: '40px', height: '40px',
-              background: 'rgba(232,83,26,0.2)',
-              border: '1px solid rgba(232,83,26,0.4)',
+              background: '#fff0e8',
+              border: '1px solid #fde8da',
               borderRadius: '10px',
               display: 'flex',
               alignItems: 'center',
@@ -971,7 +949,7 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
               <h3 style={{
                 fontSize: '16px',
                 fontWeight: '700',
-                color: 'white',
+                color: '#1d1d1f',
                 margin: '0 0 4px',
                 letterSpacing: '-0.3px',
               }}>
@@ -979,7 +957,7 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
               </h3>
               <p style={{
                 fontSize: '13px',
-                color: 'rgba(255,255,255,0.5)',
+                color: '#6e6e73',
                 margin: 0,
               }}>
                 Please read before making any financial decisions
@@ -1018,8 +996,8 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
               },
             ].map((item, i) => (
               <div key={i} style={{
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                background: 'white',
+                border: '1px solid #fde8da',
                 borderRadius: '12px',
                 padding: '18px 20px',
               }}>
@@ -1033,7 +1011,7 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
                 </div>
                 <div style={{
                   fontSize: '13px',
-                  color: 'rgba(255,255,255,0.55)',
+                  color: '#6e6e73',
                   lineHeight: 1.7,
                 }}>
                   {item.desc}
@@ -1043,12 +1021,12 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
           </div>
 
           <div style={{
-            background: 'rgba(232,83,26,0.08)',
-            border: '1px solid rgba(232,83,26,0.2)',
+            background: 'white',
+            border: '1px solid #fde8da',
             borderRadius: '10px',
             padding: '14px 18px',
             fontSize: '13px',
-            color: 'rgba(255,255,255,0.5)',
+            color: '#6e6e73',
             lineHeight: 1.7,
             textAlign: 'center',
           }}>
