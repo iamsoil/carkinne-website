@@ -1,451 +1,454 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { Search, ChevronRight, X } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import CarCard from '@/components/CarCard';
 import { supabase } from '@/lib/supabase';
 import { formatNPR } from '@/utils/format';
+import CarCard from '@/components/CarCard';
+
+const IconSearch = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </svg>
+)
+const IconX = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+)
+const IconArrow = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+  </svg>
+)
+const IconMap = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/>
+  </svg>
+)
+const IconPhone = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.22 1.18 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.56-.56a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/>
+  </svg>
+)
+const IconCalendar = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+    <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+  </svg>
+)
+const IconZap = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+  </svg>
+)
+
+const popularBrands = [
+  { name: 'Suzuki', link: '/cars?brand=Suzuki', logo: 'https://www.carlogos.org/car-logos/suzuki-logo.png' },
+  { name: 'Toyota', link: '/cars?brand=Toyota', logo: 'https://www.carlogos.org/car-logos/toyota-logo.png' },
+  { name: 'Hyundai', link: '/cars?brand=Hyundai', logo: 'https://www.carlogos.org/car-logos/hyundai-logo.png' },
+  { name: 'Kia', link: '/cars?brand=Kia', logo: 'https://www.carlogos.org/car-logos/kia-logo.png' },
+  { name: 'Honda', link: '/cars?brand=Honda', logo: 'https://www.carlogos.org/car-logos/honda-logo.png' },
+  { name: 'MG', link: '/cars?brand=MG', logo: 'https://www.carlogos.org/car-logos/mg-logo.png' },
+  { name: 'Tata', link: '/cars?brand=Tata', logo: 'https://www.carlogos.org/car-logos/tata-logo.png' },
+  { name: 'BYD', link: '/cars?brand=BYD', logo: 'https://www.carlogos.org/car-logos/byd-logo.png' },
+]
+
+const quickFilters = [
+  { label: 'Under 20L', path: '/cars?maxPrice=2000000' },
+  { label: '20–40L', path: '/cars?minPrice=2000000&maxPrice=4000000' },
+  { label: '40–60L', path: '/cars?minPrice=4000000&maxPrice=6000000' },
+  { label: 'Electric', path: '/cars?fuel=Electric' },
+  { label: 'SUV', path: '/cars?category=SUV' },
+  { label: 'Sedan', path: '/cars?category=Sedan' },
+]
+
+const latestOffers = [
+  {
+    id: '1', title: 'Dashain Special Offer',
+    description: 'Get up to Rs.2L off on selected models',
+    discount_amount: 200000, valid_until: '2025-10-31',
+    image_url: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600',
+    car: 'Toyota Fortuner', type: 'Festival Offer'
+  },
+  {
+    id: '2', title: 'Free Accessories',
+    description: 'Free accessories worth Rs.50,000',
+    discount_amount: 50000, valid_until: '2025-11-15',
+    image_url: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=600',
+    car: 'Honda City', type: 'Free Accessories'
+  },
+  {
+    id: '3', title: 'Low Interest EMI',
+    description: 'Special financing at just 7% interest rate',
+    discount_amount: 0, valid_until: '2025-12-31',
+    image_url: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600',
+    car: 'Suzuki Swift', type: 'Finance Offer'
+  },
+]
+
+function calcEMI(price: number, downPct: number, tenure: number, rate: number) {
+  const loan = price * (1 - downPct / 100)
+  const r = rate / 12 / 100
+  const n = tenure * 12
+  if (!r) return loan / n
+  return (loan * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1)
+}
 
 const Index = () => {
-  const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [featuredCars, setFeaturedCars] = useState<any[]>([]);
-  const [topShowrooms, setTopShowrooms] = useState<any[]>([]);
-  const [latestBlogPosts, setLatestBlogPosts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const carsSectionRef = useRef<HTMLDivElement>(null);
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate()
+  const [searchQuery, setSearchQuery] = useState('')
+  const [featuredCars, setFeaturedCars] = useState<any[]>([])
+  const [topShowrooms, setTopShowrooms] = useState<any[]>([])
+  const [latestBlogPosts, setLatestBlogPosts] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
-  // Quick filter options
-  const quickFilters = [
-    'Under 20L', '20-40L', '40-60L', '60L+', 'Electric', 'SUV', 'Sedan'
-  ];
-
-  // Popular brands for carousel
-  const popularBrands = [
-    { name: 'Suzuki', link: '/cars?brand=Suzuki', 
-      logo: 'https://www.carlogos.org/car-logos/suzuki-logo.png' },
-    { name: 'Toyota', link: '/cars?brand=Toyota', 
-      logo: 'https://www.carlogos.org/car-logos/toyota-logo.png' },
-    { name: 'Hyundai', link: '/cars?brand=Hyundai', 
-      logo: 'https://www.carlogos.org/car-logos/hyundai-logo.png' },
-    { name: 'Kia', link: '/cars?brand=Kia', 
-      logo: 'https://www.carlogos.org/car-logos/kia-logo.png' },
-    { name: 'Honda', link: '/cars?brand=Honda', 
-      logo: 'https://www.carlogos.org/car-logos/honda-logo.png' },
-    { name: 'MG', link: '/cars?brand=MG', 
-      logo: 'https://www.carlogos.org/car-logos/mg-logo.png' },
-    { name: 'Tata', link: '/cars?brand=Tata', 
-      logo: 'https://www.carlogos.org/car-logos/tata-logo.png' },
-    { name: 'BYD', link: '/cars?brand=BYD', 
-      logo: 'https://www.carlogos.org/car-logos/byd-logo.png' },
-  ];
-
-  // Latest offers (mock data)
-  const latestOffers = [
-    {
-      id: '1',
-      title: 'Dashain Special Offer',
-      description: 'Get up to Rs.2L off on selected models',
-      discount_amount: 200000,
-      valid_until: '2024-10-31',
-      image_url: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600',
-      car: 'Toyota Fortuner',
-      type: 'Festival Offer'
-    },
-    {
-      id: '2',
-      title: 'Free Accessories',
-      description: 'Free accessories worth Rs.50,000 with all new purchases',
-      discount_amount: 50000,
-      valid_until: '2024-11-15',
-      image_url: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=600',
-      car: 'Honda City',
-      type: 'Free Accessories'
-    },
-    {
-      id: '3',
-      title: 'Low Interest EMI',
-      description: 'Special financing at just 7% interest rate',
-      discount_amount: 0,
-      valid_until: '2024-12-31',
-      image_url: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600',
-      car: 'Suzuki Swift',
-      type: 'Finance Offer'
-    }
-  ];
-
-  // EMI Calculator state
-  const [carPrice, setCarPrice] = useState(3000000);
-  const [downPct, setDownPct] = useState(10);
-  const [tenure, setTenure] = useState(5);
-  const [interestRate, setInterestRate] = useState(10.5);
-
-  // Calculate EMI
-  const calculateEMI = () => {
-    const downPayment = carPrice * (downPct / 100);
-    const loanAmount = carPrice - downPayment;
-    const r = interestRate / 12 / 100;
-    const n = tenure * 12;
-    if (r === 0) return loanAmount / n;
-    const emi = (loanAmount * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
-    return emi;
-  };
-
-  const emi = calculateEMI();
+  // EMI widget state
+  const [carPrice, setCarPrice] = useState(3000000)
+  const [downPct, setDownPct] = useState(10)
+  const [tenure, setTenure] = useState(5)
+  const [rate, setRate] = useState(10.5)
+  const emi = calcEMI(carPrice, downPct, tenure, rate)
 
   useEffect(() => {
-    fetchFeaturedCars();
-    fetchTopShowrooms();
-    fetchLatestBlogPosts();
-  }, []);
+    const handleResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    fetchFeaturedCars()
+    fetchTopShowrooms()
+    fetchLatestBlogPosts()
+  }, [])
 
   const fetchFeaturedCars = async () => {
     try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('cars')
-        .select('*')
-        .eq('is_featured', true)
-        .limit(6);
-
-      if (error) throw error;
-      
-      setFeaturedCars(data || []);
-      console.log('Featured cars fetched:', data);
+      setLoading(true)
+      const { data } = await supabase.from('cars').select('*').eq('is_featured', true).limit(6)
+      setFeaturedCars(data || [])
     } catch (err) {
-      console.error('Error fetching featured cars:', err);
-      setError('Unable to load cars. Please try again.');
+      console.error(err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const fetchTopShowrooms = async () => {
     try {
-      const { data, error } = await supabase
-        .from('showrooms')
-        .select('*')
-        .eq('is_featured', true)
-        .limit(4);
-
-      if (error) throw error;
-      
-      setTopShowrooms(data || []);
-      console.log('Top showrooms fetched:', data);
-    } catch (err) {
-      console.error('Error fetching top showrooms:', err);
-    }
-  };
+      const { data } = await supabase.from('showrooms').select('*').eq('is_featured', true).limit(4)
+      setTopShowrooms(data || [])
+    } catch (err) { console.error(err) }
+  }
 
   const fetchLatestBlogPosts = async () => {
     try {
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('is_published', true)
-        .order('published_at', { ascending: false })
-        .limit(3);
-
-      if (error) throw error;
-      
-      setLatestBlogPosts(data || []);
-      console.log('Latest blog posts fetched:', data);
-    } catch (err) {
-      console.error('Error fetching latest blog posts:', err);
-    }
-  };
+      const { data } = await supabase.from('blog_posts').select('*')
+        .eq('is_published', true).order('published_at', { ascending: false }).limit(3)
+      setLatestBlogPosts(data || [])
+    } catch (err) { console.error(err) }
+  }
 
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/cars?search=${encodeURIComponent(searchQuery)}`);
-    }
-  };
-
-  const clearSearch = () => {
-    setSearchQuery('');
-  };
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-500 mb-4">{error}</p>
-          <Button onClick={fetchFeaturedCars}>Retry</Button>
-        </div>
-      </div>
-    );
+    e.preventDefault()
+    if (searchQuery.trim()) navigate(`/cars?search=${encodeURIComponent(searchQuery)}`)
   }
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section 
-        className="relative h-[80vh] w-full flex items-center overflow-hidden"
-        style={{
-          backgroundImage: 'url(https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/Blog-Images/Hero-image/hero.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      >
-        {/* Content */}
-        <div className="relative z-10 w-full px-6 md:px-20 lg:pl-20">
-          <div className="max-w-2xl">
-            {/* Small label */}
-            <div className="flex items-center mb-4">
-              <div className="w-8 h-0.5 bg-[#e8531a] mr-3"></div>
-              <span className="text-white text-xs font-medium uppercase tracking-widest">
-                Nepal's Smartest Car Buying Guide
-              </span>
-            </div>
-            
-            {/* Main headline */}
-            <h1 className="text-white text-5xl md:text-7xl font-bold leading-tight tracking-tight">
-              Find Your Perfect Car in Nepal
-            </h1>
-            
-            {/* Subheadline */}
-            <p className="text-white/90 text-lg md:text-xl font-normal mt-4">
-              Compare prices, calculate EMI, find showrooms
-            </p>
-            
-            {/* Search bar */}
-            <div className="mt-8 max-w-2xl">
-              <form onSubmit={handleSearch} className="flex bg-white rounded-xl p-1.5">
-                <div className="relative flex-grow">
-                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                  <Input
-                    type="text"
-                    placeholder="Search by brand, model, or keyword..."
-                    className="pl-12 pr-10 py-4 border-0 focus-visible:ring-0 text-base text-[#1d1d1f] placeholder:text-gray-400 w-full"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  {searchQuery && (
-                    <button
-                      type="button"
-                      onClick={clearSearch}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      <X className="h-5 w-5" />
-                    </button>
-                  )}
-                </div>
-                <Button 
-                  type="submit"
-                  className="bg-[#e8531a] hover:bg-[#e8531a]/90 text-white font-medium rounded-lg px-6 py-4 whitespace-nowrap"
-                >
-                  Search
-                </Button>
-              </form>
-            </div>
-            
-            {/* Stats */}
-            <div className="mt-5 text-white/80 text-sm">
-              150+ Cars   |   50+ Showrooms   |   Updated Monthly
-            </div>
-            
-            {/* Filter pills */}
-            <div className="flex flex-wrap gap-2 mt-4">
-              {quickFilters.map((filter, index) => (
-                <button
-                  key={index}
-                  className="px-4 py-2 text-xs text-white bg-white/15 border border-white/30 rounded-full hover:bg-white hover:text-[#1d1d1f] transition-colors"
-                >
-                  {filter}
-                </button>
-              ))}
-            </div>
+    <div style={{
+      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
+      minHeight: '100vh',
+      background: 'white',
+    }}>
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .brand-logo {
+          filter: grayscale(100%) opacity(45%);
+          transition: filter 0.2s;
+        }
+        .brand-logo:hover { filter: grayscale(0%) opacity(100%); }
+      `}</style>
+
+      {/* ━━━━━━━━━━ HERO ━━━━━━━━━━ */}
+      <section style={{
+        position: 'relative',
+        height: isMobile ? '85vh' : '80vh',
+        backgroundImage: 'url(https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/Blog-Images/Hero-image/hero.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        display: 'flex',
+        alignItems: 'center',
+        overflow: 'hidden',
+      }}>
+        {/* Dark overlay */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'linear-gradient(90deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 100%)',
+        }} />
+
+        <div style={{
+          position: 'relative', zIndex: 10,
+          padding: isMobile ? '0 20px' : '0 80px',
+          maxWidth: '640px',
+        }}>
+          {/* Label */}
+          <div style={{
+            display: 'flex', alignItems: 'center',
+            gap: '12px', marginBottom: '16px',
+          }}>
+            <div style={{ width: '32px', height: '2px', background: '#e8531a' }} />
+            <span style={{
+              color: 'white',
+              fontSize: '11px', fontWeight: '600',
+              textTransform: 'uppercase', letterSpacing: '2px',
+            }}>
+              Nepal's Smartest Car Buying Guide
+            </span>
           </div>
-        </div>
-        
-        {/* Social proof (desktop only) */}
-        <div className="absolute bottom-10 left-20 hidden md:block">
-          <p className="text-white text-sm font-normal mb-2">Trusted by Nepal's car buyers</p>
-          <div className="flex">
-            {[...Array(3)].map((_, i) => (
-              <div 
-                key={i} 
-                className="w-8 h-8 rounded-full bg-gray-400 border-2 border-white"
-                style={{ marginLeft: i === 0 ? 0 : -8 }}
-              ></div>
+
+          {/* Heading */}
+          <h1 style={{
+            fontSize: isMobile ? '36px' : '60px',
+            fontWeight: '800',
+            color: 'white',
+            lineHeight: 1.1,
+            letterSpacing: '-2px',
+            margin: '16px 0 8px',
+          }}>
+            Find Your<br />
+            Perfect Car<br />
+            <span style={{ color: '#e8531a' }}>in Nepal</span>
+          </h1>
+
+          <p style={{
+            color: 'rgba(255,255,255,0.85)',
+            fontSize: isMobile ? '14px' : '17px',
+            margin: '0 0 24px',
+          }}>
+            Compare prices, calculate EMI, find showrooms
+          </p>
+
+          {/* Search bar */}
+          <form onSubmit={handleSearch} style={{
+            background: 'white',
+            borderRadius: '12px',
+            padding: '6px',
+            display: 'flex',
+            maxWidth: '540px',
+          }}>
+            <div style={{ position: 'relative', flex: 1 }}>
+              <div style={{
+                position: 'absolute', left: '12px', top: '50%',
+                transform: 'translateY(-50%)', color: '#999',
+                pointerEvents: 'none',
+              }}>
+                <IconSearch />
+              </div>
+              <input
+                type="text"
+                placeholder="Search by brand, model..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                style={{
+                  width: '100%', border: 'none', outline: 'none',
+                  padding: '10px 10px 10px 36px',
+                  fontSize: '14px',
+                  background: 'transparent',
+                  fontFamily: 'inherit',
+                  boxSizing: 'border-box' as const,
+                }}
+              />
+              {searchQuery && (
+                <button type="button" onClick={() => setSearchQuery('')}
+                  style={{
+                    position: 'absolute', right: '10px', top: '50%',
+                    transform: 'translateY(-50%)', background: 'none',
+                    border: 'none', color: '#999', cursor: 'pointer',
+                  }}>
+                  <IconX />
+                </button>
+              )}
+            </div>
+            <button type="submit" style={{
+              background: '#e8531a', color: 'white',
+              border: 'none', borderRadius: '8px',
+              padding: '10px 20px', fontSize: '13px',
+              fontWeight: '700', cursor: 'pointer',
+              transition: 'background 0.2s',
+              fontFamily: 'inherit',
+            }}
+              onMouseEnter={e => e.currentTarget.style.background = '#c94415'}
+              onMouseLeave={e => e.currentTarget.style.background = '#e8531a'}
+            >
+              Search
+            </button>
+          </form>
+
+          {/* Stats */}
+          <div style={{
+            color: 'rgba(255,255,255,0.7)',
+            fontSize: '12px',
+            margin: '12px 0 14px',
+          }}>
+            150+ Cars · 50+ Showrooms · Updated Monthly
+          </div>
+
+          {/* Quick filter pills */}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {quickFilters.map((f, i) => (
+              <button key={i} onClick={() => navigate(f.path)}
+                style={{
+                  padding: '6px 14px',
+                  background: 'rgba(255,255,255,0.15)',
+                  border: '1px solid rgba(255,255,255,0.3)',
+                  borderRadius: '20px',
+                  fontSize: '11px',
+                  color: 'white',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  fontFamily: 'inherit',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = 'white'
+                  e.currentTarget.style.color = '#1d1d1f'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.15)'
+                  e.currentTarget.style.color = 'white'
+                }}
+              >
+                {f.label}
+              </button>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Popular Brands Carousel */}
-      <section className="py-6 md:py-8 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-xl font-semibold text-left text-[#1A1A1A] mb-4">
-            Popular Brands in Nepal
+      {/* ━━━━━━━━━━ BRAND CAROUSEL ━━━━━━━━━━ */}
+      <section style={{
+        background: 'white',
+        padding: '20px 0 24px',
+      }}>
+        <div style={{ padding: '0 24px', marginBottom: '16px' }}>
+          <h2 style={{
+            fontSize: '13px', fontWeight: '700',
+            color: '#6e6e73', textTransform: 'uppercase',
+            letterSpacing: '1px', margin: 0,
+          }}>
+            Popular Brands
           </h2>
-          
-          <div 
-            ref={carouselRef}
-            className="relative overflow-hidden py-2"
-            aria-label="Popular car brands in Nepal"
-          >
-            <div style={{
-              display: 'flex',
-              width: 'max-content',
-              animation: 'scroll 25s linear infinite',
-            }}>
-              {/* First set of logos */}
-              {popularBrands.map((brand, index) => (
-                <Link 
-                  to={brand.link} 
-                  key={`first-${index}`}
+        </div>
+        <div style={{ overflow: 'hidden' }}>
+          <div style={{
+            display: 'flex',
+            width: 'max-content',
+            animation: 'marquee 25s linear infinite',
+          }}>
+            {[...popularBrands, ...popularBrands].map((brand, i) => (
+              <Link to={brand.link} key={i} style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '120px', height: '56px',
+                flexShrink: 0, padding: '8px 16px',
+                textDecoration: 'none',
+              }}>
+                <img
+                  src={brand.logo}
+                  alt={brand.name}
+                  className="brand-logo"
                   style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '120px',
-                    height: '60px',
-                    flexShrink: 0,
-                    padding: '8px 16px',
+                    maxWidth: '100%', maxHeight: '100%',
+                    width: 'auto', height: 'auto',
+                    objectFit: 'contain',
                   }}
-                >
-                  <img 
-                    src={brand.logo}
-                    alt={brand.name}
-                    style={{
-                      maxWidth: '100%',
-                      maxHeight: '100%',
-                      width: 'auto',
-                      height: 'auto',
-                      objectFit: 'contain',
-                      filter: 'grayscale(100%) opacity(50%)',
-                      transition: 'filter 0.2s ease',
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.filter = 'grayscale(0%) opacity(100%)'}
-                    onMouseLeave={e => e.currentTarget.style.filter = 'grayscale(100%) opacity(50%)'}
-                    onError={(e) => {
-                      // Fallback to text if image fails to load
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const parent = target.parentElement;
-                      if (parent) {
-                        const fallback = document.createElement('div');
-                        fallback.style.width = '100%';
-                        fallback.style.height = '100%';
-                        fallback.style.display = 'flex';
-                        fallback.style.alignItems = 'center';
-                        fallback.style.justifyContent = 'center';
-                        fallback.style.backgroundColor = 'white';
-                        fallback.style.borderRadius = '4px';
-                        fallback.style.fontWeight = 'bold';
-                        fallback.style.color = '#1A1A1A';
-                        fallback.style.fontSize = '12px';
-                        fallback.textContent = brand.name;
-                        parent.appendChild(fallback);
-                      }
-                    }}
-                  />
-                </Link>
-              ))}
-              
-              {/* Duplicate set for seamless scrolling */}
-              {popularBrands.map((brand, index) => (
-                <Link 
-                  to={brand.link} 
-                  key={`second-${index}`}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: '120px',
-                    height: '60px',
-                    flexShrink: 0,
-                    padding: '8px 16px',
+                  onError={e => {
+                    const t = e.target as HTMLImageElement
+                    t.style.display = 'none'
+                    const d = document.createElement('div')
+                    d.style.cssText = 'font-weight:700;color:#1d1d1f;font-size:12px'
+                    d.textContent = brand.name
+                    t.parentElement?.appendChild(d)
                   }}
-                >
-                  <img 
-                    src={brand.logo}
-                    alt={brand.name}
-                    style={{
-                      maxWidth: '100%',
-                      maxHeight: '100%',
-                      width: 'auto',
-                      height: 'auto',
-                      objectFit: 'contain',
-                      filter: 'grayscale(100%) opacity(50%)',
-                      transition: 'filter 0.2s ease',
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.filter = 'grayscale(0%) opacity(100%)'}
-                    onMouseLeave={e => e.currentTarget.style.filter = 'grayscale(100%) opacity(50%)'}
-                    onError={(e) => {
-                      // Fallback to text if image fails to load
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      const parent = target.parentElement;
-                      if (parent) {
-                        const fallback = document.createElement('div');
-                        fallback.style.width = '100%';
-                        fallback.style.height = '100%';
-                        fallback.style.display = 'flex';
-                        fallback.style.alignItems = 'center';
-                        fallback.style.justifyContent = 'center';
-                        fallback.style.backgroundColor = 'white';
-                        fallback.style.borderRadius = '4px';
-                        fallback.style.fontWeight = 'bold';
-                        fallback.style.color = '#1A1A1A';
-                        fallback.style.fontSize = '12px';
-                        fallback.textContent = brand.name;
-                        parent.appendChild(fallback);
-                      }
-                    }}
-                  />
-                </Link>
-              ))}
-            </div>
+                />
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      <style>{`
-        @keyframes scroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-      `}</style>
-
-      {/* Featured Cars */}
-      <section className="py-20 bg-secondary" ref={carsSectionRef}>
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center">
+      {/* ━━━━━━━━━━ FEATURED CARS ━━━━━━━━━━ */}
+      <section style={{
+        background: '#f5f5f7',
+        padding: isMobile ? '32px 16px' : '56px 24px',
+      }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{
+            display: 'flex', justifyContent: 'space-between',
+            alignItems: 'flex-end', marginBottom: '24px',
+            flexWrap: 'wrap', gap: '12px',
+          }}>
             <div>
-              <h2 className="text-4xl font-semibold text-foreground">Featured Cars</h2>
+              <div style={{
+                display: 'inline-block',
+                background: '#fff8f5', border: '1px solid #e8531a',
+                borderRadius: '6px', padding: '4px 12px',
+                fontSize: '12px', fontWeight: '700',
+                color: '#e8531a', textTransform: 'uppercase',
+                letterSpacing: '1px', marginBottom: '8px',
+              }}>
+                FEATURED
+              </div>
+              <h2 style={{
+                fontSize: isMobile ? '22px' : '30px',
+                fontWeight: '800', color: '#1d1d1f',
+                margin: 0, letterSpacing: '-0.5px',
+              }}>
+                Featured Cars
+              </h2>
             </div>
-            <a href="/cars" className="text-foreground hover:text-accent flex items-center font-medium">
-              View All <ChevronRight className="ml-1 h-4 w-4" />
-            </a>
+            <button onClick={() => navigate('/cars')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                background: 'none', border: 'none',
+                fontSize: '13px', fontWeight: '700',
+                color: '#e8531a', cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}>
+              View All <IconArrow />
+            </button>
           </div>
-          
+
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-              {[...Array(6)].map((_, index) => (
-                <div key={index} className="border border-border rounded-2xl overflow-hidden animate-pulse">
-                  <div className="bg-gray-200 h-48 w-full"></div>
-                  <div className="p-5">
-                    <div className="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-                    <div className="h-8 bg-gray-200 rounded w-full mb-4"></div>
-                    <div className="h-4 bg-gray-200 rounded w-2/3 mb-2"></div>
-                    <div className="h-10 bg-gray-200 rounded w-full mt-4"></div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '16px',
+            }}>
+              {[...Array(6)].map((_, i) => (
+                <div key={i} style={{
+                  background: 'white', borderRadius: '16px',
+                  overflow: 'hidden', border: '1px solid #e5e5e5',
+                }}>
+                  <div style={{ height: '180px', background: '#f0f0f0' }} />
+                  <div style={{ padding: '14px' }}>
+                    <div style={{ height: '14px', background: '#f0f0f0', borderRadius: '4px', marginBottom: '8px', width: '70%' }} />
+                    <div style={{ height: '12px', background: '#f0f0f0', borderRadius: '4px', width: '40%' }} />
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
-              {featuredCars.map((car) => (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '16px',
+            }}>
+              {featuredCars.map(car => (
                 <CarCard key={car.id} {...car} />
               ))}
             </div>
@@ -453,146 +456,320 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Find By Budget CTA */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-semibold text-foreground mb-3">
-            Find By Budget
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Tell us your budget, we'll find your perfect car
-          </p>
-          
-          <Button 
-            size="lg" 
-            className="mt-8 bg-foreground text-white hover:bg-accent rounded-xl px-8 py-6 text-lg font-medium"
-            onClick={() => window.location.href = '/budget-finder'}
-          >
-            Find My Car
-          </Button>
-        </div>
-      </section>
-
-      {/* EMI Calculator Widget */}
-      <section className="py-20 bg-secondary">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto bg-white rounded-2xl border border-border p-8">
-            <div className="text-center mb-8">
-              <h2 className="text-4xl font-semibold text-foreground">EMI Calculator</h2>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div>
-                <label className="block text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Car Price (Rs.)</label>
-                <Input 
-                  type="number" 
-                  placeholder="e.g. 3000000" 
-                  className="w-full" 
-                  value={carPrice}
-                  onChange={(e) => setCarPrice(Number(e.target.value))}
-                />
+      {/* ━━━━━━━━━━ BUDGET FINDER CTA ━━━━━━━━━━ */}
+      <section style={{
+        background: 'white',
+        padding: isMobile ? '32px 16px' : '56px 24px',
+      }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: '40px',
+            alignItems: 'center',
+          }}>
+            <div>
+              <div style={{
+                display: 'inline-block',
+                background: '#fff8f5', border: '1px solid #e8531a',
+                borderRadius: '6px', padding: '4px 12px',
+                fontSize: '12px', fontWeight: '700',
+                color: '#e8531a', textTransform: 'uppercase',
+                letterSpacing: '1px', marginBottom: '12px',
+              }}>
+                BUDGET FINDER
               </div>
-              <div>
-                <label className="block text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Down Payment (%)</label>
-                <Input 
-                  type="number" 
-                  placeholder="e.g. 10" 
-                  defaultValue="10" 
-                  className="w-full" 
-                  value={downPct}
-                  onChange={(e) => setDownPct(Number(e.target.value))}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Loan Term (Years)</label>
-                <Input 
-                  type="number" 
-                  placeholder="e.g. 5" 
-                  defaultValue="5" 
-                  className="w-full" 
-                  value={tenure}
-                  onChange={(e) => setTenure(Number(e.target.value))}
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Interest Rate (%)</label>
-                <Input 
-                  type="number" 
-                  placeholder="e.g. 10.5" 
-                  defaultValue="10.5" 
-                  className="w-full" 
-                  value={interestRate}
-                  onChange={(e) => setInterestRate(Number(e.target.value))}
-                />
-              </div>
-            </div>
-            <div className="mt-8 text-center">
-              <p className="text-2xl font-semibold text-[#e8531a]">
-                {formatNPR(Math.round(emi))} <span className="text-base font-normal text-foreground">/ month</span>
+              <h2 style={{
+                fontSize: isMobile ? '24px' : '32px',
+                fontWeight: '800', color: '#1d1d1f',
+                margin: '0 0 12px',
+              }}>
+                Not sure what to buy?
+              </h2>
+              <p style={{
+                color: '#6e6e73', fontSize: '14px',
+                lineHeight: 1.7, margin: '0 0 24px',
+              }}>
+                Answer 4 quick questions and we'll match you with the best cars within your budget.
               </p>
-            </div>
-            <div className="mt-4 text-center">
-              <Button 
-                variant="link" 
-                className="text-[#e8531a] hover:text-[#e8531a]/90 p-0 h-auto"
-                onClick={() => navigate('/emi-calculator')}
+              <button
+                onClick={() => navigate('/budget-finder')}
+                style={{
+                  background: '#1d1d1f', color: 'white',
+                  border: 'none', borderRadius: '10px',
+                  padding: '12px 28px', fontSize: '14px',
+                  fontWeight: '700', cursor: 'pointer',
+                  fontFamily: 'inherit', transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = '#e8531a'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = '#1d1d1f'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                }}
               >
-                Full Calculator →
-              </Button>
+                Find My Car
+              </button>
+            </div>
+
+            {!isMobile && (
+              <div style={{
+                background: '#fff8f5', border: '1px solid #fde8da',
+                borderRadius: '16px', padding: '24px',
+              }}>
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} style={{
+                    display: 'flex', alignItems: 'center',
+                    gap: '12px', marginBottom: i < 3 ? '16px' : 0,
+                  }}>
+                    <div style={{
+                      width: '6px', height: '6px',
+                      borderRadius: '50%', background: '#e8531a',
+                    }} />
+                    <div style={{ fontSize: '14px', color: '#1d1d1f' }}>
+                      {[
+                        "Tell us your budget",
+                        "Share how you'll use it",
+                        "Pick your preferences",
+                        "Get matched instantly"
+                      ][i]}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━━━━━━━━ EMI CALCULATOR ━━━━━━━━━━ */}
+      <section style={{
+        background: '#f5f5f7',
+        padding: isMobile ? '32px 16px' : '56px 24px',
+      }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{
+            background: 'white',
+            borderRadius: '20px',
+            border: '1px solid #e5e5e5',
+            padding: isMobile ? '24px 20px' : '36px 40px',
+          }}>
+            <div style={{
+              display: 'inline-block',
+              background: '#fff8f5', border: '1px solid #e8531a',
+              borderRadius: '6px', padding: '4px 12px',
+              fontSize: '12px', fontWeight: '700',
+              color: '#e8531a', textTransform: 'uppercase',
+              letterSpacing: '1px', marginBottom: '12px',
+            }}>
+              EMI CALCULATOR
+            </div>
+            <h2 style={{
+              fontSize: isMobile ? '22px' : '30px',
+              fontWeight: '800', color: '#1d1d1f',
+              margin: '8px 0 28px',
+            }}>
+              Calculate Your Monthly EMI
+            </h2>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+              gap: '16px',
+            }}>
+              {[
+                { label: 'Car Price (Rs.)', value: carPrice, setter: setCarPrice, min: 500000, max: 15000000, step: 100000 },
+                { label: `Down Payment — ${downPct}%`, value: downPct, setter: setDownPct, min: 10, max: 50, step: 5 },
+                { label: `Loan Tenure — ${tenure} years`, value: tenure, setter: setTenure, min: 1, max: 7, step: 1 },
+                { label: `Interest Rate — ${rate}%`, value: rate, setter: setRate, min: 8, max: 18, step: 0.25 },
+              ].map((item, i) => (
+                <div key={i}>
+                  <div style={{
+                    fontSize: '11px', fontWeight: '700',
+                    color: '#6e6e73', textTransform: 'uppercase',
+                    letterSpacing: '1px', marginBottom: '6px',
+                  }}>
+                    {item.label}
+                  </div>
+                  <input
+                    type="range"
+                    min={item.min} max={item.max}
+                    step={item.step} value={item.value}
+                    onChange={e => item.setter(parseFloat(e.target.value))}
+                    style={{ width: '100%', accentColor: '#e8531a' }}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div style={{
+              marginTop: '24px',
+              background: '#fff8f5',
+              border: '1px solid #fde8da',
+              borderRadius: '12px',
+              padding: '20px',
+              textAlign: 'center' as const,
+            }}>
+              <div style={{
+                fontSize: '12px', fontWeight: '700',
+                color: '#6e6e73', textTransform: 'uppercase',
+                letterSpacing: '1px', marginBottom: '8px',
+              }}>
+                Monthly EMI
+              </div>
+              <div style={{
+                fontSize: isMobile ? '28px' : '36px',
+                fontWeight: '800', color: '#e8531a',
+                margin: '0 0 8px',
+              }}>
+                {formatNPR(Math.round(emi))}
+              </div>
+              <div style={{ fontSize: '14px', color: '#6e6e73', marginBottom: '16px' }}>
+                /month
+              </div>
+              <button
+                onClick={() => navigate('/emi-calculator')}
+                style={{
+                  color: '#e8531a', fontSize: '13px',
+                  fontWeight: '700', background: 'none',
+                  border: 'none', cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Open Full Calculator →
+              </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Latest Offers */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-12">
-            <h2 className="text-4xl font-semibold text-foreground">
-              Latest Offers
-            </h2>
-            <Link to="/offers" className="text-[#e8531a] text-sm font-medium hover:underline">
-              View All Offers →
-            </Link>
+      {/* ━━━━━━━━━━ LATEST OFFERS ━━━━━━━━━━ */}
+      <section style={{
+        background: '#f5f5f7',
+        padding: isMobile ? '32px 16px' : '56px 24px',
+      }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{
+            display: 'flex', justifyContent: 'space-between',
+            alignItems: 'flex-end', marginBottom: '24px',
+            flexWrap: 'wrap', gap: '12px',
+          }}>
+            <div>
+              <div style={{
+                display: 'inline-block',
+                background: '#fff8f5', border: '1px solid #e8531a',
+                borderRadius: '6px', padding: '4px 12px',
+                fontSize: '12px', fontWeight: '700',
+                color: '#e8531a', textTransform: 'uppercase',
+                letterSpacing: '1px', marginBottom: '8px',
+              }}>
+                OFFERS
+              </div>
+              <h2 style={{
+                fontSize: isMobile ? '22px' : '30px',
+                fontWeight: '800', color: '#1d1d1f',
+                margin: 0, letterSpacing: '-0.5px',
+              }}>
+                Latest Offers
+              </h2>
+            </div>
+            <button onClick={() => navigate('/offers')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                background: 'none', border: 'none',
+                fontSize: '13px', fontWeight: '700',
+                color: '#e8531a', cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}>
+              View All <IconArrow />
+            </button>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {latestOffers.map((offer) => (
-              <div 
-                key={offer.id} 
-                className="bg-white border border-[#d2d2d7] rounded-2xl overflow-hidden"
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+            gap: '16px',
+          }}>
+            {latestOffers.map(offer => (
+              <div
+                key={offer.id}
+                style={{
+                  background: 'white',
+                  border: '1px solid #e5e5e5',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  transition: 'all 0.2s',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = '#e8531a'
+                  e.currentTarget.style.transform = 'translateY(-3px)'
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,83,26,0.12)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = '#e5e5e5'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
+                onClick={() => navigate('/offers')}
               >
-                <div className="relative">
-                  <img 
-                    src={offer.image_url} 
-                    alt={offer.title} 
-                    className="w-full h-48 object-cover rounded-t-2xl"
+                <div style={{ position: 'relative' }}>
+                  <img
+                    src={offer.image_url}
+                    alt={offer.title}
+                    style={{ width: '100%', height: '180px', objectFit: 'cover' }}
                   />
-                  <span className="absolute top-3 left-3 bg-[#e8531a] text-white text-[11px] font-semibold uppercase px-2 py-1 rounded-full">
+                  <span style={{
+                    position: 'absolute', top: '12px', left: '12px',
+                    background: '#e8531a', color: 'white',
+                    fontSize: '10px', fontWeight: '700',
+                    textTransform: 'uppercase', letterSpacing: '0.5px',
+                    padding: '4px 10px', borderRadius: '100px',
+                  }}>
                     {offer.type}
                   </span>
                 </div>
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold text-[#1d1d1f] mb-1">{offer.car}</h3>
-                  <p className="text-sm text-[#6e6e73] mb-3">{offer.title}</p>
-                  <p className="text-[#e8531a] font-semibold text-sm mb-4">
-                    {offer.discount_amount > 0 ? `Save Rs. ${offer.discount_amount.toLocaleString('en-IN')}` : offer.description}
-                  </p>
-                  <div className="flex justify-between items-center mt-4">
-                    <span className="text-xs text-[#6e6e73]">
-                      Valid until: {new Date(offer.valid_until).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'short', 
-                        day: 'numeric' 
-                      })}
+                <div style={{ padding: '20px' }}>
+                  <div style={{
+                    fontSize: '15px', fontWeight: '700',
+                    color: '#1d1d1f', marginBottom: '4px',
+                  }}>
+                    {offer.car}
+                  </div>
+                  <div style={{
+                    fontSize: '13px', color: '#6e6e73',
+                    marginBottom: '8px',
+                  }}>
+                    {offer.title}
+                  </div>
+                  <div style={{
+                    fontSize: '13px', fontWeight: '700',
+                    color: '#e8531a', marginBottom: '16px',
+                  }}>
+                    {offer.discount_amount > 0
+                      ? `Save Rs. ${offer.discount_amount.toLocaleString('en-IN')}`
+                      : offer.description}
+                  </div>
+                  <div style={{
+                    display: 'flex', justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                    <span style={{
+                      fontSize: '11px', color: '#6e6e73',
+                      display: 'flex', alignItems: 'center', gap: '4px',
+                    }}>
+                      <IconCalendar />
+                      Valid until {new Date(offer.valid_until).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </span>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="border border-[#1d1d1f] text-[#1d1d1f] hover:bg-[#1d1d1f] hover:text-white rounded-lg"
-                      onClick={() => navigate('/offers')}
-                    >
-                      View Details
-                    </Button>
+                    <span style={{
+                      fontSize: '12px', fontWeight: '600',
+                      color: '#e8531a', display: 'flex',
+                      alignItems: 'center', gap: '4px',
+                    }}>
+                      View <IconArrow />
+                    </span>
                   </div>
                 </div>
               </div>
@@ -601,44 +778,147 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Top Showrooms */}
-      <section className="py-20 bg-[#f5f5f7]">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-12">
-            <h2 className="text-4xl font-semibold text-foreground">Top Showrooms</h2>
-            <Link to="/showrooms" className="text-[#e8531a] text-sm font-medium hover:underline">
-              View All Showrooms →
-            </Link>
+      {/* ━━━━━━━━━━ TOP SHOWROOMS ━━━━━━━━━━ */}
+      <section style={{
+        background: 'white',
+        padding: isMobile ? '32px 16px' : '56px 24px',
+      }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{
+            display: 'flex', justifyContent: 'space-between',
+            alignItems: 'flex-end', marginBottom: '24px',
+            flexWrap: 'wrap', gap: '12px',
+          }}>
+            <div>
+              <div style={{
+                display: 'inline-block',
+                background: '#fff8f5', border: '1px solid #e8531a',
+                borderRadius: '6px', padding: '4px 12px',
+                fontSize: '12px', fontWeight: '700',
+                color: '#e8531a', textTransform: 'uppercase',
+                letterSpacing: '1px', marginBottom: '8px',
+              }}>
+                SHOWROOMS
+              </div>
+              <h2 style={{
+                fontSize: isMobile ? '22px' : '30px',
+                fontWeight: '800', color: '#1d1d1f',
+                margin: 0, letterSpacing: '-0.5px',
+              }}>
+                Top Showrooms
+              </h2>
+            </div>
+            <button onClick={() => navigate('/showrooms')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                background: 'none', border: 'none',
+                fontSize: '13px', fontWeight: '700',
+                color: '#e8531a', cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}>
+              View All <IconArrow />
+            </button>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {topShowrooms.map((showroom) => (
-              <div 
-                key={showroom.id} 
-                className="bg-white border border-[#d2d2d7] rounded-2xl p-6"
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)',
+            gap: '16px',
+          }}>
+            {topShowrooms.map(showroom => (
+              <div
+                key={showroom.id}
+                style={{
+                  background: 'white',
+                  border: '1px solid #e5e5e5',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  transition: 'all 0.2s',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = '#e8531a'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.1)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = '#e5e5e5'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
               >
-                <div className="flex items-center mb-4">
-                  <div className="w-10 h-10 rounded-full bg-[#f5f5f7] flex items-center justify-center mr-4">
-                    <span className="font-bold text-[#1d1d1f] text-base">
-                      {showroom.brand.charAt(0)}
-                    </span>
+                <div style={{
+                  display: 'flex', alignItems: 'center',
+                  gap: '12px', marginBottom: '14px',
+                }}>
+                  <div style={{
+                    width: '42px', height: '42px',
+                    borderRadius: '12px',
+                    background: '#fff8f5',
+                    border: '1px solid #fde8da',
+                    display: 'flex', alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '16px', fontWeight: '800',
+                    color: '#e8531a', flexShrink: 0,
+                  }}>
+                    {showroom.brand?.charAt(0)}
                   </div>
                   <div>
-                    <h3 className="font-semibold text-[#1d1d1f]">{showroom.name}</h3>
-                    <p className="text-sm text-[#6e6e73]">{showroom.brand}</p>
+                    <div style={{
+                      fontSize: '14px', fontWeight: '700',
+                      color: '#1d1d1f', lineHeight: 1.3,
+                    }}>
+                      {showroom.name}
+                    </div>
+                    <div style={{
+                      fontSize: '12px', color: '#e8531a',
+                      fontWeight: '600',
+                    }}>
+                      {showroom.brand}
+                    </div>
                   </div>
                 </div>
-                <div className="space-y-2 text-sm mb-4">
-                  <p className="text-[#1d1d1f]">{showroom.address}, {showroom.city}</p>
-                  <p className="text-[#1d1d1f]">📞 {showroom.phone}</p>
+
+                <div style={{
+                  display: 'flex', flexDirection: 'column' as const,
+                  gap: '6px', marginBottom: '16px',
+                }}>
+                  <div style={{
+                    fontSize: '12px', color: '#6e6e73',
+                    display: 'flex', alignItems: 'flex-start', gap: '6px',
+                  }}>
+                    <span style={{ color: '#e8531a', marginTop: '1px', flexShrink: 0 }}>
+                      <IconMap />
+                    </span>
+                    {showroom.address}, {showroom.city}
+                  </div>
+                  <div style={{
+                    fontSize: '12px', color: '#6e6e73',
+                    display: 'flex', alignItems: 'center', gap: '6px',
+                  }}>
+                    <span style={{ color: '#e8531a', flexShrink: 0 }}>
+                      <IconPhone />
+                    </span>
+                    {showroom.phone}
+                  </div>
                 </div>
-                <a 
-                  href={showroom.google_maps_url || `https://maps.google.com/?q=${showroom.name}+${showroom.city}+Nepal`} 
-                  target="_blank" 
+
+                
+                  href={showroom.google_maps_url || `https://maps.google.com/?q=${showroom.name}+${showroom.city}+Nepal`}
+                  target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#e8531a] text-sm font-medium hover:underline"
+                  onClick={e => e.stopPropagation()}
+                  style={{
+                    display: 'flex', alignItems: 'center',
+                    gap: '6px', fontSize: '12px',
+                    fontWeight: '700', color: '#e8531a',
+                    textDecoration: 'none',
+                    transition: 'gap 0.2s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.gap = '10px'}
+                  onMouseLeave={e => e.currentTarget.style.gap = '6px'}
                 >
-                  Get Directions
+                  Get Directions <IconArrow />
                 </a>
               </div>
             ))}
@@ -646,60 +926,232 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Latest from Blog */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-12">
-            <h2 className="text-4xl font-semibold text-foreground">Latest from Blog</h2>
-            <Link to="/blog" className="text-foreground hover:text-accent flex items-center font-medium">
-              View All <ChevronRight className="ml-1 h-4 w-4" />
-            </Link>
+      {/* ━━━━━━━━━━ LATEST BLOG ━━━━━━━━━━ */}
+      <section style={{
+        background: '#f5f5f7',
+        padding: isMobile ? '32px 16px' : '56px 24px',
+      }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{
+            display: 'flex', justifyContent: 'space-between',
+            alignItems: 'flex-end', marginBottom: '24px',
+            flexWrap: 'wrap', gap: '12px',
+          }}>
+            <div>
+              <div style={{
+                display: 'inline-block',
+                background: '#fff8f5', border: '1px solid #e8531a',
+                borderRadius: '6px', padding: '4px 12px',
+                fontSize: '12px', fontWeight: '700',
+                color: '#e8531a', textTransform: 'uppercase',
+                letterSpacing: '1px', marginBottom: '8px',
+              }}>
+                BLOG
+              </div>
+              <h2 style={{
+                fontSize: isMobile ? '22px' : '30px',
+                fontWeight: '800', color: '#1d1d1f',
+                margin: 0, letterSpacing: '-0.5px',
+              }}>
+                Latest from Blog
+              </h2>
+            </div>
+            <button onClick={() => navigate('/blog')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                background: 'none', border: 'none',
+                fontSize: '13px', fontWeight: '700',
+                color: '#e8531a', cursor: 'pointer',
+                fontFamily: 'inherit',
+              }}>
+              View All <IconArrow />
+            </button>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {latestBlogPosts.map((post) => (
-              <div 
-                key={post.id} 
-                className="bg-white border border-[#d2d2d7] rounded-2xl overflow-hidden"
-              >
-                <img 
-                  src={post.cover_image || 'https://placehold.co/400x250/f5f5f7/6e6e73?text=Blog+Image'} 
-                  alt={post.title} 
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-5">
-                  <span className="text-[#e8531a] text-[11px] font-semibold uppercase">
-                    {post.category || 'General'}
-                  </span>
-                  <h3 className="text-[15px] font-semibold text-[#1d1d1f] mt-2 mb-1 line-clamp-2">
-                    {post.title}
-                  </h3>
-                  <p className="text-[13px] text-[#6e6e73] line-clamp-2 mb-3">
-                    {post.excerpt}
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-[12px] text-[#6e6e73]">
-                      {new Date(post.published_at).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'short', 
-                        day: 'numeric' 
-                      })}
+
+          {latestBlogPosts.length > 0 ? (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+              gap: '16px',
+            }}>
+              {latestBlogPosts.map(post => (
+                <div
+                  key={post.id}
+                  style={{
+                    background: 'white',
+                    border: '1px solid #e5e5e5',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    transition: 'all 0.2s',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = '#e8531a'
+                    e.currentTarget.style.transform = 'translateY(-3px)'
+                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,83,26,0.1)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = '#e5e5e5'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.boxShadow = 'none'
+                  }}
+                  onClick={() => navigate(`/blog/${post.slug}`)}
+                >
+                  <img
+                    src={post.cover_image || 'https://placehold.co/400x220/f5f5f7/6e6e73?text=Blog'}
+                    alt={post.title}
+                    style={{ width: '100%', height: '180px', objectFit: 'cover' }}
+                  />
+                  <div style={{ padding: '18px' }}>
+                    <span style={{
+                      fontSize: '11px', fontWeight: '700',
+                      color: '#e8531a', textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}>
+                      {post.category || 'General'}
                     </span>
-                    <button 
-                      onClick={() => navigate(`/blog/${post.slug}`)}
-                      className="text-[#e8531a] text-[13px] font-medium hover:underline"
-                    >
-                      Read More →
-                    </button>
+                    <h3 style={{
+                      fontSize: '15px', fontWeight: '700',
+                      color: '#1d1d1f', margin: '6px 0 6px',
+                      lineHeight: 1.4,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical' as const,
+                      overflow: 'hidden',
+                    }}>
+                      {post.title}
+                    </h3>
+                    <p style={{
+                      fontSize: '13px', color: '#6e6e73',
+                      margin: '0 0 14px', lineHeight: 1.6,
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical' as const,
+                      overflow: 'hidden',
+                    }}>
+                      {post.excerpt}
+                    </p>
+                    <div style={{
+                      display: 'flex', justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}>
+                      <span style={{
+                        fontSize: '11px', color: '#6e6e73',
+                        display: 'flex', alignItems: 'center', gap: '4px',
+                      }}>
+                        <IconCalendar />
+                        {new Date(post.published_at).toLocaleDateString('en-US', {
+                          month: 'short', day: 'numeric', year: 'numeric'
+                        })}
+                      </span>
+                      <span style={{
+                        fontSize: '12px', fontWeight: '700',
+                        color: '#e8531a', display: 'flex',
+                        alignItems: 'center', gap: '4px',
+                      }}>
+                        Read More <IconArrow />
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          ) : (
+            <div style={{
+              background: 'white', borderRadius: '16px',
+              padding: '48px', textAlign: 'center',
+              border: '1px solid #e5e5e5',
+            }}>
+              <p style={{ color: '#6e6e73', fontSize: '14px', margin: 0 }}>
+                Blog posts coming soon.
+              </p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ━━━━━━━━━━ BOTTOM CTA ━━━━━━━━━━ */}
+      <section style={{
+        background: '#1d1d1f',
+        padding: isMobile ? '32px 20px' : '56px 24px',
+        textAlign: 'center' as const,
+      }}>
+        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '6px',
+            background: 'rgba(232,83,26,0.15)',
+            border: '1px solid rgba(232,83,26,0.3)',
+            borderRadius: '6px', padding: '4px 14px',
+            fontSize: '12px', fontWeight: '700',
+            color: '#e8531a', textTransform: 'uppercase',
+            letterSpacing: '1px', marginBottom: '20px',
+          }}>
+            <IconZap /> Electric Nepal
+          </div>
+          <h2 style={{
+            fontSize: isMobile ? '24px' : '36px',
+            fontWeight: '800', color: 'white',
+            margin: '0 0 12px',
+          }}>
+            Going Electric?
+          </h2>
+          <p style={{
+            fontSize: '14px', color: 'rgba(255,255,255,0.6)',
+            margin: '0 0 28px', lineHeight: 1.6,
+          }}>
+            Explore Nepal's best electric vehicles and find
+            charging stations near you.
+          </p>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => navigate('/electric-cars')}
+              style={{
+                background: '#e8531a', color: 'white',
+                border: 'none', borderRadius: '12px',
+                padding: '14px 28px', fontSize: '14px',
+                fontWeight: '700', cursor: 'pointer',
+                fontFamily: 'inherit', transition: 'all 0.2s',
+                display: 'flex', alignItems: 'center', gap: '8px',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = '#c94415'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = '#e8531a'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }}
+            >
+              Browse EVs <IconArrow />
+            </button>
+            <button
+              onClick={() => navigate('/ev-charging')}
+              style={{
+                background: 'transparent', color: 'white',
+                border: '1px solid rgba(255,255,255,0.3)',
+                borderRadius: '12px', padding: '14px 28px',
+                fontSize: '14px', fontWeight: '700',
+                cursor: 'pointer', fontFamily: 'inherit',
+                transition: 'all 0.2s',
+                display: 'flex', alignItems: 'center', gap: '8px',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = 'white'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }}
+            >
+              Charging Map <IconArrow />
+            </button>
           </div>
         </div>
       </section>
-    </div>
-  );
-};
 
-export default Index;
+    </div>
+  )
+}
+
+export default Index
