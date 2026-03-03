@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase'
 
 const IconTarget = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -66,6 +67,8 @@ const Advertise = () => {
   })
   const [submitted, setSubmitted] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -78,9 +81,31 @@ const Advertise = () => {
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSubmitted(true)
+    setLoading(true)
+    setError(null)
+
+    try {
+      const { error } = await supabase
+        .from('enquiries')
+        .insert([{
+          full_name: formData.fullName,
+          company: formData.company,
+          email: formData.email,
+          phone: formData.phone,
+          package: formData.package,
+          message: formData.message,
+        }])
+
+      if (error) throw error
+      setSubmitted(true)
+    } catch (err) {
+      console.error('Error saving enquiry:', err)
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (submitted) {
@@ -905,33 +930,50 @@ const Advertise = () => {
                 />
               </div>
 
+              {error && (
+                <div style={{
+                  background: '#fff0f0',
+                  border: '1px solid #ffcccc',
+                  borderRadius: '8px',
+                  padding: '12px 16px',
+                  marginBottom: '16px',
+                  fontSize: '14px',
+                  color: '#cc0000',
+                }}>
+                  {error}
+                </div>
+              )}
+
               <button
                 type="submit"
+                disabled={loading}
                 style={{
                   width: '100%',
-                  background: '#e8531a',
+                  background: loading ? '#ccc' : '#e8531a',
                   color: 'white',
                   border: 'none',
                   borderRadius: '10px',
                   padding: '14px',
                   fontSize: '15px',
                   fontWeight: '700',
-                  cursor: 'pointer',
+                  cursor: loading ? 'not-allowed' : 'pointer',
                   transition: 'all 0.2s',
                   fontFamily: 'inherit',
                 }}
                 onMouseEnter={e => {
+                  if (loading) return
                   e.currentTarget.style.background = '#c94415'
                   e.currentTarget.style.transform = 'translateY(-2px)'
                   e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.35)'
                 }}
                 onMouseLeave={e => {
+                  if (loading) return
                   e.currentTarget.style.background = '#e8531a'
                   e.currentTarget.style.transform = 'translateY(0)'
                   e.currentTarget.style.boxShadow = 'none'
                 }}
               >
-                Send Enquiry →
+                {loading ? 'Sending...' : 'Send Enquiry →'}
               </button>
             </form>
           </div>
