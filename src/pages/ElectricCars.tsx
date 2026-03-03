@@ -118,34 +118,16 @@ const ElectricCars = () => {
 
       {/* HERO */}
       <div style={{
-        background: 'linear-gradient(135deg, #1d1d1f 0%, #2d2d2f 100%)',
-        padding: isMobile ? '48px 16px' : '80px 24px',
-        position: 'relative',
-        overflow: 'hidden',
+        background: 'white',
+        padding: isMobile ? '48px 16px 32px' : '72px 24px 48px',
       }}>
-        {/* Decorative circles */}
-        <div style={{
-          position: 'absolute', top: '-60px', right: '-60px',
-          width: '300px', height: '300px',
-          borderRadius: '50%',
-          background: 'rgba(232,83,26,0.08)',
-          pointerEvents: 'none',
-        }} />
-        <div style={{
-          position: 'absolute', bottom: '-40px', left: '10%',
-          width: '200px', height: '200px',
-          borderRadius: '50%',
-          background: 'rgba(232,83,26,0.05)',
-          pointerEvents: 'none',
-        }} />
-
-        <div style={{ maxWidth: '1000px', margin: '0 auto', position: 'relative' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{
             display: 'inline-flex',
             alignItems: 'center',
             gap: '8px',
-            background: 'rgba(232,83,26,0.15)',
-            border: '1px solid rgba(232,83,26,0.3)',
+            background: '#fff8f5',
+            border: '1px solid #e8531a',
             borderRadius: '6px',
             padding: '4px 14px',
             fontSize: '12px',
@@ -162,7 +144,7 @@ const ElectricCars = () => {
           <h1 style={{
             fontSize: isMobile ? '36px' : '58px',
             fontWeight: '800',
-            color: 'white',
+            color: '#1d1d1f',
             margin: '0 0 20px',
             lineHeight: 1.1,
             letterSpacing: '-2px',
@@ -173,7 +155,7 @@ const ElectricCars = () => {
 
           <p style={{
             fontSize: isMobile ? '15px' : '18px',
-            color: 'rgba(255,255,255,0.6)',
+            color: '#6e6e73',
             lineHeight: 1.7,
             margin: '0 0 36px',
             maxWidth: '520px',
@@ -182,50 +164,14 @@ const ElectricCars = () => {
             lower running costs and cutting-edge technology —
             built for Nepal's roads.
           </p>
-
-          {/* Hero stats */}
-          <div style={{
-            display: 'flex',
-            gap: '24px',
-            flexWrap: 'wrap',
-          }}>
-            {[
-              { value: `${electricCars.length || '10'}+`, label: 'EV Models' },
-              { value: '8+', label: 'Charging Cities' },
-              { value: '320km', label: 'Max Range' },
-            ].map((stat, i) => (
-              <div key={i} style={{
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: '12px',
-                padding: '16px 24px',
-              }}>
-                <div style={{
-                  fontSize: '28px',
-                  fontWeight: '800',
-                  color: '#e8531a',
-                  letterSpacing: '-1px',
-                  lineHeight: 1,
-                }}>
-                  {stat.value}
-                </div>
-                <div style={{
-                  fontSize: '12px',
-                  color: 'rgba(255,255,255,0.5)',
-                  marginTop: '4px',
-                  fontWeight: '500',
-                }}>
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
-      {/* WHY EV - 3 benefit cards */}
+      {/* COMBINED WHY EV + INCENTIVES */}
       <div style={{ background: '#f5f5f7', padding: isMobile ? '48px 16px' : '64px 24px' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+
+          {/* Why Electric - compact row */}
           <div style={{
             display: 'inline-block',
             background: '#fff8f5',
@@ -242,10 +188,10 @@ const ElectricCars = () => {
             Why Electric
           </div>
           <h2 style={{
-            fontSize: isMobile ? '26px' : '32px',
+            fontSize: isMobile ? '24px' : '28px',
             fontWeight: '800',
             color: '#1d1d1f',
-            margin: '0 0 32px',
+            margin: '0 0 20px',
             letterSpacing: '-1px',
           }}>
             Why Choose an Electric Car?
@@ -254,7 +200,8 @@ const ElectricCars = () => {
           <div style={{
             display: 'grid',
             gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
-            gap: '16px',
+            gap: '12px',
+            marginBottom: '40px',
           }}>
             {[
               {
@@ -278,15 +225,18 @@ const ElectricCars = () => {
                 style={{
                   background: 'white',
                   border: '1px solid #e5e5e5',
-                  borderRadius: '16px',
-                  padding: '28px 24px',
+                  borderRadius: '14px',
+                  padding: '20px',
                   transition: 'all 0.2s',
                   cursor: 'default',
+                  display: 'flex',
+                  gap: '14px',
+                  alignItems: 'flex-start',
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.borderColor = '#e8531a'
-                  e.currentTarget.style.transform = 'translateY(-3px)'
-                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,83,26,0.12)'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.1)'
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.borderColor = '#e5e5e5'
@@ -295,42 +245,42 @@ const ElectricCars = () => {
                 }}
               >
                 <div style={{
-                  width: '48px', height: '48px',
+                  width: '38px', height: '38px',
                   background: '#fff8f5',
-                  borderRadius: '12px',
+                  borderRadius: '10px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#e8531a',
-                  marginBottom: '16px',
+                  flexShrink: 0,
                 }}>
                   <item.Icon />
                 </div>
-                <h3 style={{
-                  fontSize: '16px',
-                  fontWeight: '700',
-                  color: '#1d1d1f',
-                  margin: '0 0 8px',
-                }}>
-                  {item.title}
-                </h3>
-                <p style={{
-                  fontSize: '14px',
-                  color: '#6e6e73',
-                  lineHeight: 1.7,
-                  margin: 0,
-                }}>
-                  {item.desc}
-                </p>
+                <div>
+                  <div style={{
+                    fontSize: '14px', fontWeight: '700',
+                    color: '#1d1d1f', marginBottom: '4px',
+                  }}>
+                    {item.title}
+                  </div>
+                  <div style={{
+                    fontSize: '12px', color: '#6e6e73', lineHeight: 1.6,
+                  }}>
+                    {item.desc}
+                  </div>
+                </div>
               </div>
             ))}
           </div>
-        </div>
-      </div>
 
-      {/* GOVERNMENT INCENTIVES - compact */}
-      <div style={{ padding: isMobile ? '48px 16px' : '64px 24px' }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          {/* Divider */}
+          <div style={{
+            height: '1px',
+            background: '#e5e5e5',
+            margin: '0 0 32px',
+          }} />
+
+          {/* Government Incentives - compact */}
           <div style={{
             display: 'inline-block',
             background: '#fff8f5',
@@ -347,10 +297,10 @@ const ElectricCars = () => {
             Government Policy
           </div>
           <h2 style={{
-            fontSize: isMobile ? '26px' : '32px',
+            fontSize: isMobile ? '24px' : '28px',
             fontWeight: '800',
             color: '#1d1d1f',
-            margin: '0 0 24px',
+            margin: '0 0 20px',
             letterSpacing: '-1px',
           }}>
             Government Incentives for EVs
@@ -370,10 +320,10 @@ const ElectricCars = () => {
               <div
                 key={i}
                 style={{
-                  background: '#f5f5f7',
+                  background: 'white',
                   border: '1px solid #e5e5e5',
-                  borderRadius: '14px',
-                  padding: '18px 16px',
+                  borderRadius: '12px',
+                  padding: '16px',
                   transition: 'all 0.2s',
                   cursor: 'default',
                 }}
@@ -384,40 +334,37 @@ const ElectricCars = () => {
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.borderColor = '#e5e5e5'
-                  e.currentTarget.style.background = '#f5f5f7'
+                  e.currentTarget.style.background = 'white'
                   e.currentTarget.style.transform = 'translateY(0)'
                 }}
               >
                 <div style={{
-                  width: '36px', height: '36px',
-                  background: 'white',
-                  borderRadius: '10px',
+                  width: '34px', height: '34px',
+                  background: '#fff8f5',
+                  borderRadius: '8px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   color: '#e8531a',
-                  marginBottom: '12px',
+                  marginBottom: '10px',
                 }}>
                   <item.Icon />
                 </div>
                 <div style={{
-                  fontSize: '13px',
-                  fontWeight: '700',
-                  color: '#1d1d1f',
-                  marginBottom: '4px',
+                  fontSize: '13px', fontWeight: '700',
+                  color: '#1d1d1f', marginBottom: '3px',
                 }}>
                   {item.title}
                 </div>
                 <div style={{
-                  fontSize: '12px',
-                  color: '#6e6e73',
-                  lineHeight: 1.5,
+                  fontSize: '11px', color: '#6e6e73', lineHeight: 1.5,
                 }}>
                   {item.desc}
                 </div>
               </div>
             ))}
           </div>
+
         </div>
       </div>
 
