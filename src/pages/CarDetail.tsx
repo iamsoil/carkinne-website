@@ -12,9 +12,369 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { EmiCalculator } from '@/components/EmiCalculator';
 import { supabase } from '@/lib/supabase';
 import { formatNPR } from '@/utils/format';
+import { useEffect as useMapEffect, useRef } from 'react'
+
+function calcEMI(principal: number, rate: number, months: number): number {
+  if (!principal || !rate || !months) return 0
+  const r = rate / 12 / 100
+  return (principal * r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1)
+}
+
+function InlineEmiCalculator({ price, carName }: { price: number, carName: string }) {
+  const [downPct, setDownPct] = useState(10)
+  const [tenure, setTenure] = useState(5)
+  const [rate, setRate] = useState(10.5)
+
+  const downPayment = Math.round((price * downPct) / 100)
+  const loanAmount = price - downPayment
+  const months = tenure * 12
+  const emi = calcEMI(loanAmount, rate, months)
+  const totalPayment = emi * months
+  const totalInterest = totalPayment - loanAmount
+
+  return (
+    <div style={{
+      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
+    }}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '24px',
+      }}>
+        {/* Left - inputs */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+          {/* Down Payment */}
+          <div>
+            <div style={{
+              fontSize: '11px', fontWeight: '700',
+              color: '#6e6e73', textTransform: 'uppercase',
+              letterSpacing: '1px', marginBottom: '10px',
+            }}>
+              Down Payment — {downPct}%
+            </div>
+            <input
+              type="range" min={10} max={50} value={downPct}
+              onChange={e => setDownPct(parseInt(e.target.value))}
+              style={{ width: '100%', accentColor: '#e8531a' }}
+            />
+            <div style={{
+              display: 'flex', justifyContent: 'space-between',
+              fontSize: '11px', color: '#6e6e73', marginTop: '4px',
+            }}>
+              <span>10%</span><span>50%</span>
+            </div>
+            <div style={{
+              marginTop: '8px',
+              fontSize: '13px',
+              color: '#1d1d1f',
+              fontWeight: '600',
+            }}>
+              Down: {formatNPR(downPayment)} → Loan: {formatNPR(loanAmount)}
+            </div>
+          </div>
+
+          {/* Tenure */}
+          <div>
+            <div style={{
+              fontSize: '11px', fontWeight: '700',
+              color: '#6e6e73', textTransform: 'uppercase',
+              letterSpacing: '1px', marginBottom: '10px',
+            }}>
+              Loan Tenure
+            </div>
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+              {[1, 2, 3, 4, 5, 6, 7].map(yr => (
+                <button
+                  key={yr}
+                  onClick={() => setTenure(yr)}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: '100px',
+                    fontSize: '13px',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    border: '1px solid',
+                    borderColor: tenure === yr ? '#e8531a' : '#d2d2d7',
+                    background: tenure === yr ? '#e8531a' : '#fff',
+                    color: tenure === yr ? '#fff' : '#1d1d1f',
+                    transition: 'all 0.2s',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  {yr}yr
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Interest Rate */}
+          <div>
+            <div style={{
+              fontSize: '11px', fontWeight: '700',
+              color: '#6e6e73', textTransform: 'uppercase',
+              letterSpacing: '1px', marginBottom: '10px',
+            }}>
+              Interest Rate
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <button
+                onClick={() => setRate(r => Math.max(8, Math.round((r - 0.25) * 100) / 100))}
+                style={{
+                  width: '36px', height: '40px',
+                  border: '1px solid #d2d2d7',
+                  borderRadius: '8px 0 0 8px',
+                  background: '#fff', fontSize: '16px',
+                  cursor: 'pointer', fontFamily: 'inherit',
+                }}
+              >−</button>
+              <div style={{
+                padding: '8px 20px',
+                border: '1px solid #d2d2d7',
+                borderLeft: 'none', borderRight: 'none',
+                fontSize: '15px', fontWeight: '600',
+                minWidth: '70px', textAlign: 'center',
+              }}>
+                {rate}%
+              </div>
+              <button
+                onClick={() => setRate(r => Math.min(18, Math.round((r + 0.25) * 100) / 100))}
+                style={{
+                  width: '36px', height: '40px',
+                  border: '1px solid #d2d2d7',
+                  borderRadius: '0 8px 8px 0',
+                  background: '#fff', fontSize: '16px',
+                  cursor: 'pointer', fontFamily: 'inherit',
+                }}
+              >+</button>
+            </div>
+            <div style={{
+              fontSize: '11px', color: '#6e6e73', marginTop: '6px',
+            }}>
+              Nepal bank average: 10–11%
+            </div>
+          </div>
+        </div>
+
+        {/* Right - results */}
+        <div style={{
+          background: '#fff8f5',
+          border: '1.5px solid #e8531a',
+          borderRadius: '16px',
+          padding: '24px',
+        }}>
+          <div style={{
+            fontSize: '11px', fontWeight: '700',
+            color: '#6e6e73', textTransform: 'uppercase',
+            letterSpacing: '1px', marginBottom: '8px',
+          }}>
+            Monthly EMI
+          </div>
+          <div style={{
+            fontSize: '36px', fontWeight: '800',
+            color: '#e8531a', letterSpacing: '-1px',
+            marginBottom: '4px',
+          }}>
+            {formatNPR(Math.round(emi))}
+          </div>
+          <div style={{
+            fontSize: '13px', color: '#6e6e73',
+            marginBottom: '20px',
+          }}>
+            per month for {tenure} years
+          </div>
+
+          <div style={{
+            height: '1px', background: '#fde8da',
+            marginBottom: '16px',
+          }} />
+
+          {[
+            ['Car Price', formatNPR(price)],
+            ['Down Payment', formatNPR(downPayment)],
+            ['Loan Amount', formatNPR(loanAmount)],
+            ['Interest Rate', `${rate}%`],
+            ['Total Interest', formatNPR(Math.round(totalInterest))],
+            ['Total Payment', formatNPR(Math.round(totalPayment))],
+          ].map(([label, value], i) => (
+            <div key={i} style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              padding: '5px 0',
+              fontSize: '13px',
+              borderBottom: i < 5 ? '1px solid #fde8da' : 'none',
+            }}>
+              <span style={{ color: '#6e6e73' }}>{label}</span>
+              <span style={{
+                color: label === 'Total Payment' ? '#e8531a' : '#1d1d1f',
+                fontWeight: label === 'Total Payment' ? '700' : '500',
+              }}>
+                {value}
+              </span>
+            </div>
+          ))}
+
+          <div style={{
+            marginTop: '16px',
+            padding: '10px 12px',
+            background: 'white',
+            border: '1px solid #fde8da',
+            borderRadius: '8px',
+            fontSize: '11px',
+            color: '#6e6e73',
+            lineHeight: 1.6,
+          }}>
+            <span style={{ fontWeight: '700', color: '#e8531a' }}>Disclaimer: </span>
+            Indicative estimates only. Actual rates may vary per bank policy and NRB regulations.
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ShowroomsMap({ showrooms }: { showrooms: any[] }) {
+  const mapRef = useRef<any>(null)
+  const mapInstanceRef = useRef<any>(null)
+  const markersRef = useRef<Record<string, any>>({})
+
+  useMapEffect(() => {
+    if (typeof window === 'undefined') return
+    if (mapInstanceRef.current) return
+
+    const L = (window as any).L
+    if (!L) {
+      // Load Leaflet if not present
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
+      document.head.appendChild(link)
+
+      const script = document.createElement('script')
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
+      script.onload = () => initMap()
+      document.head.appendChild(script)
+    } else {
+      initMap()
+    }
+
+    function initMap() {
+      if (!mapRef.current || mapInstanceRef.current) return
+      const L = (window as any).L
+
+      const map = L.map(mapRef.current, {
+        center: [27.7172, 85.3240],
+        zoom: 12,
+        zoomControl: true,
+      })
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map)
+
+      mapInstanceRef.current = map
+
+      if (showrooms.length > 0) {
+        addMarkers(map, L)
+      }
+    }
+
+    function addMarkers(map: any, L: any) {
+      const validShowrooms = showrooms.filter(s => s.lat && s.lng)
+      if (validShowrooms.length === 0) return
+
+      validShowrooms.forEach(showroom => {
+        const markerHtml = `
+          <div style="
+            width:32px; height:32px;
+            background:#e8531a;
+            border-radius:50% 50% 50% 0;
+            transform:rotate(-45deg);
+            border:2px solid white;
+            box-shadow:0 2px 8px rgba(0,0,0,0.3);
+            display:flex; align-items:center; justify-content:center;
+          ">
+            <div style="transform:rotate(45deg); color:white; font-size:12px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+                <path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2L2 7h20L12 2z"/>
+              </svg>
+            </div>
+          </div>
+        `
+
+        const icon = L.divIcon({
+          html: markerHtml,
+          iconSize: [32, 32],
+          iconAnchor: [16, 32],
+          popupAnchor: [0, -36],
+          className: '',
+        })
+
+        const marker = L.marker([showroom.lat, showroom.lng], { icon })
+          .addTo(map)
+          .bindPopup(`
+            <div style="font-family:-apple-system,sans-serif;min-width:180px;">
+              <div style="font-weight:700;font-size:14px;color:#1d1d1f;margin-bottom:4px;">
+                ${showroom.name}
+              </div>
+              <div style="font-size:12px;color:#6e6e73;margin-bottom:6px;">
+                ${showroom.address || ''}
+              </div>
+              ${showroom.phone ? `
+                <div style="font-size:12px;color:#e8531a;font-weight:600;">
+                  ${showroom.phone}
+                </div>
+              ` : ''}
+              ${showroom.working_hours ? `
+                <div style="font-size:11px;color:#6e6e73;margin-top:4px;">
+                  ${showroom.working_hours}
+                </div>
+              ` : ''}
+              <a href="https://www.google.com/maps/dir/?api=1&destination=${showroom.lat},${showroom.lng}"
+                target="_blank"
+                style="
+                  display:inline-block;margin-top:8px;
+                  background:#e8531a;color:white;
+                  padding:4px 12px;border-radius:6px;
+                  font-size:11px;font-weight:700;
+                  text-decoration:none;
+                ">
+                Directions
+              </a>
+            </div>
+          `)
+
+        markersRef.current[showroom.id] = marker
+      })
+
+      // Fit map to all markers
+      if (validShowrooms.length === 1) {
+        map.setView([validShowrooms[0].lat, validShowrooms[0].lng], 14)
+      } else {
+        const group = L.featureGroup(
+          validShowrooms.map(s => L.marker([s.lat, s.lng]))
+        )
+        map.fitBounds(group.getBounds().pad(0.2))
+      }
+    }
+
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove()
+        mapInstanceRef.current = null
+      }
+    }
+  }, [showrooms])
+
+  return (
+    <div
+      ref={mapRef}
+      style={{ height: '320px', width: '100%', borderRadius: '0 0 16px 16px' }}
+    />
+  )
+}
 
 const CarDetail = () => {
   const { slug } = useParams();
@@ -704,16 +1064,7 @@ const CarDetail = () => {
         
         {/* EMI Calculator Tab */}
         <TabsContent value="emi" className="mt-6">
-          <Card className="border border-border rounded-2xl">
-            <CardHeader>
-              <CardTitle className="text-2xl font-semibold">EMI Calculator for {car.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="bg-secondary rounded-xl p-6">
-                <EmiCalculator prefillPrice={car.ex_showroom_price} />
-              </div>
-            </CardContent>
-          </Card>
+          <InlineEmiCalculator price={car.ex_showroom_price} carName={car.name} />
         </TabsContent>
       </Tabs>
 
@@ -751,8 +1102,8 @@ const CarDetail = () => {
               <CardHeader>
                 <CardTitle className="text-2xl font-semibold">Map</CardTitle>
               </CardHeader>
-              <CardContent className="h-80 flex items-center justify-center bg-secondary rounded-lg">
-                <p className="text-muted-foreground">Map showing showrooms would appear here</p>
+              <CardContent className="p-0 rounded-b-2xl overflow-hidden">
+                <ShowroomsMap showrooms={showrooms} />
               </CardContent>
             </Card>
           </div>
@@ -880,7 +1231,7 @@ const CarDetail = () => {
             <DialogTitle className="text-2xl font-semibold">EMI Calculator for {car.name}</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <EmiCalculator prefillPrice={car.ex_showroom_price} />
+            <InlineEmiCalculator price={car.ex_showroom_price} carName={car.name} />
           </div>
         </DialogContent>
       </Dialog>
