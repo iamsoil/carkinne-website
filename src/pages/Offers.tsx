@@ -119,7 +119,7 @@ const Offers = () => {
       {/* HERO SECTION */}
       <div style={{
         background: 'white',
-        padding: isMobile ? '48px 16px 32px' : '80px 24px 60px',
+        padding: isMobile ? '28px 16px 20px' : '40px 24px 28px',
       }}>
         <div style={{
           maxWidth: '1000px',
@@ -141,145 +141,52 @@ const Offers = () => {
             OFFERS
           </div>
           <h1 style={{
-            fontSize: isMobile ? '32px' : '42px',
+            fontSize: isMobile ? '26px' : '34px',
             fontWeight: '800',
             color: '#1d1d1f',
-            margin: '0 0 12px',
-            letterSpacing: '-1.5px',
+            margin: '0 0 8px',
+            letterSpacing: '-1px',
             lineHeight: 1.2,
           }}>
             Latest Car<span style={{ color: '#e8531a' }}> Offers</span>
           </h1>
           <p style={{
-            fontSize: '17px',
+            fontSize: '13px',
             color: '#6e6e73',
-            margin: '0 0 32px',
+            margin: 0,
             lineHeight: 1.6,
             maxWidth: '600px',
           }}>
             Find the best deals and discounts on cars in Nepal
           </p>
-          
-          {/* Stats Cards */}
-          <div style={{
-            display: 'flex',
-            gap: '16px',
-            flexWrap: 'wrap',
-          }}>
-            <div
-              style={{
-                background: 'white',
-                border: '1px solid #e5e5e5',
-                borderRadius: '12px',
-                padding: '16px 20px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                flex: '1',
-                minWidth: '200px',
-                transition: 'all 0.2s',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = '#e8531a';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(232,83,26,0.1)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = '#e5e5e5';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <div style={{ color: '#e8531a' }}>
-                <IconCalendar />
-              </div>
-              <div>
-                <div style={{ fontSize: '16px', fontWeight: '700', color: '#1d1d1f' }}>
-                  Updated Weekly
-                </div>
-                <div style={{ fontSize: '13px', color: '#6e6e73' }}>
-                  Fresh deals every week
-                </div>
-              </div>
-            </div>
-            
-            <div
-              style={{
-                background: 'white',
-                border: '1px solid #e5e5e5',
-                borderRadius: '12px',
-                padding: '16px 20px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                flex: '1',
-                minWidth: '200px',
-                transition: 'all 0.2s',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = '#e8531a';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(232,83,26,0.1)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = '#e5e5e5';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <div style={{ color: '#e8531a' }}>
-                <IconTag />
-              </div>
-              <div>
-                <div style={{ fontSize: '16px', fontWeight: '700', color: '#1d1d1f' }}>
-                  Verified Deals
-                </div>
-                <div style={{ fontSize: '13px', color: '#6e6e73' }}>
-                  Direct from dealers
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
       {/* FILTER BAR */}
       <div style={{
         background: 'white',
-        padding: isMobile ? '0 16px 24px' : '0 24px 24px',
-        borderBottom: '1px solid #f0f0f0',
+        padding: isMobile ? '16px 16px 20px' : '16px 24px 24px',
       }}>
         <div style={{
           maxWidth: '1000px',
           margin: '0 auto',
           display: 'flex',
-          flexWrap: 'wrap',
-          gap: '10px',
+          gap: '24px',
         }}>
           {['all', 'active', 'expiring'].map((filterOption) => (
             <button
               key={filterOption}
               onClick={() => setFilter(filterOption)}
               style={{
-                padding: '8px 20px',
-                borderRadius: '100px',
-                fontSize: '14px',
-                fontWeight: '600',
+                fontSize: '13px',
+                fontWeight: filter === filterOption ? '700' : '500',
+                color: filter === filterOption ? '#e8531a' : '#6e6e73',
+                background: 'none',
+                border: 'none',
+                padding: '0 0 4px',
                 cursor: 'pointer',
-                border: '1px solid',
-                borderColor: filter === filterOption ? '#e8531a' : '#d2d2d7',
-                background: filter === filterOption ? '#e8531a' : 'white',
-                color: filter === filterOption ? 'white' : '#1d1d1f',
-                transition: 'all 0.2s',
+                borderBottom: filter === filterOption ? '2px solid #e8531a' : 'none',
                 fontFamily: 'inherit',
-              }}
-              onMouseEnter={e => {
-                if (filter !== filterOption) {
-                  e.currentTarget.style.borderColor = '#e8531a';
-                  e.currentTarget.style.color = '#e8531a';
-                }
-              }}
-              onMouseLeave={e => {
-                if (filter !== filterOption) {
-                  e.currentTarget.style.borderColor = '#d2d2d7';
-                  e.currentTarget.style.color = '#1d1d1f';
-                }
               }}
             >
               {filterOption === 'all' ? 'All Offers' : 
