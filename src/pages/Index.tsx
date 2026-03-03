@@ -208,7 +208,7 @@ const Index = () => {
 
           {/* Heading */}
           <h1 style={{
-            fontSize: isMobile ? '36px' : '60px',
+            fontSize: isMobile ? '43.2px' : '72px',
             fontWeight: '800',
             color: 'white',
             lineHeight: 1.1,
