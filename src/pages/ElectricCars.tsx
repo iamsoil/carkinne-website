@@ -142,7 +142,11 @@ const ElectricCars = () => {
       fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
       background: 'white',
       minHeight: '100vh',
+      overflow: 'hidden',
     }}>
+      <style>{`
+        .ev-sidebar::-webkit-scrollbar { display: none; }
+      `}</style>
 
       {/* HERO */}
       <div style={{
@@ -366,7 +370,16 @@ const ElectricCars = () => {
           }}>
 
             {/* LEFT SIDEBAR */}
-            <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '16px' }}>
+            <div className="ev-sidebar" style={{
+              display: 'flex',
+              flexDirection: 'column' as const,
+              gap: '16px',
+              position: isMobile ? 'relative' : 'sticky',
+              top: isMobile ? 'auto' : '24px',
+              maxHeight: isMobile ? 'none' : 'calc(100vh - 48px)',
+              overflowY: isMobile ? 'visible' : 'auto',
+              scrollbarWidth: 'none' as const,
+            }}>
 
               {/* Filter Panel */}
               <div style={{
@@ -374,8 +387,6 @@ const ElectricCars = () => {
                 border: '1px solid #e5e5e5',
                 borderRadius: '16px',
                 overflow: 'hidden',
-                position: isMobile ? 'relative' : 'sticky',
-                top: isMobile ? 'auto' : '24px',
               }}>
                 {/* Filter header */}
                 <div style={{
@@ -596,6 +607,9 @@ const ElectricCars = () => {
                 borderRadius: '16px',
                 padding: '16px',
                 textAlign: 'center' as const,
+                position: isMobile ? 'relative' : 'sticky',
+                bottom: isMobile ? 'auto' : '0',
+                marginTop: 'auto',
               }}>
                 <div style={{
                   width: '40px', height: '40px',
