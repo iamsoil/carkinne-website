@@ -138,7 +138,7 @@ const Offers = () => {
             letterSpacing: '1px',
             marginBottom: '16px',
           }}>
-            Offers
+            OFFERS
           </div>
           <h1 style={{
             fontSize: isMobile ? '32px' : '42px',
@@ -148,23 +148,101 @@ const Offers = () => {
             letterSpacing: '-1.5px',
             lineHeight: 1.2,
           }}>
-            Latest Car Offers
+            Latest Car<span style={{ color: '#e8531a' }}> Offers</span>
           </h1>
           <p style={{
             fontSize: '17px',
             color: '#6e6e73',
-            margin: 0,
+            margin: '0 0 32px',
             lineHeight: 1.6,
+            maxWidth: '600px',
           }}>
             Find the best deals and discounts on cars in Nepal
           </p>
+          
+          {/* Stats Cards */}
+          <div style={{
+            display: 'flex',
+            gap: '16px',
+            flexWrap: 'wrap',
+          }}>
+            <div
+              style={{
+                background: 'white',
+                border: '1px solid #e5e5e5',
+                borderRadius: '12px',
+                padding: '16px 20px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                flex: '1',
+                minWidth: '200px',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = '#e8531a';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(232,83,26,0.1)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = '#e5e5e5';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <div style={{ color: '#e8531a' }}>
+                <IconCalendar />
+              </div>
+              <div>
+                <div style={{ fontSize: '16px', fontWeight: '700', color: '#1d1d1f' }}>
+                  Updated Weekly
+                </div>
+                <div style={{ fontSize: '13px', color: '#6e6e73' }}>
+                  Fresh deals every week
+                </div>
+              </div>
+            </div>
+            
+            <div
+              style={{
+                background: 'white',
+                border: '1px solid #e5e5e5',
+                borderRadius: '12px',
+                padding: '16px 20px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                flex: '1',
+                minWidth: '200px',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = '#e8531a';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(232,83,26,0.1)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = '#e5e5e5';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <div style={{ color: '#e8531a' }}>
+                <IconTag />
+              </div>
+              <div>
+                <div style={{ fontSize: '16px', fontWeight: '700', color: '#1d1d1f' }}>
+                  Verified Deals
+                </div>
+                <div style={{ fontSize: '13px', color: '#6e6e73' }}>
+                  Direct from dealers
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* FILTER BAR */}
       <div style={{
         background: 'white',
-        padding: isMobile ? '0 16px 32px' : '0 24px 40px',
+        padding: isMobile ? '0 16px 24px' : '0 24px 24px',
         borderBottom: '1px solid #f0f0f0',
       }}>
         <div style={{
@@ -214,7 +292,7 @@ const Offers = () => {
       {/* OFFERS GRID */}
       <div style={{
         background: '#f5f5f7',
-        padding: isMobile ? '32px 16px' : '60px 24px',
+        padding: isMobile ? '24px 16px' : '40px 24px',
       }}>
         <div style={{
           maxWidth: '1200px',
@@ -453,36 +531,133 @@ const Offers = () => {
             </div>
           ) : (
             <div style={{
-              textAlign: 'center',
-              padding: '60px 20px',
               background: 'white',
               borderRadius: '16px',
               border: '1px solid #e5e5e5',
+              padding: isMobile ? '40px 20px' : '60px 32px',
+              textAlign: 'center',
             }}>
-              <h3 style={{
-                fontSize: '20px',
+              <div style={{
+                display: 'inline-block',
+                background: '#fff8f5',
+                border: '1px solid #e8531a',
+                borderRadius: '6px',
+                padding: '4px 12px',
+                fontSize: '12px',
                 fontWeight: '700',
+                color: '#e8531a',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                marginBottom: '16px',
+              }}>
+                COMING SOON
+              </div>
+              <h3 style={{
+                fontSize: '24px',
+                fontWeight: '800',
                 color: '#1d1d1f',
                 margin: '0 0 12px',
+                letterSpacing: '-0.5px',
               }}>
-                No Offers Found
+                Offers Coming Soon
               </h3>
               <p style={{
                 fontSize: '16px',
                 color: '#6e6e73',
-                margin: '0 0 24px',
+                margin: '0 0 32px',
+                lineHeight: 1.6,
+                maxWidth: '500px',
+                marginLeft: 'auto',
+                marginRight: 'auto',
               }}>
-                Try adjusting your filters to see more offers
+                We're collecting the best car deals in Nepal. Check back soon for exclusive offers, discounts, and limited-time promotions.
               </p>
+              
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+                gap: '16px',
+                marginBottom: '32px',
+                maxWidth: '600px',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+              }}>
+                <div
+                  style={{
+                    background: 'white',
+                    border: '1px solid #e5e5e5',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '12px',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = '#e8531a';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(232,83,26,0.1)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = '#e5e5e5';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div style={{ color: '#e8531a', marginTop: '2px' }}>
+                    <IconTag />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '15px', fontWeight: '700', color: '#1d1d1f', marginBottom: '4px' }}>
+                      Exchange Bonus
+                    </div>
+                    <div style={{ fontSize: '13px', color: '#6e6e73', lineHeight: 1.5 }}>
+                      Trade in your old car for extra savings
+                    </div>
+                  </div>
+                </div>
+                
+                <div
+                  style={{
+                    background: 'white',
+                    border: '1px solid #e5e5e5',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '12px',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = '#e8531a';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(232,83,26,0.1)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = '#e5e5e5';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div style={{ color: '#e8531a', marginTop: '2px' }}>
+                    <IconCalendar />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '15px', fontWeight: '700', color: '#1d1d1f', marginBottom: '4px' }}>
+                      Festival Offers
+                    </div>
+                    <div style={{ fontSize: '13px', color: '#6e6e73', lineHeight: 1.5 }}>
+                      Special deals during Dashain, Tihar & more
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
               <button
-                onClick={() => setFilter('all')}
+                onClick={() => navigate('/cars')}
                 style={{
                   background: '#e8531a',
                   color: 'white',
                   border: 'none',
                   borderRadius: '10px',
-                  padding: '12px 28px',
-                  fontSize: '15px',
+                  padding: '14px 32px',
+                  fontSize: '16px',
                   fontWeight: '700',
                   cursor: 'pointer',
                   fontFamily: 'inherit',
@@ -499,7 +674,7 @@ const Offers = () => {
                   e.currentTarget.style.boxShadow = 'none';
                 }}
               >
-                Clear Filters
+                Browse All Cars
               </button>
             </div>
           )}
