@@ -82,6 +82,9 @@ const ElectricCars = () => {
   const [electricCars, setElectricCars] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [selectedBrand, setSelectedBrand] = useState('All')
+  const [sortBy, setSortBy] = useState('featured')
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -108,6 +111,31 @@ const ElectricCars = () => {
       setLoading(false)
     }
   }
+
+  const brands = ['All', ...Array.from(new Set(electricCars.map(c => c.brand))).filter(Boolean).sort()]
+
+  const filteredCars = electricCars
+    .filter(car => {
+      const matchSearch =
+        car.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        car.brand?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        car.variant?.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchBrand = selectedBrand === 'All' || car.brand === selectedBrand
+      return matchSearch && matchBrand
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'price-low':
+          return (a.ex_showroom_price || 0) - (b.ex_showroom_price || 0)
+        case 'price-high':
+          return (b.ex_showroom_price || 0) - (a.ex_showroom_price || 0)
+        case 'range':
+          return (b.battery_range_km || 0) - (a.battery_range_km || 0)
+        case 'featured':
+        default:
+          return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0)
+      }
+    })
 
   return (
     <div style={{
@@ -330,46 +358,170 @@ const ElectricCars = () => {
       {/* AVAILABLE ELECTRIC CARS */}
       <div style={{ background: 'white', padding: isMobile ? '48px 16px' : '64px 24px' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <div style={{
-            display: 'flex',
-            alignItems: isMobile ? 'flex-start' : 'center',
-            justifyContent: 'space-between',
-            flexDirection: isMobile ? 'column' : 'row',
-            gap: '12px',
-            marginBottom: '32px',
-          }}>
-            <div>
-              <div style={{
-                display: 'inline-block',
-                background: '#fff8f5',
-                border: '1px solid #e8531a',
-                borderRadius: '6px',
-                padding: '4px 12px',
-                fontSize: '12px',
-                fontWeight: '700',
-                color: '#e8531a',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                marginBottom: '8px',
-              }}>
-                Browse
-              </div>
-              <h2 style={{
-                fontSize: isMobile ? '26px' : '32px',
-                fontWeight: '800',
-                color: '#1d1d1f',
-                margin: 0,
-                letterSpacing: '-1px',
-              }}>
-                Available Electric Cars
-              </h2>
-            </div>
+          <div style={{ marginBottom: '24px' }}>
+            {/* Title row */}
             <div style={{
-              fontSize: '14px',
-              color: '#6e6e73',
-              fontWeight: '500',
+              display: 'flex',
+              alignItems: isMobile ? 'flex-start' : 'center',
+              justifyContent: 'space-between',
+              flexDirection: isMobile ? 'column' : 'row',
+              gap: '8px',
+              marginBottom: '16px',
             }}>
-              {loading ? 'Loading...' : `${electricCars.length} models available`}
+              <div>
+                <div style={{
+                  display: 'inline-block',
+                  background: '#fff8f5',
+                  border: '1px solid #e8531a',
+                  borderRadius: '6px',
+                  padding: '4px 12px',
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  color: '#e8531a',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  marginBottom: '8px',
+                }}>
+                  Browse
+                </div>
+                <h2 style={{
+                  fontSize: isMobile ? '24px' : '28px',
+                  fontWeight: '800',
+                  color: '#1d1d1f',
+                  margin: 0,
+                  letterSpacing: '-1px',
+                }}>
+                  Available Electric Cars
+                </h2>
+              </div>
+              <div style={{
+                fontSize: '13px',
+                color: '#6e6e73',
+                fontWeight: '500',
+              }}>
+                {loading ? 'Loading...' : `${filteredCars.length} of ${electricCars.length} cars`}
+              </div>
+            </div>
+
+            {/* Search + filters row */}
+            <div style={{
+              display: 'flex',
+              gap: '10px',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+            }}>
+              {/* Search */}
+              <div style={{ position: 'relative', flex: 1, minWidth: '180px' }}>
+                <div style={{
+                  position: 'absolute', left: '10px', top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#999', pointerEvents: 'none',
+                }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search electric cars..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '9px 12px 9px 30px',
+                    border: '1px solid #d2d2d7',
+                    borderRadius: '10px',
+                    fontSize: '13px',
+                    outline: 'none',
+                    boxSizing: 'border-box' as const,
+                    transition: 'border-color 0.2s',
+                    fontFamily: 'inherit',
+                    background: 'white',
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#e8531a'}
+                  onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                />
+              </div>
+
+              {/* Brand filter */}
+              <select
+                value={selectedBrand}
+                onChange={e => setSelectedBrand(e.target.value)}
+                style={{
+                  padding: '9px 14px',
+                  border: '1px solid #d2d2d7',
+                  borderRadius: '10px',
+                  fontSize: '13px',
+                  outline: 'none',
+                  background: 'white',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  color: '#1d1d1f',
+                }}
+              >
+                {brands.map(b => (
+                  <option key={b} value={b}>
+                    {b === 'All' ? 'All Brands' : b}
+                  </option>
+                ))}
+              </select>
+
+              {/* Sort */}
+              <select
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value)}
+                style={{
+                  padding: '9px 14px',
+                  border: '1px solid #d2d2d7',
+                  borderRadius: '10px',
+                  fontSize: '13px',
+                  outline: 'none',
+                  background: 'white',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  color: '#1d1d1f',
+                }}
+              >
+                <option value="featured">Featured</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="range">Best Range</option>
+              </select>
+
+              {/* Clear button - only show if filters active */}
+              {(searchQuery || selectedBrand !== 'All') && (
+                <button
+                  onClick={() => {
+                    setSearchQuery('')
+                    setSelectedBrand('All')
+                    setSortBy('featured')
+                  }}
+                  style={{
+                    padding: '9px 14px',
+                    border: '1px solid #e8531a',
+                    borderRadius: '10px',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    color: '#e8531a',
+                    background: '#fff8f5',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = '#e8531a'
+                    e.currentTarget.style.color = 'white'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = '#fff8f5'
+                    e.currentTarget.style.color = '#e8531a'
+                  }}
+                >
+                  Clear
+                </button>
+              )}
             </div>
           </div>
 
@@ -394,7 +546,7 @@ const ElectricCars = () => {
                 </div>
               ))}
             </div>
-          ) : electricCars.length > 0 ? (
+          ) : filteredCars.length > 0 ? (
             <div style={{
               display: 'grid',
               gridTemplateColumns: isMobile
@@ -402,9 +554,45 @@ const ElectricCars = () => {
                 : 'repeat(3, 1fr)',
               gap: '16px',
             }}>
-              {electricCars.map(car => (
+              {filteredCars.map(car => (
                 <CarCard key={car.id} {...car} />
               ))}
+            </div>
+          ) : searchQuery || selectedBrand !== 'All' ? (
+            <div style={{
+              background: 'white',
+              borderRadius: '16px',
+              padding: '48px 24px',
+              textAlign: 'center',
+              border: '1px solid #e5e5e5',
+            }}>
+              <h3 style={{
+                fontSize: '16px', fontWeight: '700',
+                color: '#1d1d1f', margin: '0 0 8px',
+              }}>
+                No cars match your search
+              </h3>
+              <p style={{
+                fontSize: '14px', color: '#6e6e73',
+                margin: '0 0 16px',
+              }}>
+                Try a different brand or search term
+              </p>
+              <button
+                onClick={() => {
+                  setSearchQuery('')
+                  setSelectedBrand('All')
+                }}
+                style={{
+                  background: '#e8531a', color: 'white',
+                  border: 'none', borderRadius: '10px',
+                  padding: '10px 24px', fontSize: '13px',
+                  fontWeight: '600', cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Clear Filters
+              </button>
             </div>
           ) : (
             <div style={{
