@@ -461,7 +461,7 @@ const Index = () => {
           <div style={{
             display: 'grid',
             gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-            gap: '40px',
+            gap: isMobile ? '24px' : '40px',
             alignItems: 'center',
           }}>
             <div>
@@ -510,57 +510,55 @@ const Index = () => {
               </button>
             </div>
 
-            {!isMobile && (
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '10px',
-              }}>
-                {[
-                  "Tell us your budget",
-                  "Share how you'll use it",
-                  "Pick your preferences",
-                  "Get matched instantly"
-                ].map((text, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      background: 'white',
-                      border: '1px solid #e5e5e5',
-                      borderRadius: '10px',
-                      padding: '12px 14px',
-                      transition: 'all 0.2s',
-                      cursor: 'default',
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.borderColor = '#e8531a';
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(232,83,26,0.12)';
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.borderColor = '#e5e5e5';
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = 'none';
-                    }}
-                  >
-                    <div style={{
-                      width: '7px',
-                      height: '7px',
-                      background: '#e8531a',
-                      borderRadius: '50%',
-                      marginBottom: '8px',
-                    }} />
-                    <div style={{
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: '#1d1d1f',
-                    }}>
-                      {text}
-                    </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '10px',
+            }}>
+              {[
+                "Tell us your budget",
+                "Share how you'll use it",
+                "Pick your preferences",
+                "Get matched instantly"
+              ].map((text, i) => (
+                <div
+                  key={i}
+                  style={{
+                    background: 'white',
+                    border: '1px solid #e5e5e5',
+                    borderRadius: '10px',
+                    padding: '12px 14px',
+                    transition: 'all 0.2s',
+                    cursor: 'default',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = '#e8531a';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(232,83,26,0.12)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = '#e5e5e5';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  <div style={{
+                    width: '7px',
+                    height: '7px',
+                    background: '#e8531a',
+                    borderRadius: '50%',
+                    marginBottom: '8px',
+                  }} />
+                  <div style={{
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    color: '#1d1d1f',
+                  }}>
+                    {text}
                   </div>
-                ))}
-              </div>
-            )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -661,9 +659,19 @@ const Index = () => {
               >
                 Open Full Calculator →
               </button>
-              <p style={{ fontSize: '11px', color: '#6e6e73', textAlign: 'center', marginTop: '12px', lineHeight: 1.6 }}>
+              <div style={{
+                background: '#f5f5f7',
+                border: '1px solid #e5e5e5',
+                borderRadius: '8px',
+                padding: '10px 14px',
+                marginTop: '14px',
+                fontSize: '11px',
+                color: '#6e6e73',
+                textAlign: 'center',
+                lineHeight: 1.6,
+              }}>
                 EMI figures are estimates only. Actual rates and terms may vary by bank. Consult your lender for accurate calculations.
-              </p>
+              </div>
             </div>
           </div>
         </div>
@@ -671,7 +679,7 @@ const Index = () => {
 
       {/* ━━━━━━━━━━ LATEST OFFERS ━━━━━━━━━━ */}
       <section style={{
-        background: '#f5f5f7',
+        background: 'white',
         padding: isMobile ? '32px 16px' : '56px 24px',
       }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
@@ -804,7 +812,7 @@ const Index = () => {
 
       {/* ━━━━━━━━━━ TOP SHOWROOMS ━━━━━━━━━━ */}
       <section style={{
-        background: 'white',
+        background: '#f5f5f7',
         padding: isMobile ? '32px 16px' : '56px 24px',
       }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
@@ -952,7 +960,7 @@ const Index = () => {
 
       {/* ━━━━━━━━━━ LATEST BLOG ━━━━━━━━━━ */}
       <section style={{
-        background: '#f5f5f7',
+        background: 'white',
         padding: isMobile ? '32px 16px' : '56px 24px',
       }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
