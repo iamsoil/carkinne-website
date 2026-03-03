@@ -100,6 +100,7 @@ const Advertise = () => {
 
       if (error) throw error
       setSubmitted(true)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } catch (err) {
       console.error('Error saving enquiry:', err)
       setError('Something went wrong. Please try again.')
