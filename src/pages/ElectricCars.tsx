@@ -368,301 +368,290 @@ const ElectricCars = () => {
 
             {/* LEFT SIDEBAR */}
             <div style={{
-              position: isMobile ? 'relative' : 'sticky',
+              position: 'sticky',
               top: '24px',
               display: 'flex',
               flexDirection: 'column',
-              height: isMobile ? 'auto' : 'calc(100vh - 48px)',
+              gap: '16px',
             }}>
 
               {/* Filter Panel */}
-              <div style={{ flexShrink: 0, marginBottom: '16px' }}>
+              <div style={{
+                background: 'white',
+                border: '1px solid #e5e5e5',
+                borderRadius: '16px',
+                overflow: 'hidden',
+              }}>
+                {/* Filter header */}
                 <div style={{
-                  background: 'white',
-                  border: '1px solid #e5e5e5',
-                  borderRadius: '16px',
-                  overflow: 'hidden',
+                  padding: '14px 16px',
+                  borderBottom: '1px solid #f0f0f0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                 }}>
-                  {/* Filter header */}
                   <div style={{
-                    padding: '14px 16px',
-                    borderBottom: '1px solid #f0f0f0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
+                    fontSize: '13px', fontWeight: '700',
+                    color: '#1d1d1f',
+                    display: 'flex', alignItems: 'center', gap: '6px',
                   }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24"
+                      fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="4" y1="6" x2="20" y2="6"/>
+                      <line x1="8" y1="12" x2="16" y2="12"/>
+                      <line x1="11" y1="18" x2="13" y2="18"/>
+                    </svg>
+                    Filters
+                  </div>
+                  {(searchQuery || selectedBrand !== 'All') && (
+                    <button
+                      onClick={() => { setSearchQuery(''); setSelectedBrand('All'); setSortBy('featured') }}
+                      style={{
+                        background: 'none', border: 'none',
+                        fontSize: '12px', color: '#e8531a',
+                        fontWeight: '600', cursor: 'pointer',
+                        padding: 0, fontFamily: 'inherit',
+                      }}
+                    >
+                      Clear All
+                    </button>
+                  )}
+                </div>
+
+                {/* Search */}
+                <div style={{ padding: '12px 14px', borderBottom: '1px solid #f0f0f0' }}>
+                  <div style={{
+                    fontSize: '11px', fontWeight: '700',
+                    color: '#6e6e73', textTransform: 'uppercase',
+                    letterSpacing: '1px', marginBottom: '8px',
+                  }}>
+                    Search
+                  </div>
+                  <div style={{ position: 'relative' }}>
                     <div style={{
-                      fontSize: '13px', fontWeight: '700',
-                      color: '#1d1d1f',
-                      display: 'flex', alignItems: 'center', gap: '6px',
+                      position: 'absolute', left: '8px', top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: '#999', pointerEvents: 'none',
                     }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24"
+                      <svg width="12" height="12" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="4" y1="6" x2="20" y2="6"/>
-                        <line x1="8" y1="12" x2="16" y2="12"/>
-                        <line x1="11" y1="18" x2="13" y2="18"/>
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                       </svg>
-                      Filters
                     </div>
-                    {(searchQuery || selectedBrand !== 'All') && (
-                      <button
-                        onClick={() => { setSearchQuery(''); setSelectedBrand('All'); setSortBy('featured') }}
+                    <input
+                      type="text"
+                      placeholder="Search EVs..."
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '7px 8px 7px 26px',
+                        border: '1px solid #d2d2d7',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        outline: 'none',
+                        boxSizing: 'border-box' as const,
+                        fontFamily: 'inherit',
+                        transition: 'border-color 0.2s',
+                      }}
+                      onFocus={e => e.target.style.borderColor = '#e8531a'}
+                      onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                    />
+                  </div>
+                </div>
+
+                {/* Brand */}
+                <div style={{ padding: '12px 14px', borderBottom: '1px solid #f0f0f0' }}>
+                  <div style={{
+                    fontSize: '11px', fontWeight: '700',
+                    color: '#6e6e73', textTransform: 'uppercase',
+                    letterSpacing: '1px', marginBottom: '8px',
+                  }}>
+                    Brand
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
+                    {brands.map(brand => (
+                      <label
+                        key={brand}
                         style={{
-                          background: 'none', border: 'none',
-                          fontSize: '12px', color: '#e8531a',
-                          fontWeight: '600', cursor: 'pointer',
-                          padding: 0, fontFamily: 'inherit',
+                          display: 'flex', alignItems: 'center',
+                          gap: '8px', cursor: 'pointer',
+                          fontSize: '12px',
+                          color: selectedBrand === brand ? '#e8531a' : '#1d1d1f',
+                          fontWeight: selectedBrand === brand ? '700' : '400',
                         }}
                       >
-                        Clear All
-                      </button>
-                    )}
+                        <input
+                          type="radio"
+                          name="brand"
+                          checked={selectedBrand === brand}
+                          onChange={() => setSelectedBrand(brand)}
+                          style={{ accentColor: '#e8531a' }}
+                        />
+                        {brand === 'All' ? 'All Brands' : brand}
+                      </label>
+                    ))}
                   </div>
+                </div>
 
-                  {/* Search */}
-                  <div style={{ padding: '12px 14px', borderBottom: '1px solid #f0f0f0' }}>
-                    <div style={{
-                      fontSize: '11px', fontWeight: '700',
-                      color: '#6e6e73', textTransform: 'uppercase',
-                      letterSpacing: '1px', marginBottom: '8px',
-                    }}>
-                      Search
-                    </div>
-                    <div style={{ position: 'relative' }}>
-                      <div style={{
-                        position: 'absolute', left: '8px', top: '50%',
-                        transform: 'translateY(-50%)',
-                        color: '#999', pointerEvents: 'none',
-                      }}>
-                        <svg width="12" height="12" viewBox="0 0 24 24"
-                          fill="none" stroke="currentColor" strokeWidth="2">
-                          <circle cx="11" cy="11" r="8"/>
-                          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                        </svg>
-                      </div>
-                      <input
-                        type="text"
-                        placeholder="Search EVs..."
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
+                {/* Sort */}
+                <div style={{ padding: '12px 14px' }}>
+                  <div style={{
+                    fontSize: '11px', fontWeight: '700',
+                    color: '#6e6e73', textTransform: 'uppercase',
+                    letterSpacing: '1px', marginBottom: '8px',
+                  }}>
+                    Sort By
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
+                    {[
+                      { value: 'featured', label: 'Featured' },
+                      { value: 'price-low', label: 'Price: Low to High' },
+                      { value: 'price-high', label: 'Price: High to Low' },
+                      { value: 'range', label: 'Best Range' },
+                    ].map(opt => (
+                      <label
+                        key={opt.value}
                         style={{
-                          width: '100%',
-                          padding: '7px 8px 7px 26px',
-                          border: '1px solid #d2d2d7',
-                          borderRadius: '8px',
+                          display: 'flex', alignItems: 'center',
+                          gap: '8px', cursor: 'pointer',
                           fontSize: '12px',
-                          outline: 'none',
-                          boxSizing: 'border-box' as const,
-                          fontFamily: 'inherit',
-                          transition: 'border-color 0.2s',
+                          color: sortBy === opt.value ? '#e8531a' : '#1d1d1f',
+                          fontWeight: sortBy === opt.value ? '700' : '400',
                         }}
-                        onFocus={e => e.target.style.borderColor = '#e8531a'}
-                        onBlur={e => e.target.style.borderColor = '#d2d2d7'}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Brand */}
-                  <div style={{ padding: '12px 14px', borderBottom: '1px solid #f0f0f0' }}>
-                    <div style={{
-                      fontSize: '11px', fontWeight: '700',
-                      color: '#6e6e73', textTransform: 'uppercase',
-                      letterSpacing: '1px', marginBottom: '8px',
-                    }}>
-                      Brand
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
-                      {brands.map(brand => (
-                        <label
-                          key={brand}
-                          style={{
-                            display: 'flex', alignItems: 'center',
-                            gap: '8px', cursor: 'pointer',
-                            fontSize: '12px',
-                            color: selectedBrand === brand ? '#e8531a' : '#1d1d1f',
-                            fontWeight: selectedBrand === brand ? '700' : '400',
-                          }}
-                        >
-                          <input
-                            type="radio"
-                            name="brand"
-                            checked={selectedBrand === brand}
-                            onChange={() => setSelectedBrand(brand)}
-                            style={{ accentColor: '#e8531a' }}
-                          />
-                          {brand === 'All' ? 'All Brands' : brand}
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Sort */}
-                  <div style={{ padding: '12px 14px' }}>
-                    <div style={{
-                      fontSize: '11px', fontWeight: '700',
-                      color: '#6e6e73', textTransform: 'uppercase',
-                      letterSpacing: '1px', marginBottom: '8px',
-                    }}>
-                      Sort By
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
-                      {[
-                        { value: 'featured', label: 'Featured' },
-                        { value: 'price-low', label: 'Price: Low to High' },
-                        { value: 'price-high', label: 'Price: High to Low' },
-                        { value: 'range', label: 'Best Range' },
-                      ].map(opt => (
-                        <label
-                          key={opt.value}
-                          style={{
-                            display: 'flex', alignItems: 'center',
-                            gap: '8px', cursor: 'pointer',
-                            fontSize: '12px',
-                            color: sortBy === opt.value ? '#e8531a' : '#1d1d1f',
-                            fontWeight: sortBy === opt.value ? '700' : '400',
-                          }}
-                        >
-                          <input
-                            type="radio"
-                            name="sort"
-                            checked={sortBy === opt.value}
-                            onChange={() => setSortBy(opt.value)}
-                            style={{ accentColor: '#e8531a' }}
-                          />
-                          {opt.label}
-                        </label>
-                      ))}
-                    </div>
+                      >
+                        <input
+                          type="radio"
+                          name="sort"
+                          checked={sortBy === opt.value}
+                          onChange={() => setSortBy(opt.value)}
+                          style={{ accentColor: '#e8531a' }}
+                        />
+                        {opt.label}
+                      </label>
+                    ))}
                   </div>
                 </div>
               </div>
 
-              {/* Charging Guide - scrollable */}
+              {/* Charging Guide - compact */}
               <div style={{
-                flex: 1,
-                overflowY: 'auto',
-                scrollbarWidth: 'none',
-                marginBottom: '16px',
+                background: '#f5f5f7',
+                border: '1px solid #e5e5e5',
+                borderRadius: '16px',
+                overflow: 'hidden',
               }}>
                 <div style={{
-                  background: '#f5f5f7',
-                  border: '1px solid #e5e5e5',
-                  borderRadius: '16px',
-                  overflow: 'hidden',
+                  padding: '14px 16px',
+                  borderBottom: '1px solid #e5e5e5',
                 }}>
                   <div style={{
-                    padding: '14px 16px',
-                    borderBottom: '1px solid #e5e5e5',
+                    fontSize: '13px', fontWeight: '700',
+                    color: '#1d1d1f',
+                  }}>
+                    Charging Guide
+                  </div>
+                </div>
+                {[
+                  { Icon: IconHome, title: 'Home Charging', desc: 'Full charge in 8–12 hrs overnight' },
+                  { Icon: IconMap, title: 'Public Stations', desc: 'Available in major Nepal cities' },
+                  { Icon: IconClock, title: 'Fast DC Charging', desc: '30–60 mins at public stations' },
+                ].map((item, i) => (
+                  <div key={i} style={{
+                    padding: '10px 14px',
+                    borderBottom: i < 2 ? '1px solid #f0f0f0' : 'none',
+                    display: 'flex',
+                    gap: '10px',
+                    alignItems: 'center',
                   }}>
                     <div style={{
-                      fontSize: '13px', fontWeight: '700',
-                      color: '#1d1d1f',
+                      width: '28px', height: '28px',
+                      background: '#fff8f5',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#e8531a',
+                      flexShrink: 0,
                     }}>
-                      Charging Guide
+                      <item.Icon />
+                    </div>
+                    <div>
+                      <div style={{
+                        fontSize: '12px', fontWeight: '700',
+                        color: '#1d1d1f', marginBottom: '2px',
+                      }}>
+                        {item.title}
+                      </div>
+                      <div style={{
+                        fontSize: '11px', color: '#6e6e73', lineHeight: 1.4,
+                      }}>
+                        {item.desc}
+                      </div>
                     </div>
                   </div>
-                  {[
-                    { Icon: IconHome, title: 'Home Charging', desc: 'Full charge in 8–12 hrs overnight' },
-                    { Icon: IconMap, title: 'Public Stations', desc: 'Available in major Nepal cities' },
-                    { Icon: IconClock, title: 'Fast DC Charging', desc: '30–60 mins at public stations' },
-                  ].map((item, i) => (
-                    <div key={i} style={{
-                      padding: '10px 14px',
-                      borderBottom: i < 2 ? '1px solid #f0f0f0' : 'none',
-                      display: 'flex',
-                      gap: '10px',
-                      alignItems: 'center',
-                    }}>
-                      <div style={{
-                        width: '28px', height: '28px',
-                        background: '#fff8f5',
-                        borderRadius: '8px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: '#e8531a',
-                        flexShrink: 0,
-                      }}>
-                        <item.Icon />
-                      </div>
-                      <div>
-                        <div style={{
-                          fontSize: '12px', fontWeight: '700',
-                          color: '#1d1d1f', marginBottom: '2px',
-                        }}>
-                          {item.title}
-                        </div>
-                        <div style={{
-                          fontSize: '11px', color: '#6e6e73', lineHeight: 1.4,
-                        }}>
-                          {item.desc}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                ))}
               </div>
 
               {/* Find Charging Stations CTA */}
-              <div style={{ flexShrink: 0 }}>
+              <div style={{
+                background: '#fff8f5',
+                border: '1.5px solid #e8531a',
+                borderRadius: '16px',
+                padding: '16px',
+                textAlign: 'center' as const,
+              }}>
                 <div style={{
-                  background: '#fff8f5',
-                  border: '1.5px solid #e8531a',
-                  borderRadius: '16px',
-                  padding: '16px',
-                  textAlign: 'center' as const,
+                  width: '40px', height: '40px',
+                  background: '#e8531a',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  margin: '0 auto 10px',
                 }}>
-                  <div style={{
-                    width: '40px', height: '40px',
-                    background: '#e8531a',
-                    borderRadius: '10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: 'white',
-                    margin: '0 auto 10px',
-                  }}>
-                    <IconMap />
-                  </div>
-                  <div style={{
-                    fontSize: '13px', fontWeight: '700',
-                    color: '#1d1d1f', marginBottom: '4px',
-                  }}>
-                    Find Charging Stations
-                  </div>
-                  <div style={{
-                    fontSize: '11px', color: '#6e6e73',
-                    marginBottom: '12px', lineHeight: 1.5,
-                  }}>
-                    Interactive map of all EV charging points across Nepal
-                  </div>
-                  <button
-                    onClick={() => navigate('/ev-charging')}
-                    style={{
-                      width: '100%',
-                      background: '#e8531a',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '10px',
-                      fontSize: '12px',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit',
-                      transition: 'all 0.2s',
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.background = '#c94415'
-                      e.currentTarget.style.transform = 'translateY(-1px)'
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.background = '#e8531a'
-                      e.currentTarget.style.transform = 'translateY(0)'
-                    }}
-                  >
-                    View Charging Map →
-                  </button>
+                  <IconMap />
                 </div>
+                <div style={{
+                  fontSize: '13px', fontWeight: '700',
+                  color: '#1d1d1f', marginBottom: '4px',
+                }}>
+                  Find Charging Stations
+                </div>
+                <div style={{
+                  fontSize: '11px', color: '#6e6e73',
+                  marginBottom: '12px', lineHeight: 1.5,
+                }}>
+                  Interactive map of all EV charging points across Nepal
+                </div>
+                <button
+                  onClick={() => navigate('/ev-charging')}
+                  style={{
+                    width: '100%',
+                    background: '#e8531a',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '10px',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    fontFamily: 'inherit',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = '#c94415'
+                    e.currentTarget.style.transform = 'translateY(-1px)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = '#e8531a'
+                    e.currentTarget.style.transform = 'translateY(0)'
+                  }}
+                >
+                  View Charging Map →
+                </button>
               </div>
 
             </div>
