@@ -176,10 +176,12 @@ const Index = () => {
       {/* ━━━━━━━━━━ HERO ━━━━━━━━━━ */}
       <section style={{
         position: 'relative',
-        height: isMobile ? '75vh' : '70vh',
+        height: isMobile ? '80vh' : '75vh',
         backgroundImage: 'url(https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/Blog-Images/Hero-image/hero.jpg)',
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundPosition: 'center center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'local',
         display: 'flex',
         alignItems: 'center',
         overflow: 'hidden',
@@ -219,7 +221,7 @@ const Index = () => {
           </h1>
 
           <p style={{
-            color: 'rgba(255,255,255,0.85)',
+            color: 'rgba(255,255,255,0.9)',
             fontSize: isMobile ? '14px' : '17px',
             margin: '0 0 24px',
           }}>
@@ -284,7 +286,7 @@ const Index = () => {
 
           {/* Stats */}
           <div style={{
-            color: 'rgba(255,255,255,0.7)',
+            color: 'rgba(255,255,255,0.8)',
             fontSize: '12px',
             margin: '12px 0 14px',
           }}>
