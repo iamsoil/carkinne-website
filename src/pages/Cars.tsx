@@ -1,75 +1,106 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Filter, Grid, List, ChevronDown, SlidersHorizontal } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
-import CarCard from '@/components/CarCard';
+import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useCompare } from '@/contexts/CompareContext';
+import CarCard from '@/components/CarCard';
+
+const IconSearch = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </svg>
+)
+
+const IconGrid = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+    <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+  </svg>
+)
+
+const IconList = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <line x1="8" y1="6" x2="21" y2="6"/>
+    <line x1="8" y1="12" x2="21" y2="12"/>
+    <line x1="8" y1="18" x2="21" y2="18"/>
+    <line x1="3" y1="6" x2="3.01" y2="6"/>
+    <line x1="3" y1="12" x2="3.01" y2="12"/>
+    <line x1="3" y1="18" x2="3.01" y2="18"/>
+  </svg>
+)
+
+const IconFilter = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <line x1="4" y1="6" x2="20" y2="6"/>
+    <line x1="8" y1="12" x2="16" y2="12"/>
+    <line x1="11" y1="18" x2="13" y2="18"/>
+  </svg>
+)
+
+const IconX = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <line x1="18" y1="6" x2="6" y2="18"/>
+    <line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+)
+
+function formatNPR(amount: number): string {
+  if (!amount) return 'Rs. 0'
+  const str = Math.round(amount).toString()
+  if (str.length <= 3) return `Rs. ${str}`
+  const last3 = str.slice(-3)
+  const rest = str.slice(0, -3)
+  const formatted = rest.replace(/\B(?=(\d{2})+(?!\d))/g, ',')
+  return `Rs. ${formatted},${last3}`
+}
 
 const Cars = () => {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
-  const searchFromUrl = searchParams.get('search') || '';
-  const [cars, setCars] = useState<any[]>([]);
-  const [filteredCars, setFilteredCars] = useState<any[]>([]);
-  const [searchQuery, setSearchQuery] = useState(searchFromUrl);
-  useEffect(() => { setSearchQuery(searchFromUrl) }, [searchFromUrl]);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 15000000]);
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState('featured');
-  const [showFilters, setShowFilters] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const { addToCompare, removeFromCompare, isInCompare } = useCompare();
+  const [searchParams] = useSearchParams()
+  const searchFromUrl = searchParams.get('search') || ''
+  const [cars, setCars] = useState<any[]>([])
+  const [filteredCars, setFilteredCars] = useState<any[]>([])
+  const [searchQuery, setSearchQuery] = useState(searchFromUrl)
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 15000000])
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedFuelTypes, setSelectedFuelTypes] = useState<string[]>([])
+  const [sortBy, setSortBy] = useState('featured')
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024)
+  const { addToCompare, removeFromCompare, isInCompare } = useCompare()
 
   useEffect(() => {
-    fetchCars();
-  }, []);
+    const handleResize = () => setIsMobile(window.innerWidth < 1024)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
-  useEffect(() => {
-    filterCars();
-  }, [cars, searchQuery, priceRange, selectedBrands, selectedCategories, selectedFuelTypes, sortBy]);
+  useEffect(() => { setSearchQuery(searchFromUrl) }, [searchFromUrl])
+  useEffect(() => { fetchCars() }, [])
+  useEffect(() => { filterCars() }, [
+    cars, searchQuery, priceRange,
+    selectedBrands, selectedCategories,
+    selectedFuelTypes, sortBy
+  ])
 
   const fetchCars = async () => {
     try {
-      setLoading(true);
-      let query = supabase
-        .from('cars')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      const { data, error } = await query;
-
-      if (error) throw error;
-      
-      setCars(data || []);
-      console.log('All cars fetched:', data);
+      setLoading(true)
+      const { data, error } = await supabase
+        .from('cars').select('*')
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      setCars(data || [])
     } catch (err) {
-      console.error('Error fetching cars:', err);
-      setError('Unable to load cars. Please try again.');
+      console.error('Error:', err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const filterCars = () => {
     let result = [...cars]
-    
-    // Search filter
     if (searchQuery) {
       const q = searchQuery.toLowerCase()
       result = result.filter(car =>
@@ -80,384 +111,813 @@ const Cars = () => {
         (car.fuel_type && car.fuel_type.toLowerCase().includes(q))
       )
     }
-
-    // Price filter
     result = result.filter(car =>
       car.ex_showroom_price >= priceRange[0] &&
       car.ex_showroom_price <= priceRange[1]
     )
-
-    // Brand filter
-    if (selectedBrands.length > 0) {
+    if (selectedBrands.length > 0)
       result = result.filter(car => selectedBrands.includes(car.brand))
-    }
-
-    // Category filter
-    if (selectedCategories.length > 0) {
-      result = result.filter(car => 
-        selectedCategories.includes(car.category || 'SUV')
-      )
-    }
-
-    // Fuel type filter
-    if (selectedFuelTypes.length > 0) {
-      result = result.filter(car => 
-        selectedFuelTypes.includes(car.fuel_type)
-      )
-    }
-
-    // SORT - this was missing entirely!
+    if (selectedCategories.length > 0)
+      result = result.filter(car => selectedCategories.includes(car.category || 'SUV'))
+    if (selectedFuelTypes.length > 0)
+      result = result.filter(car => selectedFuelTypes.includes(car.fuel_type))
     switch (sortBy) {
       case 'price-low':
-        result.sort((a, b) => 
-          (a.ex_showroom_price || 0) - (b.ex_showroom_price || 0))
-        break
+        result.sort((a, b) => (a.ex_showroom_price || 0) - (b.ex_showroom_price || 0)); break
       case 'price-high':
-        result.sort((a, b) => 
-          (b.ex_showroom_price || 0) - (a.ex_showroom_price || 0))
-        break
+        result.sort((a, b) => (b.ex_showroom_price || 0) - (a.ex_showroom_price || 0)); break
       case 'mileage':
-        result.sort((a, b) => 
-          (b.mileage_kmpl || 0) - (a.mileage_kmpl || 0))
-        break
+        result.sort((a, b) => (b.mileage_kmpl || 0) - (a.mileage_kmpl || 0)); break
       case 'newest':
-        result.sort((a, b) => 
-          new Date(b.created_at).getTime() - 
-          new Date(a.created_at).getTime())
-        break
+        result.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()); break
       case 'featured':
-        result.sort((a, b) => 
-          (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0))
-        break
-      default:
-        break
+        result.sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0)); break
     }
-
     setFilteredCars(result)
-  };
-
-  const toggleBrand = (brand: string) => {
-    setSelectedBrands(prev => 
-      prev.includes(brand) 
-        ? prev.filter(b => b !== brand) 
-        : [...prev, brand]
-    );
-  };
-
-  const toggleCategory = (category: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(category) 
-        ? prev.filter(c => c !== category) 
-        : [...prev, category]
-    );
-  };
-
-  const toggleFuelType = (fuelType: string) => {
-    setSelectedFuelTypes(prev => 
-      prev.includes(fuelType) 
-        ? prev.filter(f => f !== fuelType) 
-        : [...prev, fuelType]
-    );
-  };
-
-  // Get unique values for filters
-  const brands = Array.from(new Set(cars.map(car => car.brand)));
-  const categories = Array.from(new Set(cars.map(car => car.category || 'SUV')));
-  const fuelTypes = Array.from(new Set(cars.map(car => car.fuel_type)));
-
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-20">
-        <div className="text-center">
-          <p className="text-red-500 mb-4">{error}</p>
-          <Button onClick={fetchCars}>Retry</Button>
-        </div>
-      </div>
-    );
   }
 
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <h1 className="text-4xl font-semibold mb-3">All Cars</h1>
-        <p className="text-muted-foreground">
-          Browse through our extensive collection of cars available in Nepal
-        </p>
+  const toggleBrand = (brand: string) =>
+    setSelectedBrands(prev => prev.includes(brand) ? prev.filter(b => b !== brand) : [...prev, brand])
+  const toggleCategory = (cat: string) =>
+    setSelectedCategories(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat])
+  const toggleFuelType = (ft: string) =>
+    setSelectedFuelTypes(prev => prev.includes(ft) ? prev.filter(f => f !== ft) : [...prev, ft])
+
+  const clearAll = () => {
+    setSelectedBrands([])
+    setSelectedCategories([])
+    setSelectedFuelTypes([])
+    setPriceRange([0, 15000000])
+    setSearchQuery('')
+  }
+
+  const activeFiltersCount =
+    selectedBrands.length +
+    selectedCategories.length +
+    selectedFuelTypes.length +
+    (priceRange[0] > 0 || priceRange[1] < 15000000 ? 1 : 0)
+
+  const brands = Array.from(new Set(cars.map(c => c.brand))).filter(Boolean).sort()
+  const categories = Array.from(new Set(cars.map(c => c.category || 'SUV'))).filter(Boolean).sort()
+  const fuelTypes = Array.from(new Set(cars.map(c => c.fuel_type))).filter(Boolean).sort()
+
+  const FilterPanel = () => (
+    <div style={{
+      background: 'white',
+      borderRadius: '16px',
+      border: '1px solid #e5e5e5',
+      overflow: 'hidden',
+    }}>
+      {/* Filter header */}
+      <div style={{
+        padding: '16px 20px',
+        borderBottom: '1px solid #f0f0f0',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          fontSize: '14px',
+          fontWeight: '700',
+          color: '#1d1d1f',
+        }}>
+          <IconFilter />
+          Filters
+          {activeFiltersCount > 0 && (
+            <span style={{
+              background: '#e8531a',
+              color: 'white',
+              borderRadius: '20px',
+              padding: '1px 8px',
+              fontSize: '11px',
+              fontWeight: '700',
+            }}>
+              {activeFiltersCount}
+            </span>
+          )}
+        </div>
+        {activeFiltersCount > 0 && (
+          <button
+            onClick={clearAll}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: '12px',
+              color: '#e8531a',
+              fontWeight: '600',
+              cursor: 'pointer',
+              padding: 0,
+            }}
+          >
+            Clear All
+          </button>
+        )}
       </div>
 
-      {/* Search and Filters */}
-      <div className="mb-12">
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
-          <div className="relative flex-1">
-            <Input
-              type="text"
-              placeholder="Search by brand, model, or variant..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 py-6 rounded-xl border border-border"
-            />
-            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-          </div>
-          
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowFilters(!showFilters)}
-              className="md:hidden border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg"
+      {/* Price Range */}
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid #f0f0f0' }}>
+        <div style={{
+          fontSize: '11px',
+          fontWeight: '700',
+          color: '#6e6e73',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+          marginBottom: '12px',
+        }}>
+          Price Range
+        </div>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <input
+            type="number"
+            placeholder="Min"
+            value={priceRange[0] || ''}
+            onChange={e => setPriceRange([Number(e.target.value), priceRange[1]])}
+            style={{
+              flex: 1,
+              padding: '8px 10px',
+              border: '1px solid #d2d2d7',
+              borderRadius: '8px',
+              fontSize: '12px',
+              outline: 'none',
+              width: '100%',
+              boxSizing: 'border-box' as const,
+            }}
+            onFocus={e => e.target.style.borderColor = '#e8531a'}
+            onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+          />
+          <input
+            type="number"
+            placeholder="Max"
+            value={priceRange[1] === 15000000 ? '' : priceRange[1]}
+            onChange={e => setPriceRange([priceRange[0], Number(e.target.value) || 15000000])}
+            style={{
+              flex: 1,
+              padding: '8px 10px',
+              border: '1px solid #d2d2d7',
+              borderRadius: '8px',
+              fontSize: '12px',
+              outline: 'none',
+              width: '100%',
+              boxSizing: 'border-box' as const,
+            }}
+            onFocus={e => e.target.style.borderColor = '#e8531a'}
+            onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+          />
+        </div>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          fontSize: '11px',
+          color: '#6e6e73',
+          marginTop: '6px',
+        }}>
+          <span>{formatNPR(priceRange[0])}</span>
+          <span>{priceRange[1] >= 15000000 ? 'No limit' : formatNPR(priceRange[1])}</span>
+        </div>
+      </div>
+
+      {/* Brands */}
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid #f0f0f0' }}>
+        <div style={{
+          fontSize: '11px',
+          fontWeight: '700',
+          color: '#6e6e73',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+          marginBottom: '12px',
+        }}>
+          Brand
+        </div>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column' as const,
+          gap: '8px',
+          maxHeight: '180px',
+          overflowY: 'auto' as const,
+        }}>
+          {brands.map(brand => (
+            <label
+              key={brand}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                color: selectedBrands.includes(brand) ? '#e8531a' : '#1d1d1f',
+                fontWeight: selectedBrands.includes(brand) ? '600' : '400',
+              }}
             >
-              <SlidersHorizontal className="h-4 w-4 mr-2" />
-              Filters
-            </Button>
-            
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-[180px] rounded-lg border border-border">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="featured">Featured</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-                <SelectItem value="mileage">Best Mileage</SelectItem>
-                <SelectItem value="newest">Newest First</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            <div className="flex border border-border rounded-lg overflow-hidden">
-              <Button
-                variant={viewMode === 'grid' ? 'default' : 'outline'}
-                size="icon"
-                onClick={() => setViewMode('grid')}
-                className={`rounded-none ${viewMode === 'grid' ? 'bg-foreground text-white' : 'bg-white text-foreground hover:bg-foreground hover:text-white'}`}
-              >
-                <Grid className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === 'list' ? 'default' : 'outline'}
-                size="icon"
-                onClick={() => setViewMode('list')}
-                className={`rounded-none border-l border-border ${viewMode === 'list' ? 'bg-foreground text-white' : 'bg-white text-foreground hover:bg-foreground hover:text-white'}`}
-              >
-                <List className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Filters Panel */}
-        <div className={`${showFilters ? 'block' : 'hidden'} md:block bg-white border border-border rounded-2xl p-6 mb-8`}>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {/* Price Range */}
-            <div>
-              <Label className="mb-3 block text-xs font-medium uppercase tracking-wider text-muted-foreground">Price Range</Label>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Rs.{priceRange[0].toLocaleString('en-IN')}</span>
-                  <span className="text-sm">Rs.{priceRange[1].toLocaleString('en-IN')}</span>
-                </div>
-                <div className="flex gap-2">
-                  <Input 
-                    type="number" 
-                    placeholder="Min" 
-                    value={priceRange[0]} 
-                    onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
-                    className="rounded-lg"
-                  />
-                  <Input 
-                    type="number" 
-                    placeholder="Max" 
-                    value={priceRange[1]} 
-                    onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
-                    className="rounded-lg"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Brands */}
-            <div>
-              <Label className="mb-3 block text-xs font-medium uppercase tracking-wider text-muted-foreground">Brands</Label>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
-                {brands.map(brand => (
-                  <div key={brand} className="flex items-center">
-                    <Checkbox 
-                      id={`brand-${brand}`}
-                      checked={selectedBrands.includes(brand)}
-                      onCheckedChange={() => toggleBrand(brand)}
-                      className="rounded border-border"
-                    />
-                    <Label htmlFor={`brand-${brand}`} className="ml-2 text-sm">
-                      {brand}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Categories */}
-            <div>
-              <Label className="mb-3 block text-xs font-medium uppercase tracking-wider text-muted-foreground">Categories</Label>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
-                {categories.map(category => (
-                  <div key={category} className="flex items-center">
-                    <Checkbox 
-                      id={`category-${category}`}
-                      checked={selectedCategories.includes(category)}
-                      onCheckedChange={() => toggleCategory(category)}
-                      className="rounded border-border"
-                    />
-                    <Label htmlFor={`category-${category}`} className="ml-2 text-sm">
-                      {category}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Fuel Types */}
-            <div>
-              <Label className="mb-3 block text-xs font-medium uppercase tracking-wider text-muted-foreground">Fuel Type</Label>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
-                {fuelTypes.map(fuelType => (
-                  <div key={fuelType} className="flex items-center">
-                    <Checkbox 
-                      id={`fuel-${fuelType}`}
-                      checked={selectedFuelTypes.includes(fuelType)}
-                      onCheckedChange={() => toggleFuelType(fuelType)}
-                      className="rounded border-border"
-                    />
-                    <Label htmlFor={`fuel-${fuelType}`} className="ml-2 text-sm">
-                      {fuelType}
-                    </Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex justify-end mt-6">
-            <Button variant="outline" onClick={() => {
-              setSelectedBrands([]);
-              setSelectedCategories([]);
-              setSelectedFuelTypes([]);
-              setPriceRange([0, 15000000]);
-            }} className="border border-border text-foreground hover:bg-foreground hover:text-white rounded-lg">
-              Clear All
-            </Button>
-          </div>
+              <input
+                type="checkbox"
+                checked={selectedBrands.includes(brand)}
+                onChange={() => toggleBrand(brand)}
+                style={{ accentColor: '#e8531a', width: '14px', height: '14px' }}
+              />
+              {brand}
+            </label>
+          ))}
         </div>
       </div>
 
-      {/* Results */}
-      <div className="mb-6 flex justify-between items-center">
-        <p className="text-muted-foreground">
-          Showing {filteredCars.length} of {cars.length} cars
-        </p>
+      {/* Categories */}
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid #f0f0f0' }}>
+        <div style={{
+          fontSize: '11px',
+          fontWeight: '700',
+          color: '#6e6e73',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+          marginBottom: '12px',
+        }}>
+          Category
+        </div>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column' as const,
+          gap: '8px',
+        }}>
+          {categories.map(cat => (
+            <label
+              key={cat}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                color: selectedCategories.includes(cat) ? '#e8531a' : '#1d1d1f',
+                fontWeight: selectedCategories.includes(cat) ? '600' : '400',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={selectedCategories.includes(cat)}
+                onChange={() => toggleCategory(cat)}
+                style={{ accentColor: '#e8531a', width: '14px', height: '14px' }}
+              />
+              {cat}
+            </label>
+          ))}
+        </div>
       </div>
 
-      {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, index) => (
-            <div key={index} className="border border-border rounded-2xl overflow-hidden animate-pulse">
-              <div className="bg-gray-200 h-48 w-full"></div>
-              <div className="p-5">
-                <div className="h-6 bg-gray-200 rounded w-3/4 mb-3"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-                <div className="h-8 bg-gray-200 rounded w-full mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded w-2/3 mb-2"></div>
-                <div className="h-10 bg-gray-200 rounded w-full mt-4"></div>
-              </div>
-            </div>
+      {/* Fuel Types */}
+      <div style={{ padding: '16px 20px' }}>
+        <div style={{
+          fontSize: '11px',
+          fontWeight: '700',
+          color: '#6e6e73',
+          textTransform: 'uppercase',
+          letterSpacing: '1px',
+          marginBottom: '12px',
+        }}>
+          Fuel Type
+        </div>
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column' as const,
+          gap: '8px',
+        }}>
+          {fuelTypes.map(ft => (
+            <label
+              key={ft}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                fontSize: '13px',
+                color: selectedFuelTypes.includes(ft) ? '#e8531a' : '#1d1d1f',
+                fontWeight: selectedFuelTypes.includes(ft) ? '600' : '400',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={selectedFuelTypes.includes(ft)}
+                onChange={() => toggleFuelType(ft)}
+                style={{ accentColor: '#e8531a', width: '14px', height: '14px' }}
+              />
+              {ft}
+            </label>
           ))}
         </div>
-      ) : viewMode === 'grid' ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCars.map(car => (
-            <CarCard key={car.id} {...car} />
-          ))}
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {filteredCars.map(car => (
-            <Card key={car.id} className="overflow-hidden border border-border rounded-2xl">
-              <CardContent className="p-0">
-                <div className="flex flex-col md:flex-row">
-                  <div className="md:w-1/3">
-                    <img 
-                      src={car.images[0]} 
-                      alt={`${car.brand} ${car.name}`} 
-                      className="w-full h-48 md:h-full object-cover"
-                    />
-                  </div>
-                  <div className="md:w-2/3 p-6">
-                    <div className="flex justify-between">
-                      <div>
-                        <h3 className="text-xl font-semibold">{car.name} {car.variant}</h3>
-                        <p className="text-muted-foreground">{car.brand}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-accent font-semibold text-xl">
-                          Rs.{car.ex_showroom_price.toLocaleString('en-IN')}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          On-road: Rs.{car.on_road_price.toLocaleString('en-IN')}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 my-6">
-                      <div>
-                        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Fuel</p>
-                        <p className="font-medium">{car.fuel_type}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Transmission</p>
-                        <p className="font-medium">{car.transmission}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Seating</p>
-                        <p className="font-medium">{car.seating} Seats</p>
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Engine</p>
-                        <p className="font-medium">{car.engine_cc}cc</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-wrap gap-2">
-                      <Button className="bg-foreground text-white hover:bg-accent rounded-lg">
-                        View Details
-                      </Button>
-                      <Button 
-                        variant="outline"
-                        onClick={() => isInCompare(car.id) 
-                          ? removeFromCompare(car.id) 
-                          : addToCompare(car)
-                        }
-                        className="border rounded-lg"
-                        style={{
-                          borderColor: isInCompare(car.id) ? '#e8531a' : undefined,
-                          background: isInCompare(car.id) ? '#fff8f5' : undefined,
-                          color: isInCompare(car.id) ? '#e8531a' : undefined,
-                        }}
-                      >
-                        {isInCompare(car.id) ? '✓ Added' : 'Compare'}
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {!loading && filteredCars.length === 0 && (
-        <div className="text-center py-16">
-          <p className="text-muted-foreground">No cars match your filters. Try adjusting your search criteria.</p>
-        </div>
-      )}
+      </div>
     </div>
-  );
-};
+  )
+
+  return (
+    <div style={{
+      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
+      minHeight: '100vh',
+      background: '#f5f5f7',
+    }}>
+
+      {/* HEADER */}
+      <div style={{
+        background: 'white',
+        borderBottom: '1px solid #e5e5e5',
+        padding: isMobile ? '20px 16px' : '24px 32px',
+      }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+          <div style={{
+            display: 'flex',
+            alignItems: isMobile ? 'flex-start' : 'center',
+            justifyContent: 'space-between',
+            flexDirection: isMobile ? 'column' : 'row',
+            gap: isMobile ? '16px' : '0',
+          }}>
+            <div>
+              <div style={{
+                display: 'inline-block',
+                background: '#fff8f5',
+                border: '1px solid #e8531a',
+                borderRadius: '6px',
+                padding: '3px 12px',
+                fontSize: '11px',
+                fontWeight: '700',
+                color: '#e8531a',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                marginBottom: '8px',
+              }}>
+                Browse
+              </div>
+              <h1 style={{
+                fontSize: isMobile ? '28px' : '36px',
+                fontWeight: '800',
+                color: '#1d1d1f',
+                margin: '0 0 4px',
+                letterSpacing: '-1px',
+              }}>
+                All Cars in Nepal
+              </h1>
+              <p style={{
+                fontSize: '14px',
+                color: '#6e6e73',
+                margin: 0,
+              }}>
+                {loading ? 'Loading...' : `${filteredCars.length} cars found`}
+              </p>
+            </div>
+
+            {/* Search + Sort + View */}
+            <div style={{
+              display: 'flex',
+              gap: '10px',
+              alignItems: 'center',
+              width: isMobile ? '100%' : 'auto',
+              flexWrap: 'wrap',
+            }}>
+              {/* Search */}
+              <div style={{
+                position: 'relative',
+                flex: isMobile ? 1 : undefined,
+              }}>
+                <div style={{
+                  position: 'absolute',
+                  left: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  color: '#999',
+                  pointerEvents: 'none',
+                }}>
+                  <IconSearch />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search cars..."
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  style={{
+                    padding: '10px 14px 10px 36px',
+                    border: '1px solid #d2d2d7',
+                    borderRadius: '10px',
+                    fontSize: '14px',
+                    outline: 'none',
+                    width: isMobile ? '100%' : '220px',
+                    boxSizing: 'border-box' as const,
+                    transition: 'border-color 0.2s',
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#e8531a'}
+                  onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                />
+              </div>
+
+              {/* Sort */}
+              <select
+                value={sortBy}
+                onChange={e => setSortBy(e.target.value)}
+                style={{
+                  padding: '10px 14px',
+                  border: '1px solid #d2d2d7',
+                  borderRadius: '10px',
+                  fontSize: '14px',
+                  outline: 'none',
+                  background: 'white',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                <option value="featured">Featured</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="mileage">Best Mileage</option>
+                <option value="newest">Newest First</option>
+              </select>
+
+              {/* View toggle */}
+              <div style={{
+                display: 'flex',
+                border: '1px solid #d2d2d7',
+                borderRadius: '10px',
+                overflow: 'hidden',
+              }}>
+                <button
+                  onClick={() => setViewMode('grid')}
+                  style={{
+                    padding: '10px 14px',
+                    border: 'none',
+                    background: viewMode === 'grid' ? '#e8531a' : 'white',
+                    color: viewMode === 'grid' ? 'white' : '#6e6e73',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <IconGrid />
+                </button>
+                <button
+                  onClick={() => setViewMode('list')}
+                  style={{
+                    padding: '10px 14px',
+                    border: 'none',
+                    borderLeft: '1px solid #d2d2d7',
+                    background: viewMode === 'list' ? '#e8531a' : 'white',
+                    color: viewMode === 'list' ? 'white' : '#6e6e73',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <IconList />
+                </button>
+              </div>
+
+              {/* Mobile filter toggle */}
+              {isMobile && (
+                <button
+                  onClick={() => setShowMobileFilters(!showMobileFilters)}
+                  style={{
+                    padding: '10px 16px',
+                    border: '1px solid',
+                    borderColor: activeFiltersCount > 0 ? '#e8531a' : '#d2d2d7',
+                    borderRadius: '10px',
+                    background: activeFiltersCount > 0 ? '#fff8f5' : 'white',
+                    color: activeFiltersCount > 0 ? '#e8531a' : '#1d1d1f',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    fontFamily: 'inherit',
+                  }}
+                >
+                  <IconFilter />
+                  Filters
+                  {activeFiltersCount > 0 && (
+                    <span style={{
+                      background: '#e8531a',
+                      color: 'white',
+                      borderRadius: '20px',
+                      padding: '0 6px',
+                      fontSize: '11px',
+                    }}>
+                      {activeFiltersCount}
+                    </span>
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* MOBILE FILTERS */}
+      {isMobile && showMobileFilters && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 50,
+          background: 'rgba(0,0,0,0.5)',
+        }}
+          onClick={() => setShowMobileFilters(false)}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              background: 'white',
+              borderRadius: '20px 20px 0 0',
+              maxHeight: '80vh',
+              overflowY: 'auto',
+              padding: '20px',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: '16px',
+            }}>
+              <span style={{ fontSize: '16px', fontWeight: '700' }}>Filters</span>
+              <button
+                onClick={() => setShowMobileFilters(false)}
+                style={{
+                  background: 'none', border: 'none',
+                  cursor: 'pointer', color: '#6e6e73',
+                }}
+              >
+                <IconX />
+              </button>
+            </div>
+            <FilterPanel />
+            <button
+              onClick={() => setShowMobileFilters(false)}
+              style={{
+                width: '100%',
+                background: '#e8531a',
+                color: 'white',
+                border: 'none',
+                borderRadius: '10px',
+                padding: '14px',
+                fontSize: '15px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                marginTop: '16px',
+                fontFamily: 'inherit',
+              }}
+            >
+              Show {filteredCars.length} Cars
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* MAIN CONTENT */}
+      <div style={{
+        maxWidth: '1400px',
+        margin: '0 auto',
+        padding: isMobile ? '16px' : '24px 32px',
+        display: 'grid',
+        gridTemplateColumns: isMobile ? '1fr' : '260px 1fr',
+        gap: '24px',
+        alignItems: 'start',
+      }}>
+
+        {/* LEFT - FILTERS (desktop only) */}
+        {!isMobile && (
+          <div style={{ position: 'sticky', top: '24px' }}>
+            <FilterPanel />
+          </div>
+        )}
+
+        {/* RIGHT - CARS */}
+        <div>
+          {loading ? (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+              gap: '16px',
+            }}>
+              {[...Array(6)].map((_, i) => (
+                <div key={i} style={{
+                  background: 'white',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  border: '1px solid #e5e5e5',
+                }}>
+                  <div style={{
+                    height: '180px',
+                    background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+                    backgroundSize: '200% 100%',
+                    animation: 'shimmer 1.5s infinite',
+                  }} />
+                  <div style={{ padding: '16px' }}>
+                    <div style={{ height: '16px', background: '#f0f0f0', borderRadius: '4px', marginBottom: '8px', width: '70%' }} />
+                    <div style={{ height: '12px', background: '#f0f0f0', borderRadius: '4px', marginBottom: '16px', width: '40%' }} />
+                    <div style={{ height: '24px', background: '#f0f0f0', borderRadius: '4px', width: '60%' }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredCars.length === 0 ? (
+            <div style={{
+              background: 'white',
+              borderRadius: '16px',
+              padding: '60px 24px',
+              textAlign: 'center',
+              border: '1px solid #e5e5e5',
+            }}>
+              <div style={{
+                fontSize: '48px',
+                marginBottom: '16px',
+              }}>🔍</div>
+              <h3 style={{
+                fontSize: '18px',
+                fontWeight: '700',
+                color: '#1d1d1f',
+                margin: '0 0 8px',
+              }}>
+                No cars found
+              </h3>
+              <p style={{
+                fontSize: '14px',
+                color: '#6e6e73',
+                margin: '0 0 20px',
+              }}>
+                Try adjusting your filters or search query
+              </p>
+              <button
+                onClick={clearAll}
+                style={{
+                  background: '#e8531a',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '10px',
+                  padding: '10px 24px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Clear Filters
+              </button>
+            </div>
+          ) : viewMode === 'grid' ? (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+              gap: '16px',
+            }}>
+              {filteredCars.map(car => (
+                <CarCard key={car.id} {...car} />
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {filteredCars.map(car => (
+                <div
+                  key={car.id}
+                  style={{
+                    background: 'white',
+                    border: '1px solid #e5e5e5',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    display: 'flex',
+                    transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = '#e8531a'
+                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(232,83,26,0.1)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = '#e5e5e5'
+                    e.currentTarget.style.boxShadow = 'none'
+                  }}
+                >
+                  <img
+                    src={car.images?.[0]}
+                    alt={car.name}
+                    style={{
+                      width: '200px',
+                      minWidth: '200px',
+                      height: '140px',
+                      objectFit: 'cover',
+                    }}
+                  />
+                  <div style={{
+                    flex: 1,
+                    padding: '16px 20px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    gap: '16px',
+                    flexWrap: 'wrap',
+                  }}>
+                    <div>
+                      <div style={{
+                        fontSize: '16px',
+                        fontWeight: '700',
+                        color: '#1d1d1f',
+                        marginBottom: '4px',
+                      }}>
+                        {car.name} {car.variant}
+                      </div>
+                      <div style={{
+                        fontSize: '13px',
+                        color: '#e8531a',
+                        fontWeight: '600',
+                        marginBottom: '8px',
+                      }}>
+                        {car.brand}
+                      </div>
+                      <div style={{
+                        display: 'flex',
+                        gap: '16px',
+                        flexWrap: 'wrap',
+                      }}>
+                        {[
+                          { label: 'Fuel', value: car.fuel_type },
+                          { label: 'Transmission', value: car.transmission },
+                          { label: 'Seats', value: `${car.seating}` },
+                          { label: 'Engine', value: car.is_electric ? 'Electric' : `${car.engine_cc}cc` },
+                        ].map((spec, i) => (
+                          <div key={i}>
+                            <div style={{ fontSize: '10px', color: '#6e6e73', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                              {spec.label}
+                            </div>
+                            <div style={{ fontSize: '13px', fontWeight: '600', color: '#1d1d1f' }}>
+                              {spec.value}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{
+                        fontSize: '20px',
+                        fontWeight: '800',
+                        color: '#e8531a',
+                        letterSpacing: '-0.5px',
+                        marginBottom: '4px',
+                      }}>
+                        {formatNPR(car.ex_showroom_price)}
+                      </div>
+                      <div style={{
+                        fontSize: '12px',
+                        color: '#6e6e73',
+                        marginBottom: '12px',
+                      }}>
+                        On-road: {formatNPR(car.on_road_price)}
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                        <button
+                          onClick={() => window.location.href = `/cars/${car.slug}`}
+                          style={{
+                            background: '#1d1d1f',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '8px',
+                            padding: '8px 16px',
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            fontFamily: 'inherit',
+                            transition: 'all 0.2s',
+                          }}
+                          onMouseEnter={e => e.currentTarget.style.background = '#e8531a'}
+                          onMouseLeave={e => e.currentTarget.style.background = '#1d1d1f'}
+                        >
+                          View Details
+                        </button>
+                        <button
+                          onClick={() => isInCompare(car.id)
+                            ? removeFromCompare(car.id)
+                            : addToCompare(car)
+                          }
+                          style={{
+                            background: isInCompare(car.id) ? '#fff8f5' : 'white',
+                            color: isInCompare(car.id) ? '#e8531a' : '#1d1d1f',
+                            border: `1px solid ${isInCompare(car.id) ? '#e8531a' : '#d2d2d7'}`,
+                            borderRadius: '8px',
+                            padding: '8px 16px',
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            fontFamily: 'inherit',
+                            transition: 'all 0.2s',
+                          }}
+                        >
+                          {isInCompare(car.id) ? '✓ Added' : 'Compare'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default Cars;
