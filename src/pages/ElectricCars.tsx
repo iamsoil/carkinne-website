@@ -355,479 +355,424 @@ const ElectricCars = () => {
         </div>
       </div>
 
-      {/* AVAILABLE ELECTRIC CARS */}
-      <div style={{ background: 'white', padding: isMobile ? '48px 16px' : '64px 24px' }}>
+      {/* NEW TWO-COLUMN LAYOUT */}
+      <div style={{ background: 'white', padding: isMobile ? '24px 16px' : '40px 24px' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <div style={{ marginBottom: '24px' }}>
-            {/* Title row */}
-            <div style={{
-              display: 'flex',
-              alignItems: isMobile ? 'flex-start' : 'center',
-              justifyContent: 'space-between',
-              flexDirection: isMobile ? 'column' : 'row',
-              gap: '8px',
-              marginBottom: '16px',
-            }}>
-              <div>
-                <div style={{
-                  display: 'inline-block',
-                  background: '#fff8f5',
-                  border: '1px solid #e8531a',
-                  borderRadius: '6px',
-                  padding: '4px 12px',
-                  fontSize: '12px',
-                  fontWeight: '700',
-                  color: '#e8531a',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px',
-                  marginBottom: '8px',
-                }}>
-                  Browse
-                </div>
-                <h2 style={{
-                  fontSize: isMobile ? '24px' : '28px',
-                  fontWeight: '800',
-                  color: '#1d1d1f',
-                  margin: 0,
-                  letterSpacing: '-1px',
-                }}>
-                  Available Electric Cars
-                </h2>
-              </div>
-              <div style={{
-                fontSize: '13px',
-                color: '#6e6e73',
-                fontWeight: '500',
-              }}>
-                {loading ? 'Loading...' : `${filteredCars.length} of ${electricCars.length} cars`}
-              </div>
-            </div>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '240px 1fr',
+            gap: '24px',
+            alignItems: 'start',
+          }}>
 
-            {/* Search + filters row */}
-            <div style={{
-              display: 'flex',
-              gap: '10px',
-              flexWrap: 'wrap',
-              alignItems: 'center',
-            }}>
-              {/* Search */}
-              <div style={{ position: 'relative', flex: 1, minWidth: '180px' }}>
+            {/* LEFT SIDEBAR */}
+            <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '16px' }}>
+
+              {/* Filter Panel */}
+              <div style={{
+                background: 'white',
+                border: '1px solid #e5e5e5',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                position: isMobile ? 'relative' : 'sticky',
+                top: isMobile ? 'auto' : '24px',
+              }}>
+                {/* Filter header */}
                 <div style={{
-                  position: 'absolute', left: '10px', top: '50%',
-                  transform: 'translateY(-50%)',
-                  color: '#999', pointerEvents: 'none',
+                  padding: '14px 16px',
+                  borderBottom: '1px solid #f0f0f0',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                 }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="11" cy="11" r="8"/>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                  </svg>
+                  <div style={{
+                    fontSize: '13px', fontWeight: '700',
+                    color: '#1d1d1f',
+                    display: 'flex', alignItems: 'center', gap: '6px',
+                  }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24"
+                      fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="4" y1="6" x2="20" y2="6"/>
+                      <line x1="8" y1="12" x2="16" y2="12"/>
+                      <line x1="11" y1="18" x2="13" y2="18"/>
+                    </svg>
+                    Filters
+                  </div>
+                  {(searchQuery || selectedBrand !== 'All') && (
+                    <button
+                      onClick={() => { setSearchQuery(''); setSelectedBrand('All'); setSortBy('featured') }}
+                      style={{
+                        background: 'none', border: 'none',
+                        fontSize: '12px', color: '#e8531a',
+                        fontWeight: '600', cursor: 'pointer',
+                        padding: 0, fontFamily: 'inherit',
+                      }}
+                    >
+                      Clear All
+                    </button>
+                  )}
                 </div>
-                <input
-                  type="text"
-                  placeholder="Search electric cars..."
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
+
+                {/* Search */}
+                <div style={{ padding: '12px 14px', borderBottom: '1px solid #f0f0f0' }}>
+                  <div style={{
+                    fontSize: '11px', fontWeight: '700',
+                    color: '#6e6e73', textTransform: 'uppercase',
+                    letterSpacing: '1px', marginBottom: '8px',
+                  }}>
+                    Search
+                  </div>
+                  <div style={{ position: 'relative' }}>
+                    <div style={{
+                      position: 'absolute', left: '8px', top: '50%',
+                      transform: 'translateY(-50%)',
+                      color: '#999', pointerEvents: 'none',
+                    }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Search EVs..."
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '7px 8px 7px 26px',
+                        border: '1px solid #d2d2d7',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        outline: 'none',
+                        boxSizing: 'border-box' as const,
+                        fontFamily: 'inherit',
+                        transition: 'border-color 0.2s',
+                      }}
+                      onFocus={e => e.target.style.borderColor = '#e8531a'}
+                      onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                    />
+                  </div>
+                </div>
+
+                {/* Brand */}
+                <div style={{ padding: '12px 14px', borderBottom: '1px solid #f0f0f0' }}>
+                  <div style={{
+                    fontSize: '11px', fontWeight: '700',
+                    color: '#6e6e73', textTransform: 'uppercase',
+                    letterSpacing: '1px', marginBottom: '8px',
+                  }}>
+                    Brand
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
+                    {brands.map(brand => (
+                      <label
+                        key={brand}
+                        style={{
+                          display: 'flex', alignItems: 'center',
+                          gap: '8px', cursor: 'pointer',
+                          fontSize: '12px',
+                          color: selectedBrand === brand ? '#e8531a' : '#1d1d1f',
+                          fontWeight: selectedBrand === brand ? '700' : '400',
+                        }}
+                      >
+                        <input
+                          type="radio"
+                          name="brand"
+                          checked={selectedBrand === brand}
+                          onChange={() => setSelectedBrand(brand)}
+                          style={{ accentColor: '#e8531a' }}
+                        />
+                        {brand === 'All' ? 'All Brands' : brand}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Sort */}
+                <div style={{ padding: '12px 14px' }}>
+                  <div style={{
+                    fontSize: '11px', fontWeight: '700',
+                    color: '#6e6e73', textTransform: 'uppercase',
+                    letterSpacing: '1px', marginBottom: '8px',
+                  }}>
+                    Sort By
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column' as const, gap: '6px' }}>
+                    {[
+                      { value: 'featured', label: 'Featured' },
+                      { value: 'price-low', label: 'Price: Low to High' },
+                      { value: 'price-high', label: 'Price: High to Low' },
+                      { value: 'range', label: 'Best Range' },
+                    ].map(opt => (
+                      <label
+                        key={opt.value}
+                        style={{
+                          display: 'flex', alignItems: 'center',
+                          gap: '8px', cursor: 'pointer',
+                          fontSize: '12px',
+                          color: sortBy === opt.value ? '#e8531a' : '#1d1d1f',
+                          fontWeight: sortBy === opt.value ? '700' : '400',
+                        }}
+                      >
+                        <input
+                          type="radio"
+                          name="sort"
+                          checked={sortBy === opt.value}
+                          onChange={() => setSortBy(opt.value)}
+                          style={{ accentColor: '#e8531a' }}
+                        />
+                        {opt.label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Charging Guide - compact */}
+              <div style={{
+                background: '#f5f5f7',
+                border: '1px solid #e5e5e5',
+                borderRadius: '16px',
+                overflow: 'hidden',
+              }}>
+                <div style={{
+                  padding: '14px 16px',
+                  borderBottom: '1px solid #e5e5e5',
+                }}>
+                  <div style={{
+                    fontSize: '13px', fontWeight: '700',
+                    color: '#1d1d1f',
+                  }}>
+                    Charging Guide
+                  </div>
+                </div>
+                {[
+                  { Icon: IconHome, title: 'Home Charging', desc: 'Full charge in 8–12 hrs overnight' },
+                  { Icon: IconMap, title: 'Public Stations', desc: 'Available in major Nepal cities' },
+                  { Icon: IconClock, title: 'Fast DC Charging', desc: '30–60 mins at public stations' },
+                ].map((item, i) => (
+                  <div key={i} style={{
+                    padding: '10px 14px',
+                    borderBottom: i < 2 ? '1px solid #f0f0f0' : 'none',
+                    display: 'flex',
+                    gap: '10px',
+                    alignItems: 'center',
+                  }}>
+                    <div style={{
+                      width: '28px', height: '28px',
+                      background: '#fff8f5',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#e8531a',
+                      flexShrink: 0,
+                    }}>
+                      <item.Icon />
+                    </div>
+                    <div>
+                      <div style={{
+                        fontSize: '12px', fontWeight: '700',
+                        color: '#1d1d1f', marginBottom: '2px',
+                      }}>
+                        {item.title}
+                      </div>
+                      <div style={{
+                        fontSize: '11px', color: '#6e6e73', lineHeight: 1.4,
+                      }}>
+                        {item.desc}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Find Charging Stations CTA */}
+              <div style={{
+                background: '#fff8f5',
+                border: '1.5px solid #e8531a',
+                borderRadius: '16px',
+                padding: '16px',
+                textAlign: 'center' as const,
+              }}>
+                <div style={{
+                  width: '40px', height: '40px',
+                  background: '#e8531a',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  margin: '0 auto 10px',
+                }}>
+                  <IconMap />
+                </div>
+                <div style={{
+                  fontSize: '13px', fontWeight: '700',
+                  color: '#1d1d1f', marginBottom: '4px',
+                }}>
+                  Find Charging Stations
+                </div>
+                <div style={{
+                  fontSize: '11px', color: '#6e6e73',
+                  marginBottom: '12px', lineHeight: 1.5,
+                }}>
+                  Interactive map of all EV charging points across Nepal
+                </div>
+                <button
+                  onClick={() => navigate('/ev-charging')}
                   style={{
                     width: '100%',
-                    padding: '9px 12px 9px 30px',
-                    border: '1px solid #d2d2d7',
-                    borderRadius: '10px',
-                    fontSize: '13px',
-                    outline: 'none',
-                    boxSizing: 'border-box' as const,
-                    transition: 'border-color 0.2s',
-                    fontFamily: 'inherit',
-                    background: 'white',
-                  }}
-                  onFocus={e => e.target.style.borderColor = '#e8531a'}
-                  onBlur={e => e.target.style.borderColor = '#d2d2d7'}
-                />
-              </div>
-
-              {/* Brand filter */}
-              <select
-                value={selectedBrand}
-                onChange={e => setSelectedBrand(e.target.value)}
-                style={{
-                  padding: '9px 14px',
-                  border: '1px solid #d2d2d7',
-                  borderRadius: '10px',
-                  fontSize: '13px',
-                  outline: 'none',
-                  background: 'white',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  color: '#1d1d1f',
-                }}
-              >
-                {brands.map(b => (
-                  <option key={b} value={b}>
-                    {b === 'All' ? 'All Brands' : b}
-                  </option>
-                ))}
-              </select>
-
-              {/* Sort */}
-              <select
-                value={sortBy}
-                onChange={e => setSortBy(e.target.value)}
-                style={{
-                  padding: '9px 14px',
-                  border: '1px solid #d2d2d7',
-                  borderRadius: '10px',
-                  fontSize: '13px',
-                  outline: 'none',
-                  background: 'white',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  color: '#1d1d1f',
-                }}
-              >
-                <option value="featured">Featured</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="range">Best Range</option>
-              </select>
-
-              {/* Clear button - only show if filters active */}
-              {(searchQuery || selectedBrand !== 'All') && (
-                <button
-                  onClick={() => {
-                    setSearchQuery('')
-                    setSelectedBrand('All')
-                    setSortBy('featured')
-                  }}
-                  style={{
-                    padding: '9px 14px',
-                    border: '1px solid #e8531a',
-                    borderRadius: '10px',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    color: '#e8531a',
-                    background: '#fff8f5',
+                    background: '#e8531a',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    padding: '10px',
+                    fontSize: '12px',
+                    fontWeight: '700',
                     cursor: 'pointer',
                     fontFamily: 'inherit',
                     transition: 'all 0.2s',
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.background = '#e8531a'
-                    e.currentTarget.style.color = 'white'
+                    e.currentTarget.style.background = '#c94415'
+                    e.currentTarget.style.transform = 'translateY(-1px)'
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.background = '#fff8f5'
-                    e.currentTarget.style.color = '#e8531a'
+                    e.currentTarget.style.background = '#e8531a'
+                    e.currentTarget.style.transform = 'translateY(0)'
                   }}
                 >
-                  Clear
+                  View Charging Map →
                 </button>
-              )}
-            </div>
-          </div>
+              </div>
 
-          {loading ? (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
-              gap: '16px',
-            }}>
-              {[...Array(3)].map((_, i) => (
-                <div key={i} style={{
-                  background: 'white',
-                  borderRadius: '16px',
-                  overflow: 'hidden',
-                  border: '1px solid #e5e5e5',
-                }}>
-                  <div style={{ height: '180px', background: '#f0f0f0' }} />
-                  <div style={{ padding: '16px' }}>
-                    <div style={{ height: '16px', background: '#f0f0f0', borderRadius: '4px', marginBottom: '8px', width: '70%' }} />
-                    <div style={{ height: '12px', background: '#f0f0f0', borderRadius: '4px', width: '40%' }} />
-                  </div>
-                </div>
-              ))}
             </div>
-          ) : filteredCars.length > 0 ? (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile
-                ? '1fr'
-                : 'repeat(3, 1fr)',
-              gap: '16px',
-            }}>
-              {filteredCars.map(car => (
-                <CarCard key={car.id} {...car} />
-              ))}
-            </div>
-          ) : searchQuery || selectedBrand !== 'All' ? (
-            <div style={{
-              background: 'white',
-              borderRadius: '16px',
-              padding: '48px 24px',
-              textAlign: 'center',
-              border: '1px solid #e5e5e5',
-            }}>
-              <h3 style={{
-                fontSize: '16px', fontWeight: '700',
-                color: '#1d1d1f', margin: '0 0 8px',
-              }}>
-                No cars match your search
-              </h3>
-              <p style={{
-                fontSize: '14px', color: '#6e6e73',
-                margin: '0 0 16px',
-              }}>
-                Try a different brand or search term
-              </p>
-              <button
-                onClick={() => {
-                  setSearchQuery('')
-                  setSelectedBrand('All')
-                }}
-                style={{
-                  background: '#e8531a', color: 'white',
-                  border: 'none', borderRadius: '10px',
-                  padding: '10px 24px', fontSize: '13px',
-                  fontWeight: '600', cursor: 'pointer',
-                  fontFamily: 'inherit',
-                }}
-              >
-                Clear Filters
-              </button>
-            </div>
-          ) : (
-            <div style={{
-              background: 'white',
-              borderRadius: '16px',
-              padding: '60px 24px',
-              textAlign: 'center',
-              border: '1px solid #e5e5e5',
-            }}>
+
+            {/* RIGHT - CAR GRID */}
+            <div>
+              {/* Header */}
               <div style={{
-                width: '56px', height: '56px',
-                background: '#fff8f5',
-                border: '1px solid #fde8da',
-                borderRadius: '16px',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                color: '#e8531a',
-                margin: '0 auto 16px',
+                justifyContent: 'space-between',
+                marginBottom: '16px',
               }}>
-                <IconZap />
-              </div>
-              <h3 style={{
-                fontSize: '16px', fontWeight: '700',
-                color: '#1d1d1f', margin: '0 0 8px',
-              }}>
-                No electric cars yet
-              </h3>
-              <p style={{ fontSize: '14px', color: '#6e6e73', margin: 0 }}>
-                Electric car listings coming soon.
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* CHARGING YOUR EV */}
-      <div style={{ padding: isMobile ? '48px 16px' : '64px 24px' }}>
-        <div style={{ background: '#f5f5f7', padding: isMobile ? '48px 16px' : '64px 24px' }}>
-          <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            <div style={{
-              display: 'inline-block',
-              background: '#fff8f5',
-              border: '1px solid #e8531a',
-              borderRadius: '6px',
-              padding: '4px 12px',
-              fontSize: '12px',
-              fontWeight: '700',
-              color: '#e8531a',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              marginBottom: '12px',
-            }}>
-              Charging Guide
-            </div>
-            <h2 style={{
-              fontSize: isMobile ? '26px' : '32px',
-              fontWeight: '800',
-              color: '#1d1d1f',
-              margin: '0 0 32px',
-              letterSpacing: '-1px',
-            }}>
-              Charging Your EV in Nepal
-            </h2>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
-              gap: '16px',
-              marginBottom: '40px',
-            }}>
-              {[
-                {
-                  Icon: IconHome,
-                  title: 'Home Charging',
-                  points: [
-                    'Use standard 16A power outlet',
-                    'Full charge in 8–12 hours',
-                    'Ideal for overnight charging',
-                    'Lowest cost per km',
-                  ],
-                },
-                {
-                  Icon: IconMap,
-                  title: 'Public Charging',
-                  points: [
-                    'Available in major cities',
-                    'NEA, MG, BYD, Tata stations',
-                    'CCS2 and CHAdeMO connectors',
-                    'Growing network across Nepal',
-                  ],
-                },
-                {
-                  Icon: IconClock,
-                  title: 'Charging Time',
-                  points: [
-                    'Fast DC: 30–60 minutes',
-                    'AC public: 3–5 hours',
-                    'Home AC: 8–12 hours',
-                    'Depends on battery size',
-                  ],
-                },
-              ].map((item, i) => (
-                <div
-                  key={i}
-                  style={{
-                    background: 'white',
-                    border: '1px solid #e5e5e5',
-                    borderRadius: '16px',
-                    padding: '24px',
-                    transition: 'all 0.2s',
-                    cursor: 'default',
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = '#e8531a'
-                    e.currentTarget.style.transform = 'translateY(-2px)'
-                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.1)'
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = '#e5e5e5'
-                    e.currentTarget.style.transform = 'translateY(0)'
-                    e.currentTarget.style.boxShadow = 'none'
-                  }}
-                >
+                <div>
                   <div style={{
-                    width: '44px', height: '44px',
+                    display: 'inline-block',
                     background: '#fff8f5',
-                    borderRadius: '12px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    color: '#e8531a',
-                    marginBottom: '16px',
-                  }}>
-                    <item.Icon />
-                  </div>
-                  <h3 style={{
-                    fontSize: '15px',
+                    border: '1px solid #e8531a',
+                    borderRadius: '6px',
+                    padding: '3px 10px',
+                    fontSize: '11px',
                     fontWeight: '700',
-                    color: '#1d1d1f',
-                    margin: '0 0 14px',
+                    color: '#e8531a',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px',
+                    marginBottom: '6px',
                   }}>
-                    {item.title}
-                  </h3>
-                  <div style={{
-                    display: 'flex',
-                    flexDirection: 'column' as const,
-                    gap: '8px',
-                  }}>
-                    {item.points.map((point, j) => (
-                      <div key={j} style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        fontSize: '13px',
-                        color: '#6e6e73',
-                      }}>
-                        <div style={{
-                          width: '5px', height: '5px',
-                          background: '#e8531a',
-                          borderRadius: '50%',
-                          flexShrink: 0,
-                        }} />
-                        {point}
-                      </div>
-                    ))}
+                    Browse
                   </div>
+                  <h2 style={{
+                    fontSize: isMobile ? '22px' : '26px',
+                    fontWeight: '800',
+                    color: '#1d1d1f',
+                    margin: 0,
+                    letterSpacing: '-0.5px',
+                  }}>
+                    Electric Cars
+                  </h2>
                 </div>
-              ))}
+                <div style={{
+                  fontSize: '13px', color: '#6e6e73', fontWeight: '500',
+                }}>
+                  {loading ? 'Loading...' : `${filteredCars.length} of ${electricCars.length} cars`}
+                </div>
+              </div>
+
+              {/* Cars */}
+              {loading ? (
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                  gap: '16px',
+                }}>
+                  {[...Array(3)].map((_, i) => (
+                    <div key={i} style={{
+                      background: 'white', borderRadius: '16px',
+                      overflow: 'hidden', border: '1px solid #e5e5e5',
+                    }}>
+                      <div style={{ height: '160px', background: '#f0f0f0' }} />
+                      <div style={{ padding: '14px' }}>
+                        <div style={{ height: '14px', background: '#f0f0f0', borderRadius: '4px', marginBottom: '8px', width: '70%' }} />
+                        <div style={{ height: '12px', background: '#f0f0f0', borderRadius: '4px', width: '40%' }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : filteredCars.length > 0 ? (
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+                  gap: '16px',
+                }}>
+                  {filteredCars.map(car => (
+                    <CarCard key={car.id} {...car} />
+                  ))}
+                </div>
+              ) : (searchQuery || selectedBrand !== 'All') ? (
+                <div style={{
+                  background: '#f5f5f7', borderRadius: '16px',
+                  padding: '48px 24px', textAlign: 'center',
+                  border: '1px solid #e5e5e5',
+                }}>
+                  <h3 style={{
+                    fontSize: '16px', fontWeight: '700',
+                    color: '#1d1d1f', margin: '0 0 8px',
+                  }}>
+                    No cars match your search
+                  </h3>
+                  <p style={{
+                    fontSize: '13px', color: '#6e6e73',
+                    margin: '0 0 16px',
+                  }}>
+                    Try a different brand or search term
+                  </p>
+                  <button
+                    onClick={() => { setSearchQuery(''); setSelectedBrand('All') }}
+                    style={{
+                      background: '#e8531a', color: 'white',
+                      border: 'none', borderRadius: '8px',
+                      padding: '10px 20px', fontSize: '13px',
+                      fontWeight: '600', cursor: 'pointer',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    Clear Filters
+                  </button>
+                </div>
+              ) : (
+                <div style={{
+                  background: '#f5f5f7', borderRadius: '16px',
+                  padding: '48px 24px', textAlign: 'center',
+                  border: '1px solid #e5e5e5',
+                }}>
+                  <h3 style={{
+                    fontSize: '16px', fontWeight: '700',
+                    color: '#1d1d1f', margin: '0 0 8px',
+                  }}>
+                    No electric cars yet
+                  </h3>
+                  <p style={{ fontSize: '13px', color: '#6e6e73', margin: 0 }}>
+                    Electric car listings coming soon.
+                  </p>
+                </div>
+              )}
             </div>
 
-            {/* CTA */}
-            <div style={{
-              background: '#fff8f5',
-              border: '1.5px solid #e8531a',
-              borderRadius: '16px',
-              padding: isMobile ? '24px' : '32px 40px',
-              display: 'flex',
-              alignItems: isMobile ? 'flex-start' : 'center',
-              justifyContent: 'space-between',
-              flexDirection: isMobile ? 'column' : 'row',
-              gap: '20px',
-            }}>
-              <div>
-                <h3 style={{
-                  fontSize: '20px',
-                  fontWeight: '800',
-                  color: '#1d1d1f',
-                  margin: '0 0 6px',
-                  letterSpacing: '-0.5px',
-                }}>
-                  Find Charging Stations Near You
-                </h3>
-                <p style={{
-                  fontSize: '14px',
-                  color: '#6e6e73',
-                  margin: 0,
-                }}>
-                  Interactive map of all EV charging points across Nepal
-                </p>
-              </div>
-              <button
-                onClick={() => navigate('/ev-charging')}
-                style={{
-                  background: '#e8531a',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '12px',
-                  padding: '13px 28px',
-                  fontSize: '14px',
-                  fontWeight: '700',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  whiteSpace: 'nowrap',
-                  transition: 'all 0.2s',
-                  fontFamily: 'inherit',
-                  flexShrink: 0,
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = '#c94415'
-                  e.currentTarget.style.transform = 'translateY(-2px)'
-                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.35)'
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = '#e8531a'
-                  e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = 'none'
-                }}
-              >
-                View Charging Map
-                <IconArrow />
-              </button>
-            </div>
           </div>
         </div>
       </div>
