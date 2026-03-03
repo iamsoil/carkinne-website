@@ -11,52 +11,89 @@ L.Icon.Default.mergeOptions({
   shadowUrl: '',
 })
 
+const cities = ['All Cities', 'Kathmandu', 'Lalitpur',
+  'Pokhara', 'Biratnagar', 'Butwal', 'Chitwan']
+
+const stations = [
+  { id: 1, name: 'NEA Charging Station - Kathmandu',
+    address: 'Durbar Marg, Kathmandu', city: 'Kathmandu',
+    connectors: ['CCS2', 'CHAdeMO'], operator: 'NEA',
+    power: '60 kW', status: 'Available',
+    lat: 27.7041, lng: 85.3145 },
+  { id: 2, name: 'Labim Mall Charging Station',
+    address: 'Pulchowk, Lalitpur', city: 'Lalitpur',
+    connectors: ['CCS2'], operator: 'ElectriVa',
+    power: '50 kW', status: 'Available',
+    lat: 27.6762, lng: 85.3175 },
+  { id: 3, name: 'NEA Charging Station - Butwal',
+    address: 'Butwal, Rupandehi', city: 'Butwal',
+    connectors: ['CCS2', 'GBT'], operator: 'NEA',
+    power: '60 kW', status: 'Available',
+    lat: 27.7006, lng: 83.4532 },
+  { id: 4, name: 'Sathi Auto Parts',
+    address: 'Sitalpati, Kathmandu', city: 'Kathmandu',
+    connectors: ['CCS2'], operator: 'Sathi',
+    power: '30 kW', status: 'Available',
+    lat: 27.7089, lng: 85.3142 },
+  { id: 5, name: 'MG Charging Hub',
+    address: 'Naxal, Kathmandu', city: 'Kathmandu',
+    connectors: ['CCS2', 'AC'], operator: 'MG',
+    power: '50 kW', status: 'Available',
+    lat: 27.7172, lng: 85.3240 },
+  { id: 6, name: 'TATA Charging Station',
+    address: 'New Baneshwor, Kathmandu', city: 'Kathmandu',
+    connectors: ['CCS2'], operator: 'TATA',
+    power: '50 kW', status: 'Available',
+    lat: 27.6939, lng: 85.3453 },
+  { id: 7, name: 'NEA Charging - Pokhara',
+    address: 'Lakeside, Pokhara', city: 'Pokhara',
+    connectors: ['CCS2', 'GBT'], operator: 'NEA',
+    power: '60 kW', status: 'Available',
+    lat: 28.2096, lng: 83.9856 },
+  { id: 8, name: 'BYD Charging Station',
+    address: 'Biratnagar, Morang', city: 'Biratnagar',
+    connectors: ['CCS2'], operator: 'BYD',
+    power: '50 kW', status: 'Available',
+    lat: 26.4525, lng: 87.2718 },
+]
+
+const IconBolt = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M7 2v11h3v9l7-12h-4l4-8z"/>
+  </svg>
+)
+
+const IconSearch = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2">
+    <circle cx="11" cy="11" r="8"/>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </svg>
+)
+
+const IconPin = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2">
+    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+    <circle cx="12" cy="9" r="2.5"/>
+  </svg>
+)
+
+const IconZap = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2">
+    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+  </svg>
+)
+
 const EvCharging = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCity, setSelectedCity] = useState('All Cities')
   const [selectedStation, setSelectedStation] = useState<any>(null)
-  const [hoveredStation, setHoveredStation] = useState<number|null>(null)
+  const [hoveredStation, setHoveredStation] = useState<number | null>(null)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const mapRef = useRef<L.Map | null>(null)
-  const markersRef = useRef<{[key: number]: L.Marker}>({})
-
-  const cities = ['All Cities', 'Kathmandu', 'Lalitpur', 
-    'Pokhara', 'Biratnagar', 'Butwal', 'Chitwan']
-
-  const stations = [
-    { id: 1, name: 'NEA Charging Station - Kathmandu',
-      address: 'Durbar Marg, Kathmandu', city: 'Kathmandu',
-      connectors: ['CCS2', 'CHAdeMO'], operator: 'NEA',
-      lat: 27.7041, lng: 85.3145 },
-    { id: 2, name: 'Labim Mall Charging Station',
-      address: 'Pulchowk, Lalitpur', city: 'Lalitpur',
-      connectors: ['CCS2'], operator: 'ElectriVa',
-      lat: 27.6762, lng: 85.3175 },
-    { id: 3, name: 'NEA Charging Station - Butwal',
-      address: 'Butwal, Rupandehi', city: 'Butwal',
-      connectors: ['CCS2', 'GBT'], operator: 'NEA',
-      lat: 27.7006, lng: 83.4532 },
-    { id: 4, name: 'Sathi Auto Parts',
-      address: 'Sitalpati, Kathmandu', city: 'Kathmandu',
-      connectors: ['CCS2'], operator: 'Sathi',
-      lat: 27.7089, lng: 85.3142 },
-    { id: 5, name: 'MG Charging Hub',
-      address: 'Naxal, Kathmandu', city: 'Kathmandu',
-      connectors: ['CCS2', 'AC'], operator: 'MG',
-      lat: 27.7172, lng: 85.3240 },
-    { id: 6, name: 'TATA Charging Station',
-      address: 'New Baneshwor, Kathmandu', city: 'Kathmandu',
-      connectors: ['CCS2'], operator: 'TATA',
-      lat: 27.6939, lng: 85.3453 },
-    { id: 7, name: 'NEA Charging - Pokhara',
-      address: 'Lakeside, Pokhara', city: 'Pokhara',
-      connectors: ['CCS2', 'GBT'], operator: 'NEA',
-      lat: 28.2096, lng: 83.9856 },
-    { id: 8, name: 'BYD Charging Station',
-      address: 'Biratnagar, Morang', city: 'Biratnagar',
-      connectors: ['CCS2'], operator: 'BYD',
-      lat: 26.4525, lng: 87.2718 },
-  ]
+  const markersRef = useRef<{ [key: number]: L.Marker }>({})
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -67,42 +104,38 @@ const EvCharging = () => {
   const filteredStations = stations.filter(s => {
     const matchesSearch =
       s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.address.toLowerCase().includes(searchQuery.toLowerCase())
+      s.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      s.operator.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesCity =
       selectedCity === 'All Cities' || s.city === selectedCity
     return matchesSearch && matchesCity
   })
 
-  const createOrangeIcon = () => L.divIcon({
-    className: 'custom-ev-marker',
+  const createMarkerIcon = (isActive: boolean) => L.divIcon({
+    className: '',
     html: `<div style="
-      position: relative;
-      width: 28px;
-      height: 28px;
+      position:relative;
+      width:32px;height:32px;
     ">
       <div style="
-        width: 28px;
-        height: 28px;
-        background: #e8531a;
-        border-radius: 50% 50% 50% 0;
-        transform: rotate(-45deg);
-        border: 2px solid white;
-        box-shadow: 0 2px 6px rgba(232,83,26,0.4);
+        width:32px;height:32px;
+        background:${isActive ? '#c94415' : '#e8531a'};
+        border-radius:50% 50% 50% 0;
+        transform:rotate(-45deg);
+        border:2px solid white;
+        box-shadow:0 2px 8px rgba(232,83,26,0.4);
       "></div>
       <svg style="
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -60%);
-        pointer-events: none;
-      " width="13" height="13" viewBox="0 0 24 24"
-        fill="white" xmlns="http://www.w3.org/2000/svg">
+        position:absolute;top:50%;left:50%;
+        transform:translate(-50%,-60%);
+        pointer-events:none;
+      " width="13" height="13" viewBox="0 0 24 24" fill="white">
         <path d="M7 2v11h3v9l7-12h-4l4-8z"/>
       </svg>
     </div>`,
-    iconSize: [28, 28],
-    iconAnchor: [14, 28],
-    popupAnchor: [0, -30],
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -36],
   })
 
   const handleStationClick = (station: any) => {
@@ -113,12 +146,7 @@ const EvCharging = () => {
       const targetPoint = map.project(targetLatLng, 15)
       const offsetPoint = targetPoint.subtract([0, -120])
       const offsetLatLng = map.unproject(offsetPoint, 15)
-
-      map.flyTo(offsetLatLng, 15, {
-        animate: true,
-        duration: 1,
-      })
-
+      map.flyTo(offsetLatLng, 15, { animate: true, duration: 1 })
       setTimeout(() => {
         markersRef.current[station.id]?.openPopup()
       }, 1100)
@@ -143,33 +171,84 @@ const EvCharging = () => {
     stations.forEach(station => {
       const marker = L.marker(
         [station.lat, station.lng],
-        { icon: createOrangeIcon() }
+        { icon: createMarkerIcon(false) }
       ).addTo(map)
         .bindPopup(`
-          <div style="min-width:200px;font-family:sans-serif">
-            <div style="font-size:13px;font-weight:700;color:#1d1d1f">
-              ${station.name}
+          <div style="
+            min-width:210px;
+            font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;
+            padding:4px;
+          ">
+            <div style="
+              display:flex;align-items:center;gap:8px;
+              margin-bottom:8px;
+            ">
+              <div style="
+                width:32px;height:32px;
+                background:#e8531a;
+                border-radius:8px;
+                display:flex;align-items:center;
+                justify-content:center;
+                flex-shrink:0;
+              ">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+                  <path d="M7 2v11h3v9l7-12h-4l4-8z"/>
+                </svg>
+              </div>
+              <div>
+                <div style="
+                  font-size:13px;font-weight:700;
+                  color:#1d1d1f;line-height:1.3;
+                ">
+                  ${station.name}
+                </div>
+                <div style="
+                  font-size:11px;color:#e8531a;
+                  font-weight:600;
+                ">
+                  ${station.operator} · ${station.power}
+                </div>
+              </div>
             </div>
-            <div style="font-size:11px;color:#e8531a;font-weight:700;
-              margin-top:2px;margin-bottom:6px">
-              ${station.operator}
+
+            <div style="
+              font-size:11px;color:#6e6e73;
+              margin-bottom:8px;
+              display:flex;align-items:center;gap:4px;
+            ">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none"
+                stroke="#6e6e73" stroke-width="2">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+                <circle cx="12" cy="9" r="2.5"/>
+              </svg>
+              ${station.address}
             </div>
-            <div style="font-size:11px;color:#6e6e73;margin-bottom:6px">
-              📍 ${station.address}
-            </div>
-            <div style="margin-bottom:10px">
+
+            <div style="margin-bottom:10px;display:flex;gap:4px;flex-wrap:wrap;">
               ${station.connectors.map((c: string) =>
-                `<span style="background:#f0f0f0;padding:2px 7px;
-                  border-radius:4px;font-size:10px;margin-right:4px;
-                  color:#555">${c}</span>`
+                `<span style="
+                  background:#fff8f5;
+                  border:1px solid #fde8da;
+                  padding:2px 8px;
+                  border-radius:4px;
+                  font-size:10px;
+                  color:#e8531a;
+                  font-weight:600;
+                ">${c}</span>`
               ).join('')}
             </div>
-            <a href="https://maps.google.com/?q=${encodeURIComponent(station.name + ' Nepal')}"
+
+            <a href="https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lng}"
               target="_blank"
-              style="display:block;text-align:center;background:#e8531a;
-                color:white;padding:6px 12px;border-radius:6px;
-                font-size:11px;text-decoration:none;font-weight:600">
-              📍 Get Directions
+              style="
+                display:block;text-align:center;
+                background:#e8531a;color:white;
+                padding:7px 12px;border-radius:8px;
+                font-size:12px;text-decoration:none;
+                font-weight:700;
+                transition:background 0.2s;
+              ">
+              Get Directions →
             </a>
           </div>
         `)
@@ -185,13 +264,15 @@ const EvCharging = () => {
 
   return (
     <div style={{
+      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
       display: 'flex',
       flexDirection: isMobile ? 'column' : 'row',
       height: 'calc(100vh - 64px)',
       overflow: 'hidden',
+      background: 'white',
     }}>
 
-      {/* MAP - top on mobile, right on desktop */}
+      {/* MAP */}
       <div style={{
         position: isMobile ? 'sticky' : 'relative',
         top: isMobile ? 0 : undefined,
@@ -202,15 +283,13 @@ const EvCharging = () => {
         flexShrink: 0,
         order: isMobile ? 1 : 2,
       }}>
-        <div id="ev-map"
-          style={{ width: '100%', height: '100%' }}
-        />
+        <div id="ev-map" style={{ width: '100%', height: '100%' }} />
       </div>
 
       {/* LEFT PANEL */}
       <div style={{
-        width: isMobile ? '100%' : '380px',
-        minWidth: isMobile ? 'unset' : '380px',
+        width: isMobile ? '100%' : '360px',
+        minWidth: isMobile ? 'unset' : '360px',
         height: isMobile ? 'calc(100vh - 64px - 280px)' : '100%',
         overflowY: 'auto',
         borderRight: isMobile ? 'none' : '1px solid #e5e5e5',
@@ -221,154 +300,247 @@ const EvCharging = () => {
         order: isMobile ? 2 : 1,
       }}>
 
-        {/* Sticky filters */}
+        {/* Header */}
         <div style={{
           position: 'sticky',
           top: 0,
           background: 'white',
           zIndex: 10,
-          padding: '14px 16px 10px',
+          padding: '16px 16px 12px',
           borderBottom: '1px solid #f0f0f0',
         }}>
-          <h1 style={{
-            fontSize: isMobile ? '16px' : '20px',
-            fontWeight: 700,
-            color: '#1d1d1f',
-            margin: 0,
+          <div style={{
+            display: 'inline-block',
+            background: '#fff8f5',
+            border: '1px solid #e8531a',
+            borderRadius: '6px',
+            padding: '3px 10px',
+            fontSize: '11px',
+            fontWeight: '700',
+            color: '#e8531a',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            marginBottom: '8px',
           }}>
-            EV Stations in Nepal
+            EV Charging
+          </div>
+          <h1 style={{
+            fontSize: isMobile ? '17px' : '20px',
+            fontWeight: '800',
+            color: '#1d1d1f',
+            margin: '0 0 2px',
+            letterSpacing: '-0.5px',
+          }}>
+            Charging Stations in Nepal
           </h1>
           <p style={{
             fontSize: '12px',
             color: '#6e6e73',
-            marginTop: '2px',
-            marginBottom: 0,
+            margin: '0 0 12px',
           }}>
-            Find charging points across Nepal
+            {filteredStations.length} stations found
           </p>
 
-          <input
-            type="text"
-            placeholder="Search stations..."
-            style={{
-              width: '100%',
-              border: '1px solid #d2d2d7',
-              borderRadius: '8px',
-              padding: '8px 12px',
-              fontSize: '13px',
-              marginTop: '10px',
-              boxSizing: 'border-box',
-              outline: 'none',
-            }}
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-          />
+          {/* Search */}
+          <div style={{ position: 'relative', marginBottom: '8px' }}>
+            <div style={{
+              position: 'absolute', left: '10px', top: '50%',
+              transform: 'translateY(-50%)',
+              color: '#999', pointerEvents: 'none',
+            }}>
+              <IconSearch />
+            </div>
+            <input
+              type="text"
+              placeholder="Search stations or operator..."
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                border: '1px solid #d2d2d7',
+                borderRadius: '8px',
+                padding: '8px 12px 8px 30px',
+                fontSize: '13px',
+                boxSizing: 'border-box' as const,
+                outline: 'none',
+                transition: 'border-color 0.2s',
+              }}
+              onFocus={e => e.target.style.borderColor = '#e8531a'}
+              onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+            />
+          </div>
 
+          {/* City filter */}
           <select
-            style={{
-              width: '100%',
-              border: '1px solid #d2d2d7',
-              borderRadius: '8px',
-              padding: '8px 12px',
-              fontSize: '13px',
-              marginTop: '8px',
-              boxSizing: 'border-box',
-              background: 'white',
-              outline: 'none',
-            }}
             value={selectedCity}
             onChange={e => setSelectedCity(e.target.value)}
+            style={{
+              width: '100%',
+              border: '1px solid #d2d2d7',
+              borderRadius: '8px',
+              padding: '8px 12px',
+              fontSize: '13px',
+              boxSizing: 'border-box' as const,
+              background: 'white',
+              outline: 'none',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
           >
             {cities.map(city => (
               <option key={city} value={city}>{city}</option>
             ))}
           </select>
-
-          <p style={{
-            fontSize: '12px',
-            color: '#6e6e73',
-            padding: '6px 0 0',
-            margin: 0,
-          }}>
-            {filteredStations.length} stations found
-          </p>
         </div>
 
-        {/* Scrollable list */}
+        {/* Station list */}
         <div style={{ flex: 1, overflowY: 'auto' }}>
-          {filteredStations.map(station => {
+          {filteredStations.length === 0 ? (
+            <div style={{
+              padding: '40px 16px',
+              textAlign: 'center',
+              color: '#6e6e73',
+              fontSize: '14px',
+            }}>
+              No stations found.<br />Try a different search.
+            </div>
+          ) : filteredStations.map(station => {
             const isActive = selectedStation?.id === station.id
             const isHovered = hoveredStation === station.id
+
             return (
               <div
                 key={station.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  padding: '12px 16px',
-                  borderBottom: '1px solid #f5f5f5',
-                  cursor: 'pointer',
-                  background: isActive || isHovered
-                    ? '#fff8f5' : 'white',
-                  borderLeft: (isActive || isHovered)
-                    ? '3px solid #e8531a'
-                    : '3px solid transparent',
-                }}
                 onClick={() => handleStationClick(station)}
                 onMouseEnter={() => setHoveredStation(station.id)}
                 onMouseLeave={() => setHoveredStation(null)}
+                style={{
+                  padding: '14px 16px',
+                  borderBottom: '1px solid #f5f5f5',
+                  cursor: 'pointer',
+                  background: isActive ? '#fff8f5'
+                    : isHovered ? '#fafafa' : 'white',
+                  borderLeft: `3px solid ${isActive ? '#e8531a' : 'transparent'}`,
+                  transition: 'all 0.15s',
+                }}
               >
                 <div style={{
-                  width: 32, height: 32,
-                  borderRadius: '50%',
-                  background: isActive ? '#e8531a'
-                    : isHovered ? '#fff0ea' : '#f0f0f0',
                   display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  marginRight: 12,
-                  flexShrink: 0,
-                  color: isActive ? 'white'
-                    : isHovered ? '#e8531a' : '#999',
+                  alignItems: 'flex-start',
+                  gap: '12px',
                 }}>
-                  <svg width="16" height="16"
-                    viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M7 2v11h3v9l7-12h-4l4-8z"/>
-                  </svg>
+                  {/* Icon */}
+                  <div style={{
+                    width: '36px', height: '36px',
+                    borderRadius: '10px',
+                    background: isActive ? '#e8531a'
+                      : isHovered ? '#fff0ea' : '#f5f5f7',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: isActive ? 'white'
+                      : isHovered ? '#e8531a' : '#999',
+                    flexShrink: 0,
+                    transition: 'all 0.15s',
+                  }}>
+                    <IconBolt />
+                  </div>
+
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{
+                      fontSize: '14px',
+                      fontWeight: '700',
+                      color: '#1d1d1f',
+                      marginBottom: '2px',
+                      lineHeight: 1.3,
+                    }}>
+                      {station.name}
+                    </div>
+
+                    <div style={{
+                      fontSize: '11px',
+                      color: '#e8531a',
+                      fontWeight: '600',
+                      marginBottom: '4px',
+                    }}>
+                      {station.operator} · {station.power}
+                    </div>
+
+                    <div style={{
+                      fontSize: '12px',
+                      color: '#6e6e73',
+                      marginBottom: '6px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}>
+                      <IconPin />
+                      {station.address}
+                    </div>
+
+                    <div style={{
+                      display: 'flex',
+                      gap: '4px',
+                      flexWrap: 'wrap',
+                      alignItems: 'center',
+                    }}>
+                      {station.connectors.map((c: string) => (
+                        <span key={c} style={{
+                          background: isActive ? '#fde8da' : '#f5f5f7',
+                          border: `1px solid ${isActive ? '#e8531a' : '#e5e5e5'}`,
+                          borderRadius: '4px',
+                          padding: '2px 7px',
+                          fontSize: '10px',
+                          color: isActive ? '#e8531a' : '#555',
+                          fontWeight: '600',
+                          transition: 'all 0.15s',
+                        }}>
+                          {c}
+                        </span>
+                      ))}
+
+                      <span style={{
+                        marginLeft: 'auto',
+                        fontSize: '10px',
+                        color: '#22c55e',
+                        fontWeight: '700',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '3px',
+                      }}>
+                        <IconZap />
+                        {station.status}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{
-                    fontSize: 14, fontWeight: 600, color: '#1d1d1f'
-                  }}>
-                    {station.name}
+                {/* Expanded directions button when active */}
+                {isActive && (
+                  <div style={{ marginTop: '12px', marginLeft: '48px' }}>
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={e => e.stopPropagation()}
+                      style={{
+                        display: 'inline-block',
+                        background: '#e8531a',
+                        color: 'white',
+                        padding: '7px 16px',
+                        borderRadius: '8px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        textDecoration: 'none',
+                        transition: 'background 0.2s',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#c94415'}
+                      onMouseLeave={e => e.currentTarget.style.background = '#e8531a'}
+                    >
+                      Get Directions →
+                    </a>
                   </div>
-                  <div style={{
-                    fontSize: 11, color: '#e8531a',
-                    fontWeight: 600, marginTop: 2,
-                  }}>
-                    {station.operator}
-                  </div>
-                  <div style={{
-                    fontSize: 12, color: '#6e6e73', marginTop: 4
-                  }}>
-                    📍 {station.address}
-                  </div>
-                  <div style={{ marginTop: 6 }}>
-                    {station.connectors.map((c: string) => (
-                      <span key={c} style={{
-                        background: '#f0f0f0',
-                        borderRadius: 4,
-                        padding: '2px 6px',
-                        fontSize: 11,
-                        marginRight: 4,
-                        color: '#555',
-                      }}>
-                        {c}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                )}
               </div>
             )
           })}
