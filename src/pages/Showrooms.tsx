@@ -283,6 +283,23 @@ const Showrooms = () => {
           padding: '14px 16px 10px',
           borderBottom: '1px solid #f0f0f0',
         }}>
+          <div style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            background: '#fff8f5',
+            border: '1px solid #e8531a',
+            borderRadius: '6px',
+            padding: '3px 10px',
+            fontSize: '11px',
+            fontWeight: '700',
+            color: '#e8531a',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            marginBottom: '6px',
+          }}>
+            Showrooms
+          </div>
           <h1 style={{
             fontSize: isMobile ? '15px' : '18px',
             fontWeight: 800,
