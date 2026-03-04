@@ -62,13 +62,18 @@ const IconCheckWhite = () => (
 
 const Advertise = () => {
   const [formData, setFormData] = useState({
-    fullName: '', company: '', email: '',
-    phone: '', package: 'Basic', message: ''
+    name: '', 
+    business_name: '', 
+    email: '',
+    phone: '', 
+    package: 'Basic', 
+    message: ''
   })
   const [submitted, setSubmitted] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({})
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -76,13 +81,58 @@ const Advertise = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  const validate = () => {
+    const errors: Record<string, string> = {}
+
+    // Name
+    if (!formData.name || formData.name.trim().length < 2) {
+      errors.name = 'Please enter your full name'
+    }
+
+    // Email — must match standard email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!formData.email || !emailRegex.test(formData.email.trim())) {
+      errors.email = 'Please enter a valid email address'
+    }
+
+    // Phone — must be 10 digits, optionally starting with +977 or 0
+    const phoneRegex = /^(\+977|0)?[9][6-9]\d{8}$|^(\+977|0)?[0-9]{7,10}$/
+    if (!formData.phone || formData.phone.trim().length < 7) {
+      errors.phone = 'Please enter a valid phone number'
+    }
+
+    // Business name
+    if (!formData.business_name || formData.business_name.trim().length < 2) {
+      errors.business_name = 'Please enter your business name'
+    }
+
+    return errors
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
+    
+    // Clear error when user starts typing
+    if (formErrors[name]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev }
+        delete newErrors[name]
+        return newErrors
+      })
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    const errors = validate()
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors)
+      return
+    }
+    setFormErrors({})
+
     setLoading(true)
     setError(null)
 
@@ -90,8 +140,8 @@ const Advertise = () => {
       const { error } = await supabase
         .from('enquiries')
         .insert([{
-          full_name: formData.fullName,
-          company: formData.company,
+          full_name: formData.name,
+          company: formData.business_name,
           email: formData.email,
           phone: formData.phone,
           package: formData.package,
@@ -823,10 +873,10 @@ const Advertise = () => {
                 marginBottom: '16px',
               }}>
                 {[
-                  { label: 'Full Name *', name: 'fullName', type: 'text', required: true },
-                  { label: 'Company / Showroom *', name: 'company', type: 'text', required: true },
+                  { label: 'Full Name *', name: 'name', type: 'text', required: true },
+                  { label: 'Business Name *', name: 'business_name', type: 'text', required: true },
                   { label: 'Email *', name: 'email', type: 'email', required: true },
-                  { label: 'Phone', name: 'phone', type: 'text', required: false },
+                  { label: 'Phone *', name: 'phone', type: 'text', required: true },
                 ].map((field, i) => (
                   <div key={i}>
                     <label style={{
@@ -847,7 +897,7 @@ const Advertise = () => {
                       style={{
                         width: '100%',
                         padding: '11px 14px',
-                        border: '1px solid #d2d2d7',
+                        border: formErrors[field.name] ? '1px solid #ef4444' : '1px solid #d2d2d7',
                         borderRadius: '8px',
                         fontSize: '14px',
                         outline: 'none',
@@ -856,8 +906,18 @@ const Advertise = () => {
                         fontFamily: 'inherit',
                       }}
                       onFocus={e => e.target.style.borderColor = '#e8531a'}
-                      onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                      onBlur={e => e.target.style.borderColor = formErrors[field.name] ? '#ef4444' : '#d2d2d7'}
                     />
+                    {formErrors[field.name] && (
+                      <div style={{
+                        fontSize: '11px',
+                        color: '#ef4444',
+                        marginTop: '4px',
+                        fontWeight: '500',
+                      }}>
+                        {formErrors[field.name]}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
