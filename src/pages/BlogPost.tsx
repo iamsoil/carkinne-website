@@ -211,24 +211,6 @@ const BlogPost = () => {
         margin: '0 auto',
         padding: isMobile ? '20px 16px' : '40px 24px',
       }}>
-        <div style={{ marginBottom: '16px' }}>
-          <span
-            onClick={() => navigate('/blog')}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              color: '#e8531a',
-              fontSize: '13px',
-              fontWeight: '700',
-              cursor: 'pointer',
-              textDecoration: 'none',
-            }}
-          >
-            <IconArrow /> Back to Blog
-          </span>
-        </div>
-
         <div style={{ marginBottom: '12px' }}>
           <span style={{
             background: '#fff8f5',
@@ -357,6 +339,23 @@ const BlogPost = () => {
             </p>
           </div>
         )}
+        
+        <div style={{ marginTop: '40px', paddingTop: '24px', borderTop: '1px solid #f0f0f0' }}>
+          <span
+            onClick={() => navigate('/blog')}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              color: '#e8531a',
+              fontSize: '13px',
+              fontWeight: '700',
+              cursor: 'pointer',
+            }}
+          >
+            <IconArrow /> Back to Blog
+          </span>
+        </div>
       </div>
 
       {/* Related Posts */}
