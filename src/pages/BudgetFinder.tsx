@@ -136,21 +136,19 @@ const BudgetFinder = () => {
   // Handle rank selection
   const handleRankSelect = (itemId: string, rank: number) => {
     setRankings(prev => {
-      // Create a copy of the current rankings
-      const newRankings = { ...prev };
-      
-      // If this rank is already assigned to another item, unassign it
-      Object.keys(newRankings).forEach(key => {
-        if (newRankings[key] === rank) {
-          newRankings[key] = null;
-        }
-      });
-      
-      // Assign the rank to the current item
-      newRankings[itemId] = rank;
-      
-      return newRankings;
-    });
+      const newRankings: Record<string, number | null> = {}
+      // Copy all, clearing any item that had this rank
+      Object.keys(prev).forEach(key => {
+        newRankings[key] = prev[key] === rank ? null : prev[key]
+      })
+      // If this item already has this rank, toggle it off
+      if (prev[itemId] === rank) {
+        newRankings[itemId] = null
+      } else {
+        newRankings[itemId] = rank
+      }
+      return newRankings
+    })
   };
 
   // Calculate match score for cars
@@ -1041,14 +1039,14 @@ const BudgetFinder = () => {
                     }}>
                       {item.label}
                     </span>
-                    <div style={{ display: 'flex', gap: '4px' }}>
+                    <div style={{ display: 'flex', gap: isMobile ? '3px' : '4px' }}>
                       {[1, 2, 3, 4, 5, 6].map((rank) => (
                         <button
                           key={rank}
                           onClick={() => handleRankSelect(item.id, rank)}
                           style={{
-                            width: '28px',
-                            height: '28px',
+                            width: isMobile ? '26px' : '28px',
+                            height: isMobile ? '26px' : '28px',
                             borderRadius: '8px',
                             fontSize: '11px',
                             fontWeight: '700',
@@ -1061,6 +1059,7 @@ const BudgetFinder = () => {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
+                            flexShrink: 0,
                           }}
                         >
                           {rank}
