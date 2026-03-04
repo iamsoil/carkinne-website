@@ -211,38 +211,38 @@ const BlogPost = () => {
         margin: '0 auto',
         padding: isMobile ? '20px 16px' : '40px 24px',
       }}>
-        <div 
-          onClick={() => navigate('/blog')}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            color: '#e8531a',
-            fontSize: '13px',
-            fontWeight: '700',
-            cursor: 'pointer',
-            marginBottom: '16px',
-            textDecoration: 'none',
-          }}
-        >
-          <IconArrow />
-          Back to Blog
+        <div style={{ marginBottom: '16px' }}>
+          <span
+            onClick={() => navigate('/blog')}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              color: '#e8531a',
+              fontSize: '13px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              textDecoration: 'none',
+            }}
+          >
+            <IconArrow /> Back to Blog
+          </span>
         </div>
-        
-        <div style={{
-          display: 'inline-block',
-          background: '#fff8f5',
-          border: '1px solid #fde8da',
-          color: '#e8531a',
-          fontSize: '11px',
-          fontWeight: '700',
-          textTransform: 'uppercase',
-          letterSpacing: '1px',
-          borderRadius: '6px',
-          padding: '4px 12px',
-          marginBottom: '12px',
-        }}>
-          {post.category || 'General'}
+
+        <div style={{ marginBottom: '12px' }}>
+          <span style={{
+            background: '#fff8f5',
+            border: '1px solid #fde8da',
+            color: '#e8531a',
+            fontSize: '11px',
+            fontWeight: '700',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            borderRadius: '6px',
+            padding: '4px 12px',
+          }}>
+            {post.category || 'General'}
+          </span>
         </div>
         
         <h1 style={{
