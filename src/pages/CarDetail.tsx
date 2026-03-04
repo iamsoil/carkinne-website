@@ -46,6 +46,14 @@ function InlineEmiCalculator({ price, carName }: { price: number, carName: strin
     <div style={{
       fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
     }}>
+      <style>{`
+        input[type='range'] {
+          -webkit-appearance: auto;
+          accent-color: #e8531a;
+          height: 4px;
+          cursor: pointer;
+        }
+      `}</style>
       <div style={{
         display: 'grid',
         gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
@@ -66,7 +74,13 @@ function InlineEmiCalculator({ price, carName }: { price: number, carName: strin
             <input
               type="range" min={10} max={50} value={downPct}
               onChange={e => setDownPct(parseInt(e.target.value))}
-              style={{ width: '100%', accentColor: '#e8531a' }}
+              style={{
+                width: '100%',
+                accentColor: '#e8531a',
+                height: '4px',
+                cursor: 'pointer',
+                appearance: 'auto',
+              }}
             />
             <div style={{
               display: 'flex', justifyContent: 'space-between',
@@ -451,7 +465,7 @@ const IconFuel = () => (
 const IconSettings = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8531a" strokeWidth="2">
     <circle cx="12" cy="12" r="3"/>
-    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51 1 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+    <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
   </svg>
 )
 
@@ -2199,32 +2213,29 @@ const CarDetail = () => {
 
         {/* SHOWROOMS SECTION */}
         <div id="showrooms-section" style={{ marginTop: '32px' }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            marginBottom: '16px'
-          }}>
+          <div style={{ marginBottom: '16px' }}>
             <div style={{
-              display: 'inline-block',
+              display: 'inline-flex',
+              alignItems: 'center',
               background: '#fff8f5',
               border: '1px solid #e8531a',
               borderRadius: '6px',
-              padding: '4px 12px',
-              fontSize: '12px',
+              padding: '3px 10px',
+              fontSize: '11px',
               fontWeight: '700',
               color: '#e8531a',
               textTransform: 'uppercase',
-              letterSpacing: '1px'
+              letterSpacing: '1px',
+              marginBottom: '8px',
             }}>
-              SHOWROOMS
+              Showrooms
             </div>
             <h2 style={{
               fontSize: isMobile ? '18px' : '22px',
               fontWeight: '800',
               color: '#1d1d1f',
+              letterSpacing: '-0.5px',
               margin: 0,
-              letterSpacing: '-0.5px'
             }}>
               Where to Buy {car.name}
             </h2>
@@ -2435,60 +2446,32 @@ const CarDetail = () => {
         {/* SIMILAR CARS SECTION */}
         {similarCars.length > 0 && (
           <div style={{ marginTop: '32px' }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: '16px'
-            }}>
+            <div style={{ marginBottom: '16px' }}>
               <div style={{
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '12px'
+                background: '#fff8f5',
+                border: '1px solid #e8531a',
+                borderRadius: '6px',
+                padding: '3px 10px',
+                fontSize: '11px',
+                fontWeight: '700',
+                color: '#e8531a',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                marginBottom: '8px',
               }}>
-                <div style={{
-                  display: 'inline-block',
-                  background: '#fff8f5',
-                  border: '1px solid #e8531a',
-                  borderRadius: '6px',
-                  padding: '4px 12px',
-                  fontSize: '12px',
-                  fontWeight: '700',
-                  color: '#e8531a',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px'
-                }}>
-                  SIMILAR CARS
-                </div>
-                <h2 style={{
-                  fontSize: isMobile ? '18px' : '22px',
-                  fontWeight: '800',
-                  color: '#1d1d1f',
-                  margin: 0,
-                  letterSpacing: '-0.5px'
-                }}>
-                  You Might Also Like
-                </h2>
+                Similar Cars
               </div>
-              <button
-                onClick={() => navigate('/cars')}
-                style={{
-                  color: '#e8531a',
-                  fontSize: '13px',
-                  fontWeight: '700',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
-                onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
-                onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
-              >
-                View All <IconArrow />
-              </button>
+              <h2 style={{
+                fontSize: isMobile ? '18px' : '22px',
+                fontWeight: '800',
+                color: '#1d1d1f',
+                letterSpacing: '-0.5px',
+                margin: 0,
+              }}>
+                You Might Also Like
+              </h2>
             </div>
             <div style={{
               display: 'grid',
@@ -2565,32 +2548,29 @@ const CarDetail = () => {
         {/* COMPARE SECTION */}
         {similarCars.length > 0 && (
           <div style={{ marginTop: '32px', marginBottom: '40px' }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              marginBottom: '16px'
-            }}>
+            <div style={{ marginBottom: '16px' }}>
               <div style={{
-                display: 'inline-block',
+                display: 'inline-flex',
+                alignItems: 'center',
                 background: '#fff8f5',
                 border: '1px solid #e8531a',
                 borderRadius: '6px',
-                padding: '4px 12px',
-                fontSize: '12px',
+                padding: '3px 10px',
+                fontSize: '11px',
                 fontWeight: '700',
                 color: '#e8531a',
                 textTransform: 'uppercase',
-                letterSpacing: '1px'
+                letterSpacing: '1px',
+                marginBottom: '8px',
               }}>
-                COMPARE
+                Compare
               </div>
               <h2 style={{
                 fontSize: isMobile ? '18px' : '22px',
                 fontWeight: '800',
                 color: '#1d1d1f',
+                letterSpacing: '-0.5px',
                 margin: 0,
-                letterSpacing: '-0.5px'
               }}>
                 Compare with Similar
               </h2>
