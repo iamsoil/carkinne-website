@@ -221,7 +221,7 @@ const BlogPost = () => {
             fontSize: '13px',
             fontWeight: '700',
             cursor: 'pointer',
-            marginBottom: '20px',
+            marginBottom: '16px',
             textDecoration: 'none',
           }}
         >
@@ -338,10 +338,7 @@ const BlogPost = () => {
         
         {!post.content && (
           <div style={{
-            background: '#fff8f5',
-            border: '1px solid #fde8da',
-            borderRadius: '12px',
-            padding: '20px',
+            padding: '0',
           }}>
             <p style={{
               fontSize: isMobile ? '15px' : '16px',
