@@ -53,6 +53,9 @@ function InlineEmiCalculator({ price, carName }: { price: number, carName: strin
           height: 4px;
           cursor: pointer;
         }
+        .no-spinner::-webkit-inner-spin-button,
+        .no-spinner::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        .no-spinner { -moz-appearance: textfield; }
       `}</style>
       <div style={{
         display: 'grid',
@@ -72,11 +75,13 @@ function InlineEmiCalculator({ price, carName }: { price: number, carName: strin
               Down Payment
             </div>
             <input
-              type="number"
+              type="text"
+              inputMode="numeric"
               min={10}
               max={50}
               value={downPct}
               onChange={e => setDownPct(Math.min(50, Math.max(10, parseInt(e.target.value) || 10)))}
+              className="no-spinner"
               style={{
                 width: '100%',
                 border: '1px solid #d2d2d7',
