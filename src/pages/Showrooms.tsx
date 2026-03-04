@@ -12,6 +12,31 @@ L.Icon.Default.mergeOptions({
   shadowUrl: '',
 })
 
+const IconPin = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+    <circle cx="12" cy="9" r="2.5"/>
+  </svg>
+)
+
+const IconPhone = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.22 1.18 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.56-.56a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/>
+  </svg>
+)
+
+const IconClock = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+  </svg>
+)
+
+const IconSearch = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+  </svg>
+)
+
 const Showrooms = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCity, setSelectedCity] = useState('All Cities')
@@ -170,15 +195,15 @@ const Showrooms = () => {
               ${showroom.brand}
             </div>
             <div style="font-size:11px;color:#6e6e73;margin-bottom:2px">
-              📍 ${showroom.address}
+              <span style="color:#e8531a;font-weight:700">Address:</span> ${showroom.address}
             </div>
             ${showroom.phone ? `
             <div style="font-size:11px;color:#6e6e73;margin-bottom:2px">
-              📞 ${showroom.phone}
+              <span style="color:#e8531a;font-weight:700">Phone:</span> ${showroom.phone}
             </div>` : ''}
             ${showroom.working_hours ? `
             <div style="font-size:11px;color:#6e6e73;margin-bottom:8px">
-              🕐 ${showroom.working_hours}
+              <span style="color:#e8531a;font-weight:700">Hours:</span> ${showroom.working_hours}
             </div>` : ''}
             <div style="display:flex;gap:6px;margin-top:8px">
               <a href="${mapsLink}" target="_blank"
@@ -186,7 +211,7 @@ const Showrooms = () => {
                   background:#e8531a;color:white;padding:5px 8px;
                   border-radius:6px;font-size:11px;
                   text-decoration:none;font-weight:600">
-                📍 Directions
+                Directions
               </a>
               ${waLink ? `
               <a href="${waLink}" target="_blank"
@@ -194,7 +219,7 @@ const Showrooms = () => {
                   background:#25D366;color:white;padding:5px 8px;
                   border-radius:6px;font-size:11px;
                   text-decoration:none;font-weight:600">
-                💬 WhatsApp
+                WhatsApp
               </a>` : ''}
             </div>
           </div>
@@ -246,6 +271,7 @@ const Showrooms = () => {
         flexDirection: 'column',
         background: 'white',
         order: isMobile ? 2 : 1,
+        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
       }}>
 
         {/* Sticky filters header */}
@@ -258,10 +284,11 @@ const Showrooms = () => {
           borderBottom: '1px solid #f0f0f0',
         }}>
           <h1 style={{
-            fontSize: isMobile ? '16px' : '20px',
-            fontWeight: 700,
+            fontSize: isMobile ? '15px' : '18px',
+            fontWeight: 800,
             color: '#1d1d1f',
             margin: 0,
+            letterSpacing: '-0.3px',
           }}>
             Car Showrooms in Nepal
           </h1>
@@ -274,22 +301,36 @@ const Showrooms = () => {
             Find authorized dealers near you
           </p>
 
-          <input
-            type="text"
-            placeholder="Search showrooms..."
-            style={{
-              width: '100%',
-              border: '1px solid #d2d2d7',
-              borderRadius: '8px',
-              padding: '8px 12px',
-              fontSize: '13px',
-              marginTop: '10px',
-              boxSizing: 'border-box',
-              outline: 'none',
-            }}
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-          />
+          <div style={{ position: 'relative', marginTop: '10px' }}>
+            <div style={{
+              position: 'absolute',
+              left: '10px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: '#999',
+              pointerEvents: 'none',
+            }}>
+              <IconSearch />
+            </div>
+            <input
+              type="text"
+              placeholder="Search showrooms..."
+              style={{
+                width: '100%',
+                border: '1px solid #d2d2d7',
+                borderRadius: '8px',
+                padding: '8px 12px',
+                fontSize: '13px',
+                boxSizing: 'border-box',
+                outline: 'none',
+                paddingLeft: '32px',
+              }}
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              onFocus={e => e.target.style.borderColor = '#e8531a'}
+              onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+            />
+          </div>
 
           <div style={{
             display: 'flex',
@@ -306,9 +347,13 @@ const Showrooms = () => {
                 boxSizing: 'border-box',
                 background: 'white',
                 outline: 'none',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
               }}
               value={selectedBrand}
               onChange={e => setSelectedBrand(e.target.value)}
+              onFocus={e => e.target.style.borderColor = '#e8531a'}
+              onBlur={e => e.target.style.borderColor = '#d2d2d7'}
             >
               {brands.map(b => (
                 <option key={b} value={b}>{b}</option>
@@ -325,9 +370,13 @@ const Showrooms = () => {
                 boxSizing: 'border-box',
                 background: 'white',
                 outline: 'none',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
               }}
               value={selectedCity}
               onChange={e => setSelectedCity(e.target.value)}
+              onFocus={e => e.target.style.borderColor = '#e8531a'}
+              onBlur={e => e.target.style.borderColor = '#d2d2d7'}
             >
               {cities.map(city => (
                 <option key={city} value={city}>{city}</option>
@@ -335,15 +384,19 @@ const Showrooms = () => {
             </select>
           </div>
 
-          <p style={{
-            fontSize: '12px',
-            color: '#6e6e73',
-            padding: '6px 0 0',
-            margin: 0,
+          <div style={{
+            display: 'inline-block',
+            background: '#fff8f5',
+            border: '1px solid #fde8da',
+            borderRadius: '6px',
+            padding: '2px 10px',
+            fontSize: '11px',
+            fontWeight: '700',
+            color: '#e8531a',
+            marginTop: '8px',
           }}>
-            {loading ? 'Loading...' :
-              `${filteredShowrooms.length} showrooms found`}
-          </p>
+            {loading ? 'Loading...' : `${filteredShowrooms.length} showrooms found`}
+          </div>
         </div>
 
         {/* Scrollable list only */}
@@ -422,22 +475,72 @@ const Showrooms = () => {
                       {showroom.brand}
                     </div>
                     <div style={{
-                      fontSize: 12, color: '#6e6e73', marginTop: 4
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '5px',
+                      fontSize: '12px',
+                      color: '#6e6e73',
+                      marginTop: '3px',
                     }}>
-                      📍 {showroom.address}
+                      <span style={{ 
+                        color: '#6e6e73', 
+                        display: 'inline-flex', 
+                        verticalAlign: 'middle', 
+                        marginRight: '4px' 
+                      }}>
+                        <IconPin />
+                      </span>
+                      {showroom.address}
                     </div>
                     {showroom.phone && (
                       <div style={{
-                        fontSize: 12, color: '#6e6e73', marginTop: 2
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        fontSize: '12px',
+                        color: '#6e6e73',
+                        marginTop: '3px',
                       }}>
-                        📞 {showroom.phone}
+                        <span style={{ 
+                          color: '#6e6e73', 
+                          display: 'inline-flex', 
+                          verticalAlign: 'middle', 
+                          marginRight: '4px' 
+                        }}>
+                          <IconPhone />
+                        </span>
+                        {showroom.phone}
                       </div>
                     )}
                     {showroom.working_hours && (
                       <div style={{
-                        fontSize: 12, color: '#6e6e73', marginTop: 2
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        fontSize: '12px',
+                        color: '#6e6e73',
+                        marginTop: '3px',
                       }}>
-                        🕐 {showroom.working_hours}
+                        <span style={{ 
+                          color: '#6e6e73', 
+                          display: 'inline-flex', 
+                          verticalAlign: 'middle', 
+                          marginRight: '4px' 
+                        }}>
+                          <IconClock />
+                        </span>
+                        {showroom.working_hours}
+                      </div>
+                    )}
+                    {isActive && (
+                      <div style={{
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        color: '#e8531a',
+                        marginTop: '8px',
+                        display: 'inline-block',
+                      }}>
+                        View on Map →
                       </div>
                     )}
                   </div>
