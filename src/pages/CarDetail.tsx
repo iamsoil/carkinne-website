@@ -451,7 +451,7 @@ const IconFuel = () => (
 const IconSettings = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8531a" strokeWidth="2">
     <circle cx="12" cy="12" r="3"/>
-    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51 1 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
   </svg>
 )
 
@@ -1213,7 +1213,9 @@ const CarDetail = () => {
             onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
             onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
           >
-            <IconGauge style={{ margin: '0 auto 8px', display: 'block' }} />
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+              <IconGauge />
+            </div>
             <div style={{
               fontSize: isMobile ? '12px' : '13px',
               fontWeight: '700',
@@ -1241,7 +1243,9 @@ const CarDetail = () => {
             onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
             onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
           >
-            <IconFuel style={{ margin: '0 auto 8px', display: 'block' }} />
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+              <IconFuel />
+            </div>
             <div style={{
               fontSize: isMobile ? '12px' : '13px',
               fontWeight: '700',
@@ -1269,7 +1273,9 @@ const CarDetail = () => {
             onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
             onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
           >
-            <IconFuel style={{ margin: '0 auto 8px', display: 'block' }} />
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+              <IconFuel />
+            </div>
             <div style={{
               fontSize: isMobile ? '12px' : '13px',
               fontWeight: '700',
@@ -1297,7 +1303,9 @@ const CarDetail = () => {
             onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
             onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
           >
-            <IconSettings style={{ margin: '0 auto 8px', display: 'block' }} />
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+              <IconSettings />
+            </div>
             <div style={{
               fontSize: isMobile ? '12px' : '13px',
               fontWeight: '700',
@@ -1325,7 +1333,9 @@ const CarDetail = () => {
             onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
             onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
           >
-            <IconUsers style={{ margin: '0 auto 8px', display: 'block' }} />
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+              <IconUsers />
+            </div>
             <div style={{
               fontSize: isMobile ? '12px' : '13px',
               fontWeight: '700',
