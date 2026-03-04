@@ -205,24 +205,6 @@ const BlogPost = () => {
         <meta name="description" content={post.seo_description || post.excerpt} />
       </div>
 
-      {/* Cover Image */}
-      <div style={{
-        width: '100%',
-        height: isMobile ? '220px' : '380px',
-        overflow: 'hidden',
-        position: 'relative',
-      }}>
-        <img 
-          src={post.cover_image || 'https://placehold.co/1200x400/f5f5f7/6e6e73?text=CarKinne'} 
-          alt={post.title} 
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
-        />
-      </div>
-
       {/* Article content */}
       <div style={{
         maxWidth: '720px',
@@ -314,6 +296,20 @@ const BlogPost = () => {
           background: '#f0f0f0',
           margin: '0 0 28px',
         }}></div>
+        
+        {/* Cover Image - moved inline within content flow */}
+        <img 
+          src={post.cover_image || 'https://placehold.co/1200x400/f5f5f7/6e6e73?text=CarKinne'} 
+          alt={post.title} 
+          style={{
+            width: '100%',
+            height: isMobile ? '200px' : '320px',
+            objectFit: 'cover',
+            borderRadius: '12px',
+            marginBottom: '28px',
+            display: 'block',
+          }}
+        />
         
         <div 
           className="article-body"
