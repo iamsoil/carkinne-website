@@ -2659,6 +2659,11 @@ const CarDetail = () => {
                     </div>
                   </div>
                   <button
+                    onClick={() => {
+                      localStorage.setItem('compareCar1', car.slug)
+                      localStorage.setItem('compareCar2', similarCar.slug)
+                      navigate(`/cars?compare=${car.slug}&with=${similarCar.slug}`)
+                    }}
                     style={{
                       marginTop: '12px',
                       border: '1px solid #d2d2d7',
