@@ -77,6 +77,9 @@ const Cars = () => {
   }, [])
 
   useEffect(() => { setSearchQuery(searchFromUrl) }, [searchFromUrl])
+  useEffect(() => {
+    if (isMobile) setViewMode('grid')
+  }, [isMobile])
   useEffect(() => { fetchCars() }, [])
   useEffect(() => { filterCars() }, [
     cars, searchQuery, priceRange,
@@ -530,40 +533,42 @@ const Cars = () => {
               </select>
 
               {/* View toggle */}
-              <div style={{
-                display: 'flex',
-                border: '1px solid #d2d2d7',
-                borderRadius: '10px',
-                overflow: 'hidden',
-              }}>
-                <button
-                  onClick={() => setViewMode('grid')}
-                  style={{
-                    padding: '10px 14px',
-                    border: 'none',
-                    background: viewMode === 'grid' ? '#e8531a' : 'white',
-                    color: viewMode === 'grid' ? 'white' : '#6e6e73',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  <IconGrid />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  style={{
-                    padding: '10px 14px',
-                    border: 'none',
-                    borderLeft: '1px solid #d2d2d7',
-                    background: viewMode === 'list' ? '#e8531a' : 'white',
-                    color: viewMode === 'list' ? 'white' : '#6e6e73',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
-                >
-                  <IconList />
-                </button>
-              </div>
+              {!isMobile && (
+                <div style={{
+                  display: 'flex',
+                  border: '1px solid #d2d2d7',
+                  borderRadius: '10px',
+                  overflow: 'hidden',
+                }}>
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    style={{
+                      padding: '10px 14px',
+                      border: 'none',
+                      background: viewMode === 'grid' ? '#e8531a' : 'white',
+                      color: viewMode === 'grid' ? 'white' : '#6e6e73',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    <IconGrid />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    style={{
+                      padding: '10px 14px',
+                      border: 'none',
+                      borderLeft: '1px solid #d2d2d7',
+                      background: viewMode === 'list' ? '#e8531a' : 'white',
+                      color: viewMode === 'list' ? 'white' : '#6e6e73',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    <IconList />
+                  </button>
+                </div>
+              )}
 
               {/* Mobile filter toggle */}
               {isMobile && (

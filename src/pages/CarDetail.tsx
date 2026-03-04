@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { formatNPR } from '@/utils/format';
+import { useCompare } from '@/contexts/CompareContext';
 
 function useMapEffect(effect: () => void | (() => void), deps: any[]) {
   const isInitialMount = useRef(true);
@@ -53,9 +54,14 @@ function InlineEmiCalculator({ price, carName }: { price: number, carName: strin
           height: 4px;
           cursor: pointer;
         }
-        .no-spinner::-webkit-inner-spin-button,
-        .no-spinner::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-        .no-spinner { -moz-appearance: textfield; }
+        input.no-spinner::-webkit-inner-spin-button,
+        input.no-spinner::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+        input.no-spinner {
+          -moz-appearance: textfield;
+        }
       `}</style>
       <div style={{
         display: 'grid',
@@ -495,6 +501,7 @@ const IconArrow = () => (
 const CarDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const { addToCompare, clearCompare } = useCompare();
   const [car, setCar] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -2665,9 +2672,10 @@ const CarDetail = () => {
                   </div>
                   <button
                     onClick={() => {
-                      localStorage.setItem('compareCar1', car.slug)
-                      localStorage.setItem('compareCar2', similarCar.slug)
-                      navigate(`/cars?compare=${car.slug}&with=${similarCar.slug}`)
+                      clearCompare()
+                      addToCompare(car)
+                      addToCompare(similarCar)
+                      navigate('/compare')
                     }}
                     style={{
                       marginTop: '12px',
