@@ -69,32 +69,29 @@ function InlineEmiCalculator({ price, carName }: { price: number, carName: strin
               color: '#6e6e73', textTransform: 'uppercase',
               letterSpacing: '1px', marginBottom: '10px',
             }}>
-              Down Payment — {downPct}%
+              Down Payment
             </div>
             <input
-              type="range" min={10} max={50} value={downPct}
-              onChange={e => setDownPct(parseInt(e.target.value))}
+              type="number"
+              min={10}
+              max={50}
+              value={downPct}
+              onChange={e => setDownPct(Math.min(50, Math.max(10, parseInt(e.target.value) || 10)))}
               style={{
                 width: '100%',
-                accentColor: '#e8531a',
-                height: '4px',
-                cursor: 'pointer',
-                appearance: 'auto',
+                border: '1px solid #d2d2d7',
+                borderRadius: '8px',
+                padding: '10px 12px',
+                fontSize: '13px',
+                fontFamily: 'inherit',
+                outline: 'none',
+                boxSizing: 'border-box' as const,
               }}
+              onFocus={e => e.target.style.borderColor = '#e8531a'}
+              onBlur={e => e.target.style.borderColor = '#d2d2d7'}
             />
-            <div style={{
-              display: 'flex', justifyContent: 'space-between',
-              fontSize: '11px', color: '#6e6e73', marginTop: '4px',
-            }}>
-              <span>10%</span><span>50%</span>
-            </div>
-            <div style={{
-              marginTop: '8px',
-              fontSize: '13px',
-              color: '#1d1d1f',
-              fontWeight: '600',
-            }}>
-              Down: {formatNPR(downPayment)} → Loan: {formatNPR(loanAmount)}
+            <div style={{ fontSize: '11px', color: '#6e6e73', marginTop: '4px' }}>
+              Enter percentage between 10–50%
             </div>
           </div>
 
@@ -446,7 +443,7 @@ const IconGauge = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8531a" strokeWidth="2">
     <path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/>
     <path d="M12 6v2"/>
-    <path d="M6.34 7.34l1.42 1.42"/>
+    <path d="M6.34 7.34l2.12 2.12"/>
     <path d="M4 13h2"/>
     <path d="M12 12l3-3"/>
     <circle cx="12" cy="13" r="1" fill="#e8531a"/>
@@ -465,7 +462,7 @@ const IconFuel = () => (
 const IconSettings = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8531a" strokeWidth="2">
     <circle cx="12" cy="12" r="3"/>
-    <path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
+    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
   </svg>
 )
 
