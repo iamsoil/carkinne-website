@@ -60,7 +60,12 @@ const BudgetFinder = () => {
   const [transmission, setTransmission] = useState<string>('No preference');
   const [features, setFeatures] = useState<string[]>([]);
   const [rankings, setRankings] = useState<Record<string, number | null>>({
-    '1': null, '2': null, '3': null, '4': null, '5': null, '6': null
+    '1': null,
+    '2': null,
+    '3': null,
+    '4': null,
+    '5': null,
+    '6': null,
   });
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -136,17 +141,23 @@ const BudgetFinder = () => {
   // Handle rank selection
   const handleRankSelect = (itemId: string, rank: number) => {
     setRankings(prev => {
-      const newRankings: Record<string, number | null> = {}
-      // Copy all, clearing any item that had this rank
-      Object.keys(prev).forEach(key => {
-        newRankings[key] = prev[key] === rank ? null : prev[key]
+      const newRankings: Record<string, number | null> = { ...prev }
+      
+      // Check if this item already has this exact rank (toggle off)
+      const alreadySelected = prev[itemId] === rank
+      
+      // Remove this rank from whichever item currently holds it
+      Object.keys(newRankings).forEach(key => {
+        if (newRankings[key] === rank) {
+          newRankings[key] = null
+        }
       })
-      // If this item already has this rank, toggle it off
-      if (prev[itemId] === rank) {
-        newRankings[itemId] = null
-      } else {
+      
+      // If it wasn't already selected, assign it. If it was, leave it null (toggled off)
+      if (!alreadySelected) {
         newRankings[itemId] = rank
       }
+      
       return newRankings
     })
   };
