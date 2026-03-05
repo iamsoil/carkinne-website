@@ -177,7 +177,7 @@ const Index = () => {
       <section style={{
         position: 'relative',
         height: isMobile ? '80vh' : '75vh',
-        backgroundImage: 'url(https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/web-images/carkinne-hero.png)',
+        backgroundImage: 'url(https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/web-images/carkinne-hero-image.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
@@ -208,16 +208,14 @@ const Index = () => {
 
           {/* Heading */}
           <h1 style={{
-            fontSize: isMobile ? '51.84px' : '72px',
-            fontWeight: '800',
             color: 'white',
-            lineHeight: 1.1,
+            fontSize: isMobile ? '36px' : '60px',
+            fontWeight: '800',
             letterSpacing: '-2px',
+            lineHeight: 1.1,
             margin: '16px 0 8px',
           }}>
-            Find Your<br />
-            Perfect Car<br />
-            <span style={{ color: 'white' }}>in Nepal</span>
+            Find Your Perfect Car in Nepal
           </h1>
 
           <p style={{
