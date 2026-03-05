@@ -164,20 +164,23 @@ const Index = () => {
       <style>{`
         @keyframes marquee {
           0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          100% { transform: translateX(-25%); }
         }
         .brand-logo {
-          filter: grayscale(100%) opacity(45%);
-          transition: filter 0.2s;
+          filter: grayscale(100%) opacity(45%");
+          transition: filter 0.3s ease;
+          cursor: pointer;
         }
-        .brand-logo:hover { filter: grayscale(0%) opacity(100%); }
+        .brand-logo:hover {
+          filter: grayscale(0%) opacity(100%");
+        }
       `}</style>
 
       {/* ━━━━━━━━━━ HERO ━━━━━━━━━━ */}
       <section style={{
         position: 'relative',
         height: isMobile ? '80vh' : '75vh',
-        backgroundImage: 'ur(https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/web-images/carkinne-hero.png)',
+        backgroundImage: 'url(https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/web-images/carkinne-background.svg)',
         backgroundSize: 'cover',
         backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
@@ -209,10 +212,10 @@ const Index = () => {
           {/* Heading */}
           <h1 style={{
             color: 'white',
-            fontSize: isMobile ? '36px' : '60px',
+            fontSize: isMobile ? '48px' : '72px',
             fontWeight: '800',
             letterSpacing: '-2px',
-            lineHeight: 1.1,
+            lineHeight: 1.0,
             margin: '16px 0 8px',
           }}>
             Find Your Perfect Car in Nepal
@@ -336,19 +339,21 @@ const Index = () => {
             Popular Brands
           </h2>
         </div>
-        <div style={{ overflow: 'hidden' }}>
+        <div style={{ overflow: 'hidden', position: 'relative' }}>
           <div style={{
             display: 'flex',
             width: 'max-content',
-            animation: 'marquee 25s linear infinite',
+            animation: 'marquee 30s linear infinite',
           }}>
-            {[...popularBrands, ...popularBrands].map((brand, i) => (
+            {[...popularBrands, ...popularBrands, ...popularBrands, ...popularBrands].map((brand, i) => (
               <Link to={brand.link} key={i} style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '120px', height: '56px',
-                flexShrink: 0, padding: '8px 16px',
+                width: '120px',
+                height: '56px',
+                flexShrink: 0,
+                padding: '8px 16px',
                 textDecoration: 'none',
               }}>
                 <img
@@ -356,8 +361,10 @@ const Index = () => {
                   alt={brand.name}
                   className="brand-logo"
                   style={{
-                    maxWidth: '100%', maxHeight: '100%',
-                    width: 'auto', height: 'auto',
+                    maxWidth: '100%',
+                    maxHeight: '100%',
+                    width: 'auto',
+                    height: 'auto',
                     objectFit: 'contain',
                   }}
                   onError={e => {
