@@ -177,7 +177,7 @@ const Index = () => {
       <section style={{
         position: 'relative',
         height: isMobile ? '80vh' : '75vh',
-        backgroundImage: 'ur(https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/web-images/carkinne-hero-image.png)',
+        backgroundImage: 'ur(https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/web-images/carkinne-hero.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
