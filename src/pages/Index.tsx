@@ -196,7 +196,7 @@ const Index = () => {
             display: 'flex', alignItems: 'center',
             gap: '12px', marginBottom: '16px',
           }}>
-          
+            <div style={{ width: '32px', height: '2px', background: 'white' }} />
             <span style={{
               color: 'white',
               fontSize: '11px', fontWeight: '600',
