@@ -261,36 +261,66 @@ const BlogPost = () => {
                 dangerouslySetInnerHTML={{ __html: post.content || '' }}
               />
 
-              {/* MOBILE SHARE */}
-              {isMobile && (
-                <div style={{ marginTop: '48px', paddingTop: '28px', borderTop: '1px solid #e5e5e5' }}>
-                  <div style={{ fontSize: '12px', fontWeight: '700', color: '#aaa', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '14px' }}>Share this article</div>
-                  <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                    {[
-                      { href: `https://wa.me/?text=${encodeURIComponent(post.title + ' ' + shareUrl)}`, bg: '#25D366', label: 'WhatsApp', icon: <IconWhatsApp /> },
-                      { href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, bg: '#1877F2', label: 'Facebook', icon: <IconFacebook /> },
-                      { href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(shareUrl)}`, bg: '#000', label: 'X', icon: <IconX /> },
-                    ].map((item, i) => (
-                      <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
-                        style={{
-                          display: 'flex', alignItems: 'center', gap: '8px',
-                          background: item.bg, color: 'white',
-                          borderRadius: '10px', padding: '10px 16px',
-                          fontSize: '13px', fontWeight: '700', textDecoration: 'none',
-                        }}
-                      >{item.icon}{item.label}</a>
-                    ))}
-                    <button onClick={handleCopy} style={{
-                      display: 'flex', alignItems: 'center', gap: '8px',
-                      background: copied ? '#e8531a' : 'white',
-                      color: copied ? 'white' : '#1d1d1f',
-                      border: '1.5px solid #e5e5e5', borderRadius: '10px',
-                      padding: '10px 16px', fontSize: '13px', fontWeight: '700',
-                      cursor: 'pointer', fontFamily: 'inherit',
-                    }}><IconLink />{copied ? 'Copied!' : 'Copy Link'}</button>
-                  </div>
+              {/* POST FOOTER - Back + Share */}
+              <div style={{
+                marginTop: '48px', paddingTop: '28px',
+                borderTop: '1px solid #e5e5e5',
+                display: 'flex', alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap', gap: '16px',
+              }}>
+                {/* Back to Blog */}
+                <button
+                  onClick={() => { navigate('/blog'); window.scrollTo(0, 0) }}
+                  style={{
+                    display: 'inline-flex', alignItems: 'center', gap: '8px',
+                    background: 'none', border: '1.5px solid #e5e5e5',
+                    borderRadius: '10px', padding: '10px 20px',
+                    fontSize: '14px', fontWeight: '700',
+                    color: '#6e6e73', cursor: 'pointer',
+                    fontFamily: 'inherit', transition: 'all 0.2s',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = '#e8531a'
+                    e.currentTarget.style.color = '#e8531a'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = '#e5e5e5'
+                    e.currentTarget.style.color = '#6e6e73'
+                  }}
+                >
+                  <IconArrowLeft /> Back to Blog
+                </button>
+
+                {/* Share buttons */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '12px', fontWeight: '700', color: '#aaa', textTransform: 'uppercase', letterSpacing: '1px' }}>Share</span>
+                  {[
+                    { href: `https://wa.me/?text=${encodeURIComponent(post.title + ' ' + shareUrl)}`, bg: '#25D366', icon: <IconWhatsApp /> },
+                    { href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, bg: '#1877F2', icon: <IconFacebook /> },
+                    { href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(shareUrl)}`, bg: '#000', icon: <IconX /> },
+                  ].map((item, i) => (
+                    <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
+                      style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        width: '36px', height: '36px', borderRadius: '8px',
+                        background: item.bg, color: 'white', textDecoration: 'none',
+                        transition: 'transform 0.2s',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
+                      onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
+                    >{item.icon}</a>
+                  ))}
+                  <button onClick={handleCopy} style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    width: '36px', height: '36px', borderRadius: '8px',
+                    background: copied ? '#e8531a' : 'white',
+                    border: '1.5px solid #e5e5e5',
+                    color: copied ? 'white' : '#1d1d1f',
+                    cursor: 'pointer', transition: 'all 0.2s',
+                  }}><IconLink /></button>
                 </div>
-              )}
+              </div>
 
               {/* RECOMMENDED FOR YOU */}
               {recommendedPosts.length > 0 && (
@@ -483,34 +513,6 @@ const BlogPost = () => {
               </div>
             </div>
           )}
-
-          {/* BACK TO BLOG - bottom */}
-          <div style={{ textAlign: 'center', marginTop: '24px', marginBottom: isMobile ? '48px' : '80px' }}>
-            <button
-              onClick={() => {
-                navigate('/blog')
-                window.scrollTo(0, 0)
-              }}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                background: 'none', border: '1.5px solid #e5e5e5',
-                borderRadius: '10px', padding: '12px 28px',
-                fontSize: '14px', fontWeight: '700',
-                color: '#6e6e73', cursor: 'pointer',
-                fontFamily: 'inherit', transition: 'all 0.2s',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = '#e8531a'
-                e.currentTarget.style.color = '#e8531a'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = '#e5e5e5'
-                e.currentTarget.style.color = '#6e6e73'
-              }}
-            >
-              <IconArrowLeft /> Back to Blog
-            </button>
-          </div>
         </div>
       </div>
 
