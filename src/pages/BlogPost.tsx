@@ -24,6 +24,40 @@ const IconCalendar = () => (
   </svg>
 )
 
+const IconShare = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+  </svg>
+)
+
+const IconFacebook = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+  </svg>
+)
+
+const IconWhatsApp = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.554 4.118 1.528 5.847L.057 23.571a.75.75 0 00.921.921l5.724-1.471A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22.5a10.44 10.44 0 01-5.339-1.463l-.383-.228-3.968 1.02 1.02-3.968-.228-.383A10.44 10.44 0 011.5 12C1.5 6.201 6.201 1.5 12 1.5S22.5 6.201 22.5 12 17.799 22.5 12 22.5z"/>
+  </svg>
+)
+
+const IconTwitter = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+  </svg>
+)
+
+const IconLink = () => (
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+    <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+  </svg>
+)
+
 const BlogPost = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -31,6 +65,7 @@ const BlogPost = () => {
   const [relatedPosts, setRelatedPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -340,7 +375,17 @@ const BlogPost = () => {
           </div>
         )}
         
-        <div style={{ marginTop: '40px', paddingTop: '24px', borderTop: '1px solid #f0f0f0' }}>
+        <div style={{
+          marginTop: '40px',
+          paddingTop: '24px',
+          borderTop: '1px solid #f0f0f0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}>
+          {/* Back to Blog */}
           <span
             onClick={() => navigate('/blog')}
             style={{
@@ -355,6 +400,98 @@ const BlogPost = () => {
           >
             <IconArrow /> Back to Blog
           </span>
+
+          {/* Share */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            flexWrap: 'wrap',
+          }}>
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              fontSize: '12px',
+              fontWeight: '700',
+              color: '#6e6e73',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+            }}>
+              <IconShare /> Share
+            </span>
+
+            {/* WhatsApp */}
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(post.title + ' — ' + window.location.href)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                width: '32px', height: '32px', borderRadius: '8px',
+                background: '#25D366', color: 'white', textDecoration: 'none',
+                transition: 'opacity 0.2s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
+              onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+            >
+              <IconWhatsApp />
+            </a>
+
+            {/* Facebook */}
+            <a
+              href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                width: '32px', height: '32px', borderRadius: '8px',
+                background: '#1877f2', color: 'white', textDecoration: 'none',
+                transition: 'opacity 0.2s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
+              onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+            >
+              <IconFacebook />
+            </a>
+
+            {/* X/Twitter */}
+            <a
+              href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(post.title)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                width: '32px', height: '32px', borderRadius: '8px',
+                background: '#000', color: 'white', textDecoration: 'none',
+                transition: 'opacity 0.2s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.opacity = '0.8'}
+              onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+            >
+              <IconTwitter />
+            </a>
+
+            {/* Copy Link */}
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href)
+                setCopied(true)
+                setTimeout(() => setCopied(false), 2000)
+              }}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '5px',
+                padding: '0 12px', height: '32px', borderRadius: '8px',
+                background: copied ? '#e8531a' : '#f5f5f7',
+                color: copied ? 'white' : '#1d1d1f',
+                border: 'none', fontSize: '12px', fontWeight: '600',
+                cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.2s',
+              }}
+            >
+              <IconLink />
+              {copied ? 'Copied!' : 'Copy Link'}
+            </button>
+          </div>
         </div>
       </div>
 
