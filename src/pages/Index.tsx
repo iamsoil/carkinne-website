@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { formatNPR } from '@/utils/format';
@@ -180,7 +180,7 @@ const Index = () => {
       <section style={{
         position: 'relative',
         height: isMobile ? '80vh' : '75vh',
-        backgroundImage: 'url(https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/web-images/carkinne-background.svg)',
+        backgroundImage: 'url(https://pbktycczurhclouptznf.supabase.co/storage/v1/object/public/web-images/carkinne-hero.png)',
         backgroundSize: 'cover',
         backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
@@ -212,13 +212,27 @@ const Index = () => {
           {/* Heading */}
           <h1 style={{
             color: 'white',
-            fontSize: isMobile ? '48px' : '72px',
+            fontSize: isMobile ? '36px' : '60px',
             fontWeight: '800',
             letterSpacing: '-2px',
-            lineHeight: 1.0,
+            lineHeight: 1.1,
             margin: '16px 0 8px',
           }}>
-            Find Your Perfect Car in Nepal
+            <span style={{
+              background: '#e8531a',
+              padding: '2px 8px',
+              display: 'inline',
+              boxDecorationBreak: 'clone',
+              WebkitBoxDecorationBreak: 'clone',
+            }}>Find Your Perfect</span>
+            <br />
+            <span style={{
+              background: '#e8531a',
+              padding: '2px 8px',
+              display: 'inline',
+              boxDecorationBreak: 'clone',
+              WebkitBoxDecorationBreak: 'clone',
+            }}>Car in Nepal</span>
           </h1>
 
           <p style={{
