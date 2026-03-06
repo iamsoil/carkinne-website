@@ -300,8 +300,8 @@ const EvCharging = () => {
 
       {/* LEFT PANEL */}
       <div style={{
-        width: isMobile ? '100%' : '360px',
-        minWidth: isMobile ? 'unset' : '360px',
+        width: isMobile ? '100%' : '380px',
+        minWidth: isMobile ? 'unset' : '380px',
         height: isMobile ? 'calc(100vh - 64px - 224px)' : '100%',
         overflowY: 'auto',
         borderRight: isMobile ? 'none' : '1px solid #e5e5e5',
@@ -310,6 +310,7 @@ const EvCharging = () => {
         flexDirection: 'column',
         background: 'white',
         order: isMobile ? 2 : 1,
+        padding: isMobile ? undefined : '20px 20px 0 20px',
       }}>
 
         {/* Header */}
@@ -373,7 +374,7 @@ const EvCharging = () => {
               </button>
             </div>
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '4px' }}>
               <h1 style={{
                 fontSize: '20px',
                 fontWeight: '800',
@@ -409,6 +410,13 @@ const EvCharging = () => {
             </div>
           )}
           
+          <p style={{
+            fontSize: '13px',
+            color: '#888',
+            margin: '6px 0 16px 0',
+          }}>
+            Find EV charging stations across Nepal
+          </p>
           <p style={{
             fontSize: '12px',
             color: '#6e6e73',
