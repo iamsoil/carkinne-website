@@ -3,6 +3,7 @@
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { useState, useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 
 delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -38,6 +39,7 @@ const IconSearch = () => (
 )
 
 const Showrooms = () => {
+  const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCity, setSelectedCity] = useState('All Cities')
   const [selectedBrand, setSelectedBrand] = useState('All Brands')
@@ -300,22 +302,66 @@ const Showrooms = () => {
           }}>
             Showrooms
           </div>
-          <h1 style={{
-            fontSize: isMobile ? '15px' : '18px',
-            fontWeight: 800,
-            color: '#1d1d1f',
-            margin: 0,
-            letterSpacing: '-0.3px',
-          }}>
-            Car Showrooms in Nepal
-          </h1>
+          
+          {isMobile ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+              <h1 style={{
+                fontSize: '22px',
+                fontWeight: 800,
+                color: '#111',
+                margin: 0,
+              }}>
+                Showrooms in Nepal
+              </h1>
+              <button
+                onClick={() => navigate('/advertise')}
+                style={{
+                  background: 'white',
+                  color: '#e8531a',
+                  border: '1.5px solid #e8531a',
+                  borderRadius: '10px',
+                  padding: '8px 14px',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                }}
+              >
+                + List Showroom
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '4px' }}>
+              <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#111', margin: 0 }}>
+                Showrooms in Nepal
+              </h1>
+              <button
+                onClick={() => navigate('/advertise')}
+                style={{
+                  background: 'white',
+                  color: '#e8531a',
+                  border: '1.5px solid #e8531a',
+                  borderRadius: '10px',
+                  padding: '10px 20px',
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                }}
+              >
+                + List Showroom
+              </button>
+            </div>
+          )}
+          
           <p style={{
-            fontSize: '12px',
-            color: '#6e6e73',
-            marginTop: '2px',
-            marginBottom: 0,
+            fontSize: '13px',
+            color: '#888',
+            margin: '6px 0 16px 0',
           }}>
-            Find authorized dealers near you
+            Browse verified car showrooms across Nepal
           </p>
 
           <div style={{ position: 'relative', marginTop: '10px' }}>
