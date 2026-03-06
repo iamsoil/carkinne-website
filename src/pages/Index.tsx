@@ -63,30 +63,6 @@ const quickFilters = [
   { label: 'Sedan', path: '/cars?category=Sedan' },
 ]
 
-const latestOffers = [
-  {
-    id: '1', title: 'Dashain Special Offer',
-    description: 'Get up to Rs.2L off on selected models',
-    discount_amount: 200000, valid_until: '2025-10-31',
-    image_url: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600',
-    car: 'Toyota Fortuner', type: 'Festival Offer'
-  },
-  {
-    id: '2', title: 'Free Accessories',
-    description: 'Free accessories worth Rs.50,000',
-    discount_amount: 50000, valid_until: '2025-11-15',
-    image_url: 'https://images.unsplash.com/photo-1550355291-bbee04a92027?w=600',
-    car: 'Honda City', type: 'Free Accessories'
-  },
-  {
-    id: '3', title: 'Low Interest EMI',
-    description: 'Special financing at just 7% interest rate',
-    discount_amount: 0, valid_until: '2025-12-31',
-    image_url: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=600',
-    car: 'Suzuki Swift', type: 'Finance Offer'
-  },
-]
-
 function calcEMI(price: number, downPct: number, tenure: number, rate: number) {
   const loan = price * (1 - downPct / 100)
   const r = rate / 12 / 100
@@ -101,6 +77,7 @@ const Index = () => {
   const [featuredCars, setFeaturedCars] = useState<any[]>([])
   const [topShowrooms, setTopShowrooms] = useState<any[]>([])
   const [latestBlogPosts, setLatestBlogPosts] = useState<any[]>([])
+  const [latestOffers, setLatestOffers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
@@ -121,6 +98,7 @@ const Index = () => {
     fetchFeaturedCars()
     fetchTopShowrooms()
     fetchLatestBlogPosts()
+    fetchLatestOffers()
   }, [])
 
   const fetchFeaturedCars = async () => {
@@ -147,6 +125,15 @@ const Index = () => {
       const { data } = await supabase.from('blog_posts').select('*')
         .eq('is_published', true).order('published_at', { ascending: false }).limit(3)
       setLatestBlogPosts(data || [])
+    } catch (err) { console.error(err) }
+  }
+
+  const fetchLatestOffers = async () => {
+    try {
+      const { data } = await supabase.from('offers').select('*')
+        .order('valid_until', { ascending: true })
+        .limit(3)
+      setLatestOffers(data || [])
     } catch (err) { console.error(err) }
   }
 
@@ -766,7 +753,7 @@ const Index = () => {
                     textTransform: 'uppercase', letterSpacing: '0.5px',
                     padding: '4px 10px', borderRadius: '100px',
                   }}>
-                    {offer.type}
+                    {offer.offer_type || 'Special Offer'}
                   </span>
                 </div>
                 <div style={{ padding: '20px' }}>
@@ -774,7 +761,7 @@ const Index = () => {
                     fontSize: '15px', fontWeight: '700',
                     color: '#1d1d1f', marginBottom: '4px',
                   }}>
-                    {offer.car}
+                    {offer.car_name || 'Special Offer'}
                   </div>
                   <div style={{
                     fontSize: '13px', color: '#6e6e73',
@@ -788,7 +775,7 @@ const Index = () => {
                   }}>
                     {offer.discount_amount > 0
                       ? `Save Rs. ${offer.discount_amount.toLocaleString('en-IN')}`
-                      : offer.description}
+                      : offer.discount_text || offer.description}
                   </div>
                   <div style={{
                     display: 'flex', justifyContent: 'space-between',
