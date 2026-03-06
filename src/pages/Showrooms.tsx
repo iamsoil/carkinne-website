@@ -262,8 +262,8 @@ const Showrooms = () => {
 
       {/* LEFT PANEL - bottom on mobile, left on desktop */}
       <div style={{
-        width: isMobile ? '100%' : '380px',
-        minWidth: isMobile ? 'unset' : '380px',
+        width: isMobile ? '100%' : '456px',
+        minWidth: isMobile ? 'unset' : '456px',
         flex: isMobile ? 1 : undefined,
         height: isMobile ? 'calc(100vh - 64px - 224px)' : '100%',
         overflowY: 'auto',
