@@ -215,7 +215,7 @@ const Index = () => {
             fontSize: isMobile ? '48px' : '72px',
             fontWeight: '800',
             letterSpacing: '-2px',
-            lineHeight: 1.1,
+            lineHeight: 1,
             margin: '16px 0 8px',
             textShadow: '0 2px 12px rgba(0,0,0,0.2)',
           }}>
