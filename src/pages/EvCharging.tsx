@@ -374,7 +374,7 @@ const EvCharging = () => {
             onMouseEnter={e => e.currentTarget.style.background = '#c94415'}
             onMouseLeave={e => e.currentTarget.style.background = '#e8531a'}
           >
-            + Contribute a Station
+            + Add Station
           </button>
 
           {/* Search */}
@@ -787,44 +787,71 @@ const EvCharging = () => {
                 </div>
 
                 {/* Submit */}
-                <button
-                  onClick={async () => {
-                    if (!formData.station_name || !formData.phone || !formData.google_maps_url) {
-                      alert('Please fill in Station Name, Phone Number and Google Maps Link.')
-                      return
-                    }
-                    setSubmitting(true)
-                    try {
-                      // Note: This would require creating a table in Supabase
-                      // await supabase.from('charging_station_contributions').insert([{
-                      //   station_name: formData.station_name,
-                      //   phone: formData.phone,
-                      //   google_maps_url: formData.google_maps_url,
-                      //   vendor: formData.vendor,
-                      //   city: formData.city,
-                      //   amenities: formData.amenities,
-                      //   additional_details: formData.additional_details,
-                      //   status: 'pending',
-                      //   submitted_at: new Date().toISOString(),
-                      // }])
-                      setFormSubmitted(true)
-                    } catch (err) {
-                      alert('Something went wrong. Please try again.')
-                    } finally {
-                      setSubmitting(false)
-                    }
-                  }}
-                  style={{
-                    width: '100%',
-                    background: submitting ? '#ccc' : '#e8531a',
-                    color: 'white', border: 'none', borderRadius: '12px',
-                    padding: '13px', fontSize: '14px', fontWeight: '700',
-                    cursor: submitting ? 'not-allowed' : 'pointer',
-                    fontFamily: 'inherit', transition: 'all 0.2s',
-                  }}
-                >
-                  {submitting ? 'Submitting...' : 'Submit for Review'}
-                </button>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    onClick={() => setShowContributeForm(false)}
+                    style={{
+                      flex: 1,
+                      background: 'white',
+                      color: '#1d1d1f',
+                      border: '1.5px solid #e5e5e5',
+                      borderRadius: '12px',
+                      padding: '13px',
+                      fontSize: '14px',
+                      fontWeight: '700',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
+                    onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={async () => {
+                      if (!formData.station_name || !formData.phone || !formData.google_maps_url) {
+                        alert('Please fill in Station Name, Phone Number and Google Maps Link.')
+                        return
+                      }
+                      setSubmitting(true)
+                      try {
+                        // Note: This would require creating a table in Supabase
+                        // await supabase.from('charging_station_contributions').insert([{
+                        //   station_name: formData.station_name,
+                        //   phone: formData.phone,
+                        //   google_maps_url: formData.google_maps_url,
+                        //   vendor: formData.vendor,
+                        //   city: formData.city,
+                        //   amenities: formData.amenities,
+                        //   additional_details: formData.additional_details,
+                        //   status: 'pending',
+                        //   submitted_at: new Date().toISOString(),
+                        // }])
+                        setFormSubmitted(true)
+                      } catch (err) {
+                        alert('Something went wrong. Please try again.')
+                      } finally {
+                        setSubmitting(false)
+                      }
+                    }}
+                    style={{
+                      flex: 2,
+                      background: submitting ? '#ccc' : '#e8531a',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '12px',
+                      padding: '13px',
+                      fontSize: '14px',
+                      fontWeight: '700',
+                      cursor: submitting ? 'not-allowed' : 'pointer',
+                      fontFamily: 'inherit',
+                      transition: 'all 0.2s',
+                    }}
+                  >
+                    {submitting ? 'Submitting...' : 'Submit Station'}
+                  </button>
+                </div>
               </div>
             )}
           </div>
