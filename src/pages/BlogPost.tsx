@@ -36,6 +36,7 @@ const BlogPost = () => {
   const navigate = useNavigate()
   const [post, setPost] = useState<any>(null)
   const [relatedPosts, setRelatedPosts] = useState<any[]>([])
+  const [recommendedPosts, setRecommendedPosts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
@@ -60,6 +61,7 @@ const BlogPost = () => {
         .single()
       if (error) throw error
       setPost(data)
+      
       // Fetch related posts from same category, exclude current
       const { data: related } = await supabase
         .from('blog_posts')
@@ -68,6 +70,15 @@ const BlogPost = () => {
         .neq('slug', slug)
         .limit(3)
       setRelatedPosts(related || [])
+      
+      // Fetch recommended posts from different categories
+      const { data: recommended } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .neq('slug', slug)
+        .neq('category', data.category)
+        .limit(2)
+      setRecommendedPosts(recommended || [])
     } catch (err) {
       console.error('Error fetching post:', err)
     } finally {
@@ -173,22 +184,6 @@ const BlogPost = () => {
         background: 'white', minHeight: '100vh',
       }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto', padding: isMobile ? '24px 16px' : '40px 24px' }}>
-
-          {/* BACK BUTTON */}
-          <button
-            onClick={() => navigate('/blog')}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '6px',
-              background: 'none', border: 'none',
-              fontSize: '13px', fontWeight: '600',
-              color: '#6e6e73', cursor: 'pointer',
-              fontFamily: 'inherit', padding: 0, marginBottom: '32px',
-            }}
-            onMouseEnter={e => e.currentTarget.style.color = '#e8531a'}
-            onMouseLeave={e => e.currentTarget.style.color = '#6e6e73'}
-          >
-            <IconArrowLeft /> Back to Blog
-          </button>
 
           {/* TWO COLUMN LAYOUT */}
           <div style={{
@@ -296,6 +291,90 @@ const BlogPost = () => {
                   </div>
                 </div>
               )}
+
+              {/* RECOMMENDED FOR YOU */}
+              {recommendedPosts.length > 0 && (
+                <div style={{
+                  marginTop: '64px', paddingTop: '40px',
+                  borderTop: '1px solid #e5e5e5',
+                }}>
+                  <div style={{
+                    display: 'inline-block',
+                    background: '#fff8f5', border: '1px solid #e8531a',
+                    borderRadius: '6px', padding: '4px 12px',
+                    fontSize: '11px', fontWeight: '700',
+                    color: '#e8531a', textTransform: 'uppercase',
+                    letterSpacing: '1px', marginBottom: '12px',
+                  }}>Recommended</div>
+                  <h2 style={{
+                    fontSize: isMobile ? '20px' : '24px',
+                    fontWeight: '800', color: '#1d1d1f',
+                    margin: '0 0 24px', letterSpacing: '-0.5px',
+                  }}>Recommended For You</h2>
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+                    gap: '20px',
+                  }}>
+                    {recommendedPosts.map(rec => (
+                      <div
+                        key={rec.id}
+                        onClick={() => {
+                          navigate(`/blog/${rec.slug}`)
+                          window.scrollTo(0, 0)
+                        }}
+                        style={{
+                          display: 'flex', gap: '16px',
+                          background: 'white', border: '1px solid #e5e5e5',
+                          borderRadius: '16px', overflow: 'hidden',
+                          cursor: 'pointer', transition: 'all 0.2s',
+                          padding: '16px',
+                        }}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.borderColor = '#e8531a'
+                          e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,83,26,0.12)'
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.borderColor = '#e5e5e5'
+                          e.currentTarget.style.boxShadow = 'none'
+                        }}
+                      >
+                        {rec.cover_image && (
+                          <img src={rec.cover_image} alt={rec.title}
+                            style={{
+                              width: '90px', height: '90px',
+                              objectFit: 'cover', borderRadius: '10px',
+                              flexShrink: 0,
+                            }}
+                          />
+                        )}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          {rec.category && (
+                            <span style={{
+                              fontSize: '10px', fontWeight: '700',
+                              color: '#e8531a', textTransform: 'uppercase',
+                              letterSpacing: '0.5px', display: 'block', marginBottom: '6px',
+                            }}>{rec.category}</span>
+                          )}
+                          <div style={{
+                            fontSize: '14px', fontWeight: '700',
+                            color: '#1d1d1f', lineHeight: 1.4,
+                            marginBottom: '8px',
+                            overflow: 'hidden', textOverflow: 'ellipsis',
+                            display: '-webkit-box', WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                          }}>{rec.title}</div>
+                          <div style={{ fontSize: '12px', color: '#6e6e73' }}>
+                            {new Date(rec.published_at).toLocaleDateString('en-US', {
+                              month: 'short', day: 'numeric', year: 'numeric'
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* STICKY SHARE SIDEBAR (desktop only) */}
@@ -329,7 +408,10 @@ const BlogPost = () => {
                 {relatedPosts.map(related => (
                   <div
                     key={related.id}
-                    onClick={() => navigate(`/blog/${related.slug}`)}
+                    onClick={() => {
+                      navigate(`/blog/${related.slug}`)
+                      window.scrollTo(0, 0)
+                    }}
                     style={{
                       background: 'white', border: '1px solid #e5e5e5',
                       borderRadius: '16px', overflow: 'hidden',
@@ -375,7 +457,10 @@ const BlogPost = () => {
               {/* MORE ARTICLES BUTTON */}
               <div style={{ textAlign: 'center', marginTop: '32px' }}>
                 <button
-                  onClick={() => navigate('/blog')}
+                  onClick={() => {
+                    navigate('/blog')
+                    window.scrollTo(0, 0)
+                  }}
                   style={{
                     background: 'white', color: '#1d1d1f',
                     border: '1.5px solid #e5e5e5',
@@ -398,6 +483,34 @@ const BlogPost = () => {
               </div>
             </div>
           )}
+
+          {/* BACK TO BLOG - bottom */}
+          <div style={{ textAlign: 'center', marginTop: '24px', marginBottom: isMobile ? '48px' : '80px' }}>
+            <button
+              onClick={() => {
+                navigate('/blog')
+                window.scrollTo(0, 0)
+              }}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                background: 'none', border: '1.5px solid #e5e5e5',
+                borderRadius: '10px', padding: '12px 28px',
+                fontSize: '14px', fontWeight: '700',
+                color: '#6e6e73', cursor: 'pointer',
+                fontFamily: 'inherit', transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = '#e8531a'
+                e.currentTarget.style.color = '#e8531a'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = '#e5e5e5'
+                e.currentTarget.style.color = '#6e6e73'
+              }}
+            >
+              <IconArrowLeft /> Back to Blog
+            </button>
+          </div>
         </div>
       </div>
 
