@@ -77,7 +77,6 @@ const Index = () => {
   const [featuredCars, setFeaturedCars] = useState<any[]>([])
   const [topShowrooms, setTopShowrooms] = useState<any[]>([])
   const [latestBlogPosts, setLatestBlogPosts] = useState<any[]>([])
-  const [latestOffers, setLatestOffers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
 
@@ -87,6 +86,34 @@ const Index = () => {
   const [tenure, setTenure] = useState(5)
   const [rate, setRate] = useState(10.5)
   const emi = calcEMI(carPrice, downPct, tenure, rate)
+
+  // Hardcoded offers data
+  const offers = [
+    {
+      id: '1',
+      title: 'Free Showroom Listing — Full Year',
+      description: 'List your showroom on CarKinne completely free for 12 months. Get your brand in front of thousands of Nepal car buyers.',
+      valid_until: '2025-12-31',
+      tag: 'Showrooms',
+      image_url: '/og-cover.png',
+    },
+    {
+      id: '2',
+      title: '70% Off Banner Advertising',
+      description: 'Promote your dealership with a featured banner on CarKinne at 70% off. High-visibility placements across the site.',
+      valid_until: '2025-11-30',
+      tag: 'Advertising',
+      image_url: '/og-cover.png',
+    },
+    {
+      id: '3',
+      title: 'Launch Special — Free Featured Car Ads',
+      description: 'Get your car listings featured at the top of CarKinne search results for free during our launch period.',
+      valid_until: '2025-10-31',
+      tag: 'Featured Ads',
+      image_url: '/og-cover.png',
+    },
+  ];
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -98,7 +125,6 @@ const Index = () => {
     fetchFeaturedCars()
     fetchTopShowrooms()
     fetchLatestBlogPosts()
-    fetchLatestOffers()
   }, [])
 
   const fetchFeaturedCars = async () => {
@@ -125,15 +151,6 @@ const Index = () => {
       const { data } = await supabase.from('blog_posts').select('*')
         .eq('is_published', true).order('published_at', { ascending: false }).limit(3)
       setLatestBlogPosts(data || [])
-    } catch (err) { console.error(err) }
-  }
-
-  const fetchLatestOffers = async () => {
-    try {
-      const { data } = await supabase.from('offers').select('*')
-        .order('valid_until', { ascending: true })
-        .limit(3)
-      setLatestOffers(data || [])
     } catch (err) { console.error(err) }
   }
 
@@ -717,7 +734,7 @@ const Index = () => {
             gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
             gap: '16px',
           }}>
-            {latestOffers.map(offer => (
+            {offers.map(offer => (
               <div
                 key={offer.id}
                 style={{
@@ -730,7 +747,7 @@ const Index = () => {
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.borderColor = '#e8531a'
-                  e.currentTarget.style.transform = 'translateY(-3px)'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
                   e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,83,26,0.12)'
                 }}
                 onMouseLeave={e => {
@@ -753,7 +770,7 @@ const Index = () => {
                     textTransform: 'uppercase', letterSpacing: '0.5px',
                     padding: '4px 10px', borderRadius: '100px',
                   }}>
-                    {offer.offer_type || 'Special Offer'}
+                    {offer.tag}
                   </span>
                 </div>
                 <div style={{ padding: '20px' }}>
@@ -761,21 +778,13 @@ const Index = () => {
                     fontSize: '15px', fontWeight: '700',
                     color: '#1d1d1f', marginBottom: '4px',
                   }}>
-                    {offer.car_name || 'Special Offer'}
+                    {offer.title}
                   </div>
                   <div style={{
                     fontSize: '13px', color: '#6e6e73',
                     marginBottom: '8px',
                   }}>
-                    {offer.title}
-                  </div>
-                  <div style={{
-                    fontSize: '13px', fontWeight: '700',
-                    color: '#e8531a', marginBottom: '16px',
-                  }}>
-                    {offer.discount_amount > 0
-                      ? `Save Rs. ${offer.discount_amount.toLocaleString('en-IN')}`
-                      : offer.discount_text || offer.description}
+                    {offer.description}
                   </div>
                   <div style={{
                     display: 'flex', justifyContent: 'space-between',
@@ -793,7 +802,7 @@ const Index = () => {
                       color: '#e8531a', display: 'flex',
                       alignItems: 'center', gap: '4px',
                     }}>
-                      View <IconArrow />
+                      View Offer <IconArrow />
                     </span>
                   </div>
                 </div>
