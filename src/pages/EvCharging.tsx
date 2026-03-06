@@ -373,12 +373,12 @@ const EvCharging = () => {
               </button>
             </div>
           ) : (
-            <>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
               <h1 style={{
                 fontSize: '20px',
                 fontWeight: '800',
                 color: '#1d1d1f',
-                margin: '0 0 2px',
+                margin: 0,
                 letterSpacing: '-0.5px',
               }}>
                 Charging Stations in Nepal
@@ -398,15 +398,15 @@ const EvCharging = () => {
                   fontWeight: '700',
                   cursor: 'pointer',
                   fontFamily: 'inherit',
-                  marginTop: '10px',
                   transition: 'all 0.2s',
+                  flexShrink: 0,
                 }}
                 onMouseEnter={e => e.currentTarget.style.background = '#c94415'}
                 onMouseLeave={e => e.currentTarget.style.background = '#e8531a'}
               >
                 + Add Station
               </button>
-            </>
+            </div>
           )}
           
           <p style={{
