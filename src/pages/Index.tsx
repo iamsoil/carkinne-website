@@ -212,27 +212,14 @@ const Index = () => {
           {/* Heading */}
           <h1 style={{
             color: 'white',
-            fontSize: isMobile ? '36px' : '60px',
+            fontSize: isMobile ? '42px' : '64px',
             fontWeight: '800',
             letterSpacing: '-2px',
             lineHeight: 1.1,
             margin: '16px 0 8px',
+            textShadow: '0 2px 12px rgba(0,0,0,0.2)',
           }}>
-            <span style={{
-              background: '#e8531a',
-              padding: '2px 8px',
-              display: 'inline',
-              boxDecorationBreak: 'clone',
-              WebkitBoxDecorationBreak: 'clone',
-            }}>Find Your Perfect</span>
-            <br />
-            <span style={{
-              background: '#e8531a',
-              padding: '2px 8px',
-              display: 'inline',
-              boxDecorationBreak: 'clone',
-              WebkitBoxDecorationBreak: 'clone',
-            }}>Car in Nepal</span>
+            Find Your Perfect Car in Nepal
           </h1>
 
           <p style={{
