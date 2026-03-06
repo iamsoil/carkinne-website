@@ -94,6 +94,18 @@ const EvCharging = () => {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const mapRef = useRef<L.Map | null>(null)
   const markersRef = useRef<{ [key: number]: L.Marker }>({})
+  const [showContributeForm, setShowContributeForm] = useState(false)
+  const [formData, setFormData] = useState({
+    station_name: '',
+    phone: '',
+    google_maps_url: '',
+    vendor: '',
+    city: '',
+    additional_details: '',
+    amenities: [] as string[],
+  })
+  const [formSubmitted, setFormSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768)
@@ -187,7 +199,7 @@ const EvCharging = () => {
                 width:32px;height:32px;
                 background:#e8531a;
                 border-radius:8px;
-                display:flex;align-items:center;
+                display:flex;align-items;
                 justify-content:center;
                 flex-shrink:0;
               ">
@@ -278,7 +290,7 @@ const EvCharging = () => {
         top: isMobile ? 0 : undefined,
         zIndex: isMobile ? 10 : undefined,
         flex: isMobile ? 'unset' : 1,
-        height: isMobile ? '280px' : '100%',
+        height: isMobile ? '224px' : '100%',
         width: isMobile ? '100%' : undefined,
         flexShrink: 0,
         order: isMobile ? 1 : 2,
@@ -290,7 +302,7 @@ const EvCharging = () => {
       <div style={{
         width: isMobile ? '100%' : '360px',
         minWidth: isMobile ? 'unset' : '360px',
-        height: isMobile ? 'calc(100vh - 64px - 280px)' : '100%',
+        height: isMobile ? 'calc(100vh - 64px - 224px)' : '100%',
         overflowY: 'auto',
         borderRight: isMobile ? 'none' : '1px solid #e5e5e5',
         borderTop: isMobile ? '1px solid #e5e5e5' : 'none',
@@ -341,8 +353,32 @@ const EvCharging = () => {
             {filteredStations.length} stations found
           </p>
 
+          <button
+            onClick={() => setShowContributeForm(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: '#e8531a',
+              color: 'white',
+              border: 'none',
+              borderRadius: '10px',
+              padding: '10px 16px',
+              fontSize: '13px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              marginTop: '10px',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = '#c94415'}
+            onMouseLeave={e => e.currentTarget.style.background = '#e8531a'}
+          >
+            + Contribute a Station
+          </button>
+
           {/* Search */}
-          <div style={{ position: 'relative', marginBottom: '8px' }}>
+          <div style={{ position: 'relative', marginBottom: '8px', marginTop: '16px' }}>
             <div style={{
               position: 'absolute', left: '10px', top: '50%',
               transform: 'translateY(-50%)',
@@ -404,7 +440,7 @@ const EvCharging = () => {
             }}>
               No stations found.<br />Try a different search.
             </div>
-          ) : filteredStations.map(station => {
+          ) : filteredStations.map((station) => {
             const isActive = selectedStation?.id === station.id
             const isHovered = hoveredStation === station.id
 
@@ -546,6 +582,254 @@ const EvCharging = () => {
           })}
         </div>
       </div>
+
+      {showContributeForm && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0,0,0,0.5)',
+          zIndex: 1000,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '16px',
+        }}
+        onClick={() => setShowContributeForm(false)}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: 'white',
+              borderRadius: '20px',
+              padding: '28px 24px',
+              width: '100%',
+              maxWidth: '560px',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
+            }}
+          >
+            {/* Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+              <div>
+                <h2 style={{ fontSize: '18px', fontWeight: '800', color: '#1d1d1f', margin: 0 }}>
+                  Contribute Charging Station
+                </h2>
+                <p style={{ fontSize: '12px', color: '#6e6e73', margin: '4px 0 0' }}>
+                  Help the EV community by adding a missing charging station.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowContributeForm(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px', color: '#6e6e73', padding: '0 0 0 12px' }}
+              >
+                ×
+              </button>
+            </div>
+
+            {formSubmitted ? (
+              <div style={{ textAlign: 'center', padding: '32px 0' }}>
+                <div style={{
+                  width: '56px', height: '56px', borderRadius: '50%',
+                  background: '#fff8f5', border: '2px solid #e8531a',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  margin: '0 auto 16px', fontSize: '24px',
+                }}>
+                  ✓
+                </div>
+                <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#1d1d1f', margin: '0 0 8px' }}>
+                  Thank you for contributing!
+                </h3>
+                <p style={{ fontSize: '13px', color: '#6e6e73', margin: '0 0 20px' }}>
+                  We'll review your submission and add it to the map soon.
+                </p>
+                <button
+                  onClick={() => { setShowContributeForm(false); setFormSubmitted(false) }}
+                  style={{
+                    background: '#e8531a', color: 'white', border: 'none',
+                    borderRadius: '10px', padding: '10px 24px',
+                    fontSize: '13px', fontWeight: '700', cursor: 'pointer', fontFamily: 'inherit',
+                  }}
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+                {/* Station Name + Phone */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: '700', color: '#6e6e73', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: '6px' }}>
+                      Station Name *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. NEA Charging Station"
+                      value={formData.station_name}
+                      onChange={e => setFormData(p => ({ ...p, station_name: e.target.value }))}
+                      style={{ width: '100%', border: '1px solid #d2d2d7', borderRadius: '8px', padding: '9px 12px', fontSize: '13px', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' }}
+                      onFocus={e => e.target.style.borderColor = '#e8531a'}
+                      onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: '700', color: '#6e6e73', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: '6px' }}>
+                      Phone Number *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="98XXXXXXXX"
+                      value={formData.phone}
+                      onChange={e => setFormData(p => ({ ...p, phone: e.target.value }))}
+                      style={{ width: '100%', border: '1px solid #d2d2d7', borderRadius: '8px', padding: '9px 12px', fontSize: '13px', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' }}
+                      onFocus={e => e.target.style.borderColor = '#e8531a'}
+                      onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                    />
+                  </div>
+                </div>
+
+                {/* Google Maps URL */}
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: '700', color: '#6e6e73', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: '6px' }}>
+                    Google Map Link *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="https://maps.app.goo.gl/..."
+                    value={formData.google_maps_url}
+                    onChange={e => setFormData(p => ({ ...p, google_maps_url: e.target.value }))}
+                    style={{ width: '100%', border: '1px solid #d2d2d7', borderRadius: '8px', padding: '9px 12px', fontSize: '13px', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' }}
+                    onFocus={e => e.target.style.borderColor = '#e8531a'}
+                    onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                  />
+                  <p style={{ fontSize: '11px', color: '#6e6e73', margin: '4px 0 0' }}>Please share the location link from Google Maps.</p>
+                </div>
+
+                {/* Vendor + City */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: '700', color: '#6e6e73', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: '6px' }}>
+                      Vendor / Network
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. NEA, Theego, BYD"
+                      value={formData.vendor}
+                      onChange={e => setFormData(p => ({ ...p, vendor: e.target.value }))}
+                      style={{ width: '100%', border: '1px solid #d2d2d7', borderRadius: '8px', padding: '9px 12px', fontSize: '13px', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' }}
+                      onFocus={e => e.target.style.borderColor = '#e8531a'}
+                      onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: '11px', fontWeight: '700', color: '#6e6e73', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: '6px' }}>
+                      City (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Kathmandu"
+                      value={formData.city}
+                      onChange={e => setFormData(p => ({ ...p, city: e.target.value }))}
+                      style={{ width: '100%', border: '1px solid #d2d2d7', borderRadius: '8px', padding: '9px 12px', fontSize: '13px', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box' }}
+                      onFocus={e => e.target.style.borderColor = '#e8531a'}
+                      onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                    />
+                  </div>
+                </div>
+
+                {/* Amenities */}
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: '700', color: '#6e6e73', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: '8px' }}>
+                    Amenities Available
+                  </label>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {['Wifi', 'Cafe', 'Restaurant', 'Shopping', 'Parking', 'Hotel', 'Park', 'Gym', 'Restroom'].map(a => {
+                      const selected = formData.amenities.includes(a)
+                      return (
+                        <button
+                          key={a}
+                          type="button"
+                          onClick={() => setFormData(p => ({
+                            ...p,
+                            amenities: selected ? p.amenities.filter(x => x !== a) : [...p.amenities, a]
+                          }))}
+                          style={{
+                            padding: '6px 12px', borderRadius: '20px', fontSize: '12px',
+                            fontWeight: '600', cursor: 'pointer', fontFamily: 'inherit',
+                            border: '1px solid', transition: 'all 0.15s',
+                            borderColor: selected ? '#e8531a' : '#d2d2d7',
+                            background: selected ? '#fff8f5' : 'white',
+                            color: selected ? '#e8531a' : '#1d1d1f',
+                          }}
+                        >
+                          {a}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* Additional Details */}
+                <div>
+                  <label style={{ fontSize: '11px', fontWeight: '700', color: '#6e6e73', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'block', marginBottom: '6px' }}>
+                    Additional Details
+                  </label>
+                  <textarea
+                    placeholder="Opening hours, specific directions, or other info..."
+                    value={formData.additional_details}
+                    onChange={e => setFormData(p => ({ ...p, additional_details: e.target.value }))}
+                    rows={3}
+                    style={{ width: '100%', border: '1px solid #d2d2d7', borderRadius: '8px', padding: '9px 12px', fontSize: '13px', fontFamily: 'inherit', outline: 'none', resize: 'vertical', boxSizing: 'border-box' }}
+                    onFocus={e => e.target.style.borderColor = '#e8531a'}
+                    onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                  />
+                </div>
+
+                {/* Submit */}
+                <button
+                  onClick={async () => {
+                    if (!formData.station_name || !formData.phone || !formData.google_maps_url) {
+                      alert('Please fill in Station Name, Phone Number and Google Maps Link.')
+                      return
+                    }
+                    setSubmitting(true)
+                    try {
+                      // Note: This would require creating a table in Supabase
+                      // await supabase.from('charging_station_contributions').insert([{
+                      //   station_name: formData.station_name,
+                      //   phone: formData.phone,
+                      //   google_maps_url: formData.google_maps_url,
+                      //   vendor: formData.vendor,
+                      //   city: formData.city,
+                      //   amenities: formData.amenities,
+                      //   additional_details: formData.additional_details,
+                      //   status: 'pending',
+                      //   submitted_at: new Date().toISOString(),
+                      // }])
+                      setFormSubmitted(true)
+                    } catch (err) {
+                      alert('Something went wrong. Please try again.')
+                    } finally {
+                      setSubmitting(false)
+                    }
+                  }}
+                  style={{
+                    width: '100%',
+                    background: submitting ? '#ccc' : '#e8531a',
+                    color: 'white', border: 'none', borderRadius: '12px',
+                    padding: '13px', fontSize: '14px', fontWeight: '700',
+                    cursor: submitting ? 'not-allowed' : 'pointer',
+                    fontFamily: 'inherit', transition: 'all 0.2s',
+                  }}
+                >
+                  {submitting ? 'Submitting...' : 'Submit for Review'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }
