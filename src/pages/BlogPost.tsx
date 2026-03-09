@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
 import { Helmet } from 'react-helmet-async'
+import { Share2 } from 'lucide-react'
 
 const IconArrowLeft = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -247,12 +248,8 @@ const BlogPost = () => {
 
                 {/* Share */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{
-                    fontSize: '11px', fontWeight: '700',
-                    color: '#aaa', textTransform: 'uppercase',
-                    letterSpacing: '1px', marginRight: '4px',
-                  }}>Share</span>
-
+                  <Share2 size={16} style={{ color: '#aaa' }} />
+                  
                   {/* WhatsApp */}
                   <a
                     href={`https://wa.me/?text=${encodeURIComponent(post.title + ' ' + shareUrl)}`}
