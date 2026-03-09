@@ -91,14 +91,6 @@ const BlogPost = () => {
     return Math.ceil(words / 200)
   }
 
-  const shareUrl = `https://carkinne.com/blog/${slug}`
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(shareUrl)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
   if (loading) {
     return (
       <div style={{ maxWidth: '1100px', margin: '0 auto', padding: isMobile ? '40px 16px' : '60px 24px' }}>
@@ -127,6 +119,8 @@ const BlogPost = () => {
       </div>
     )
   }
+
+  const shareUrl = `https://carkinne.com/blog/${slug}`
 
   return (
     <>
@@ -239,51 +233,149 @@ const BlogPost = () => {
                   onClick={() => { navigate('/blog'); window.scrollTo(0, 0) }}
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: '8px',
-                    background: 'none', border: '1.5px solid #e5e5e5',
-                    borderRadius: '10px', padding: '10px 20px',
-                    fontSize: '14px', fontWeight: '700',
-                    color: '#6e6e73', cursor: 'pointer',
-                    fontFamily: 'inherit', transition: 'all 0.2s',
+                    background: 'none', border: 'none',
+                    fontSize: '15px', fontWeight: '700',
+                    color: '#e8531a', cursor: 'pointer',
+                    fontFamily: 'inherit', padding: 0,
+                    transition: 'gap 0.2s',
                   }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = '#e8531a'
-                    e.currentTarget.style.color = '#e8531a'
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = '#e5e5e5'
-                    e.currentTarget.style.color = '#6e6e73'
-                  }}
+                  onMouseEnter={e => e.currentTarget.style.gap = '12px'}
+                  onMouseLeave={e => e.currentTarget.style.gap = '8px'}
                 >
                   <IconArrowLeft /> Back to Blog
                 </button>
 
-                {/* Share buttons */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                  <span style={{ fontSize: '12px', fontWeight: '700', color: '#aaa', textTransform: 'uppercase', letterSpacing: '1px' }}>Share</span>
-                  {[
-                    { href: `https://wa.me/?text=${encodeURIComponent(post.title + ' ' + shareUrl)}`, bg: '#25D366', icon: <IconWhatsApp /> },
-                    { href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, bg: '#1877F2', icon: <IconFacebook /> },
-                    { href: `https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(shareUrl)}`, bg: '#000', icon: <IconX /> },
-                  ].map((item, i) => (
-                    <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
-                      style={{
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        width: '36px', height: '36px', borderRadius: '8px',
-                        background: item.bg, color: 'white', textDecoration: 'none',
-                        transition: 'transform 0.2s',
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
-                      onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
-                    >{item.icon}</a>
-                  ))}
-                  <button onClick={handleCopy} style={{
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    width: '36px', height: '36px', borderRadius: '8px',
-                    background: copied ? '#e8531a' : 'white',
-                    border: '1.5px solid #e5e5e5',
-                    color: copied ? 'white' : '#1d1d1f',
-                    cursor: 'pointer', transition: 'all 0.2s',
-                  }}><IconLink /></button>
+                {/* Share */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{
+                    fontSize: '11px', fontWeight: '700',
+                    color: '#aaa', textTransform: 'uppercase',
+                    letterSpacing: '1px', marginRight: '4px',
+                  }}>Share</span>
+
+                  {/* WhatsApp */}
+                  <a
+                    href={`https://wa.me/?text=${encodeURIComponent(post.title + ' ' + shareUrl)}`}
+                    target="_blank" rel="noopener noreferrer"
+                    title="Share on WhatsApp"
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      width: '38px', height: '38px', borderRadius: '10px',
+                      background: '#25D366', color: 'white', textDecoration: 'none',
+                      transition: 'transform 0.2s, box-shadow 0.2s',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(37,211,102,0.4)'
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.transform = 'translateY(0)'
+                      e.currentTarget.style.boxShadow = 'none'
+                    }}
+                  ><IconWhatsApp /></a>
+
+                  {/* Facebook */}
+                  <a
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
+                    target="_blank" rel="noopener noreferrer"
+                    title="Share on Facebook"
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      width: '38px', height: '38px', borderRadius: '10px',
+                      background: '#1877F2', color: 'white', textDecoration: 'none',
+                      transition: 'transform 0.2s, box-shadow 0.2s',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(24,119,242,0.4)'
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.transform = 'translateY(0)'
+                      e.currentTarget.style.boxShadow = 'none'
+                    }}
+                  ><IconFacebook /></a>
+
+                  {/* X / Twitter */}
+                  <a
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(shareUrl)}`}
+                    target="_blank" rel="noopener noreferrer"
+                    title="Share on X"
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      width: '38px', height: '38px', borderRadius: '10px',
+                      background: '#000', color: 'white', textDecoration: 'none',
+                      transition: 'transform 0.2s, box-shadow 0.2s',
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.transform = 'translateY(-2px)'
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)'
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.transform = 'translateY(0)'
+                      e.currentTarget.style.boxShadow = 'none'
+                    }}
+                  ><IconX /></a>
+
+                  {/* Copy Link */}
+                  <button
+                    onClick={() => {
+                      const url = window.location.href
+                      if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(url).then(() => {
+                          setCopied(true)
+                          setTimeout(() => setCopied(false), 2000)
+                        }).catch(() => {
+                          // fallback
+                          const el = document.createElement('textarea')
+                          el.value = url
+                          document.body.appendChild(el)
+                          el.select()
+                          document.execCommand('copy')
+                          document.body.removeChild(el)
+                          setCopied(true)
+                          setTimeout(() => setCopied(false), 2000)
+                        })
+                      } else {
+                        const el = document.createElement('textarea')
+                        el.value = url
+                        document.body.appendChild(el)
+                        el.select()
+                        document.execCommand('copy')
+                        document.body.removeChild(el)
+                        setCopied(true)
+                        setTimeout(() => setCopied(false), 2000)
+                      }
+                    }}
+                    title="Copy link"
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      width: '38px', height: '38px', borderRadius: '10px',
+                      background: copied ? '#e8531a' : '#f5f5f7',
+                      color: copied ? 'white' : '#1d1d1f',
+                      border: 'none', cursor: 'pointer',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={e => {
+                      if (!copied) {
+                        e.currentTarget.style.background = '#e8e8e8'
+                        e.currentTarget.style.transform = 'translateY(-2px)'
+                      }
+                    }}
+                    onMouseLeave={e => {
+                      if (!copied) {
+                        e.currentTarget.style.background = '#f5f5f7'
+                        e.currentTarget.style.transform = 'translateY(0)'
+                      }
+                    }}
+                  >
+                    {copied ? (
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                    ) : (
+                      <IconLink />
+                    )}
+                  </button>
                 </div>
               </div>
 
