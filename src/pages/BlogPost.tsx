@@ -78,7 +78,7 @@ const BlogPost = () => {
         .select('*')
         .neq('slug', slug)
         .neq('category', data.category)
-        .limit(2)
+        .limit(3)
       setRecommendedPosts(recommended || [])
     } catch (err) {
       console.error('Error fetching post:', err)
@@ -397,7 +397,7 @@ const BlogPost = () => {
                   }}>Recommended For You</h2>
                   <div style={{
                     display: 'grid',
-                    gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+                    gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
                     gap: '20px',
                   }}>
                     {recommendedPosts.map(rec => (
