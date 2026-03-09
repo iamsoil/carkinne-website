@@ -553,18 +553,20 @@ const Index = () => {
                   }}
                 >
                   <div style={{
-                    width: '7px',
-                    height: '7px',
-                    background: '#e8531a',
-                    borderRadius: '50%',
-                    marginBottom: '8px',
-                  }} />
-                  <div style={{
-                    fontSize: '12px',
-                    fontWeight: '600',
-                    color: '#1d1d1f',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
                   }}>
-                    {text}
+                    <div style={{
+                      width: '8px',
+                      height: '8px',
+                      borderRadius: '50%',
+                      background: '#e8531a',
+                      flexShrink: 0,
+                    }} />
+                    <span style={{ fontSize: '14px', fontWeight: '600', color: '#1d1d1f' }}>
+                      {text}
+                    </span>
                   </div>
                 </div>
               ))}
