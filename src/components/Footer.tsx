@@ -60,6 +60,8 @@ const Footer = () => {
               <li><a href="/about" className="text-white/80 hover:text-accent transition-colors">About Us</a></li>
               <li><a href="/advertise" className="text-white/80 hover:text-accent transition-colors">Advertise</a></li>
               <li><a href="/admin" className="text-white/80 hover:text-accent transition-colors">Admin</a></li>
+              <li><a href="/terms" className="text-white/80 hover:text-accent transition-colors">Terms & Conditions</a></li>
+              <li><a href="/privacy" className="text-white/80 hover:text-accent transition-colors">Privacy Policy</a></li>
             </ul>
           </div>
         </div>
