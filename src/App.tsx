@@ -33,6 +33,8 @@ import EvCharging from './pages/EvCharging';
 import CompareBar from './components/CompareBar';
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import Terms from '@/pages/Terms'
+import Privacy from '@/pages/Privacy'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -71,6 +73,10 @@ const App = () => (
                 <Route path="/about" element={<About />} />
                 <Route path="/advertise" element={<Advertise />} />
                 <Route path="/ev-charging" element={<EvCharging />} />
+                
+                {/* Legal pages */}
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/privacy" element={<Privacy />} />
                 
                 {/* Admin Routes */}
                 <Route path="/admin/login" element={<AdminLogin />} />
