@@ -174,12 +174,12 @@ const Index = () => {
           100% { transform: translateX(-25%); }
         }
         .brand-logo {
-          filter: grayscale(100%) opacity(45%");
+          filter: grayscale(100%) opacity(45%);
           transition: filter 0.3s ease;
           cursor: pointer;
         }
         .brand-logo:hover {
-          filter: grayscale(0%) opacity(100%");
+          filter: grayscale(0%) opacity(100%);
         }
       `}</style>
 
@@ -311,2804 +311,1248 @@ const Index = () => {
               )}
             </div>
             <button type="submit" style={{
-              background: '#e<dyad-write path="src/pages/CarDetail.tsx" description="Updating CarDetail page to add analytics tracking">
-"use client";
-
-import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
-import { formatNPR } from '@/utils/format';
-import { useCompare } from '@/contexts/CompareContext';
-import { trackCarView, trackEnquiry, trackCompareAdd } from '@/utils/analytics';
-
-function useMapEffect(effect: () => void | (() => void), deps: any[]) {
-  const isInitialMount = useRef(true);
-
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
-    return effect();
-  }, deps);
-}
-
-function calcEMI(principal: number, rate: number, months: number): number {
-  if (!principal || !rate || !months) return 0;
-  const r = rate / 12 / 100;
-  return (principal * r * Math.pow(1 + r, months)) / (Math.pow(1 + r, months) - 1);
-}
-
-function InlineEmiCalculator({ price, carName }: { price: number, carName: string }) {
-  const [downPct, setDownPct] = useState(10);
-  const [tenure, setTenure] = useState(5);
-  const [rate, setRate] = useState(10.5);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const downPayment = Math.round((price * downPct) / 100);
-  const loanAmount = price - downPayment;
-  const months = tenure * 12;
-  const emi = calcEMI(loanAmount, rate, months);
-  const totalPayment = emi * months;
-  const totalInterest = totalPayment - loanAmount;
-
-  return (
-    <div style={{
-      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
-    }}>
-      <style>{`
-        input[type='range'] {
-          -webkit-appearance: auto;
-          accent-color: #e8531a;
-          height: 4px;
-          cursor: pointer;
-        }
-        input.no-spinner::-webkit-inner-spin-button,
-        input.no-spinner::-webkit-outer-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-        input.no-spinner {
-          -moz-appearance: textfield;
-        }
-      `}</style>
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-        gap: '24px',
-      }}>
-        {/* Left - inputs */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-
-          {/* Down Payment */}
-          <div>
-            <div style={{
-              fontSize: '11px', fontWeight: '700',
-              color: '#6e6e73', textTransform: 'uppercase',
-              letterSpacing: '1px', marginBottom: '10px',
-            }}>
-              Down Payment
-            </div>
-            <input
-              type="text"
-              inputMode="numeric"
-              min={10}
-              max={50}
-              value={downPct}
-              onChange={e => setDownPct(Math.min(50, Math.max(10, parseInt(e.target.value) || 10)))}
-              className="no-spinner"
-              style={{
-                width: '100%',
-                border: '1px solid #d2d2d7',
-                borderRadius: '8px',
-                padding: '10px 12px',
-                fontSize: '13px',
-                fontFamily: 'inherit',
-                outline: 'none',
-                boxSizing: 'border-box' as const,
-              }}
-              onFocus={e => e.target.style.borderColor = '#e8531a'}
-              onBlur={e => e.target.style.borderColor = '#d2d2d7'}
-            />
-            <div style={{ fontSize: '11px', color: '#6e6e73', marginTop: '4px' }}>
-              Enter percentage between 10–50%
-            </div>
-          </div>
-
-          {/* Tenure */}
-          <div>
-            <div style={{
-              fontSize: '11px', fontWeight: '700',
-              color: '#6e6e73', textTransform: 'uppercase',
-              letterSpacing: '1px', marginBottom: '10px',
-            }}>
-              Loan Tenure
-            </div>
-            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-              {[1, 2, 3, 4, 5, 6, 7].map(yr => (
-                <button
-                  key={yr}
-                  onClick={() => setTenure(yr)}
-                  style={{
-                    padding: '6px 14px',
-                    borderRadius: '100px',
-                    fontSize: '13px',
-                    fontWeight: '500',
-                    cursor: 'pointer',
-                    border: '1px solid',
-                    borderColor: tenure === yr ? '#e8531a' : '#d2d2d7',
-                    background: tenure === yr ? '#e8531a' : '#fff',
-                    color: tenure === yr ? '#fff' : '#1d1d1f',
-                    transition: 'all 0.2s',
-                    fontFamily: 'inherit',
-                  }}
-                >
-                  {yr}yr
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Interest Rate */}
-          <div>
-            <div style={{
-              fontSize: '11px', fontWeight: '700',
-              color: '#6e6e73', textTransform: 'uppercase',
-              letterSpacing: '1px', marginBottom: '10px',
-            }}>
-              Interest Rate
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <button
-                onClick={() => setRate(r => Math.max(8, Math.round((r - 0.25) * 100) / 100))}
-                style={{
-                  width: '36px', height: '40px',
-                  border: '1px solid #d2d2d7',
-                  borderRadius: '8px 0 0 8px',
-                  background: '#fff', fontSize: '16px',
-                  cursor: 'pointer', fontFamily: 'inherit',
-                }}
-              >−</button>
-              <div style={{
-                padding: '8px 20px',
-                border: '1px solid #d2d2d7',
-                borderLeft: 'none', borderRight: 'none',
-                fontSize: '15px', fontWeight: '600',
-                minWidth: '70px', textAlign: 'center',
-              }}>
-                {rate}%
-              </div>
-              <button
-                onClick={() => setRate(r => Math.min(18, Math.round((r + 0.25) * 100) / 100))}
-                style={{
-                  width: '36px', height: '40px',
-                  border: '1px solid #d2d2d7',
-                  borderRadius: '0 8px 8px 0',
-                  background: '#fff', fontSize: '16px',
-                  cursor: 'pointer', fontFamily: 'inherit',
-                }}
-              >+</button>
-            </div>
-            <div style={{
-              fontSize: '11px', color: '#6e6e73', marginTop: '6px',
-            }}>
-              Nepal bank average: 10–11%
-            </div>
-          </div>
-        </div>
-
-        {/* Right - results */}
-        <div style={{
-          background: '#fff8f5',
-          border: '1.5px solid #e8531a',
-          borderRadius: '16px',
-          padding: '24px',
-        }}>
-          <div style={{
-            fontSize: '11px', fontWeight: '700',
-            color: '#6e6e73', textTransform: 'uppercase',
-            letterSpacing: '1px', marginBottom: '8px',
-          }}>
-            Monthly EMI
-          </div>
-          <div style={{
-            fontSize: '36px', fontWeight: '800',
-            color: '#e8531a', letterSpacing: '-1px',
-            marginBottom: '4px',
-          }}>
-            {formatNPR(Math.round(emi))}
-          </div>
-          <div style={{
-            fontSize: '13px', color: '#6e6e73',
-            marginBottom: '20px',
-          }}>
-            per month for {tenure} years
-          </div>
-
-          <div style={{
-            height: '1px', background: '#fde8da',
-            marginBottom: '16px',
-          }} />
-
-          {[
-            ['Car Price', formatNPR(price)],
-            ['Down Payment', formatNPR(downPayment)],
-            ['Loan Amount', formatNPR(loanAmount)],
-            ['Interest Rate', `${rate}%`],
-            ['Total Interest', formatNPR(Math.round(totalInterest))],
-            ['Total Payment', formatNPR(Math.round(totalPayment))],
-          ].map(([label, value], i) => (
-            <div key={i} style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              padding: '5px 0',
-              fontSize: '13px',
-              borderBottom: i < 5 ? '1px solid #fde8da' : 'none',
-            }}>
-              <span style={{ color: '#6e6e73' }}>{label}</span>
-              <span style={{
-                color: label === 'Total Payment' ? '#e8531a' : '#1d1d1f',
-                fontWeight: label === 'Total Payment' ? '700' : '500',
-              }}>
-                {value}
-              </span>
-            </div>
-          ))}
-
-          <div style={{
-            marginTop: '16px',
-            padding: '10px 12px',
-            background: 'white',
-            border: '1px solid #fde8da',
-            borderRadius: '8px',
-            fontSize: '11px',
-            color: '#6e6e73',
-            lineHeight: 1.6,
-          }}>
-            <span style={{ fontWeight: '700', color: '#e8531a' }}>Disclaimer: </span>
-            Indicative estimates only. Actual rates may vary per bank policy and NRB regulations.
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function ShowroomsMap({ showrooms }: { showrooms: any[] }) {
-  const mapRef = useRef<any>(null)
-  const mapInstanceRef = useRef<any>(null)
-  const markersRef = useRef<Record<string, any>>({})
-
-  useMapEffect(() => {
-    if (typeof window === 'undefined') return
-    if (mapInstanceRef.current) return
-
-    const L = (window as any).L
-    if (!L) {
-      // Load Leaflet if not present
-      const link = document.createElement('link')
-      link.rel = 'stylesheet'
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
-      document.head.appendChild(link)
-
-      const script = document.createElement('script')
-      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
-      script.onload = () => initMap()
-      document.head.appendChild(script)
-    } else {
-      initMap()
-    }
-
-    function initMap() {
-      if (!mapRef.current || mapInstanceRef.current) return
-      const L = (window as any).L
-
-      const map = L.map(mapRef.current, {
-        center: [27.7172, 85.3240],
-        zoom: 12,
-        zoomControl: true,
-      })
-
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-      }).addTo(map)
-
-      mapInstanceRef.current = map
-
-      if (showrooms.length > 0) {
-        addMarkers(map, L)
-      }
-    }
-
-    function addMarkers(map: any, L: any) {
-      const validShowrooms = showrooms.filter(s => s.lat && s.lng)
-      if (validShowrooms.length === 0) return
-
-      validShowrooms.forEach(showroom => {
-        const markerHtml = `
-          <div style="
-            width:32px; height:32px;
-            background:#e8531a;
-            border-radius:50% 50% 50% 0;
-            transform:rotate(-45deg);
-            border:2px solid white;
-            box-shadow:0 2px 8px rgba(0,0,0,0.3);
-            display:flex; align-items:center; justify-content:center;
-          ">
-            <div style="transform:rotate(45deg); color:white; font-size:12px;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
-                <path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2L2 7h20L12 2z"/>
-              </svg>
-            </div>
-          </div>
-        `
-
-        const icon = L.divIcon({
-          html: markerHtml,
-          iconSize: [32, 32],
-          iconAnchor: [16, 32],
-          popupAnchor: [0, -36],
-          className: '',
-        })
-
-        const marker = L.marker([showroom.lat, showroom.lng], { icon })
-          .addTo(map)
-          .bindPopup(`
-            <div style="font-family:-apple-system,sans-serif;min-width:180px;">
-              <div style="font-weight:700;font-size:14px;color:#1d1d1f;margin-bottom:4px;">
-                ${showroom.name}
-              </div>
-              <div style="font-size:12px;color:#6e6e73;margin-bottom:6px;">
-                ${showroom.address || ''}
-              </div>
-              ${showroom.phone ? `
-                <div style="font-size:12px;color:#e8531a;font-weight:600;">
-                  ${showroom.phone}
-                </div>
-              ` : ''}
-              ${showroom.working_hours ? `
-                <div style="font-size:11px;color:#6e6e73;margin-top:4px;">
-                  ${showroom.working_hours}
-                </div>
-              ` : ''}
-              <a href="https://www.google.com/maps/dir/?api=1&destination=${showroom.lat},${showroom.lng}"
-                target="_blank"
-                style="
-                  display:inline-block;margin-top:8px;
-                  background:#e8531a;color:white;
-                  padding:4px 12px;border-radius:6px;
-                  font-size:11px;font-weight:700;
-                  text-decoration:none;
-                ">
-                Directions
-              </a>
-            </div>
-          `)
-
-        markersRef.current[showroom.id] = marker
-      })
-
-      // Fit map to all markers
-      if (validShowrooms.length === 1) {
-        map.setView([validShowrooms[0].lat, validShowrooms[0].lng], 14)
-      } else {
-        const group = L.featureGroup(
-          validShowrooms.map(s => L.marker([s.lat, s.lng]))
-        )
-        map.fitBounds(group.getBounds().pad(0.2))
-      }
-    }
-
-    return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove()
-        mapInstanceRef.current = null
-      }
-    }
-  }, [showrooms])
-
-  return (
-    <div
-      ref={mapRef}
-      style={{ height: '320px', width: '100%', borderRadius: '0 0 16px 16px' }}
-    />
-  )
-}
-
-const IconHeart = ({ filled }: { filled?: boolean }) => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill={filled ? '#e8531a' : 'none'} stroke={filled ? '#e8531a' : 'currentColor'} strokeWidth="2">
-    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
-  </svg>
-)
-
-const IconShare = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-  </svg>
-)
-
-const IconChevron = ({ up }: { up?: boolean }) => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ transform: up ? 'rotate(180deg)' : 'none' }}>
-    <polyline points="6 9 12 15 18 9"/>
-  </svg>
-)
-
-const IconCheck = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#e8531a" strokeWidth="2.5">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-)
-
-const IconMap = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-    <circle cx="12" cy="9" r="2.5"/>
-  </svg>
-)
-
-const IconPhone = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8 19.79 19.79 0 01.22 1.18 2 2 0 012.22 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.09a16 16 0 006 6l.56-.56a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/>
-  </svg>
-)
-
-const IconClock = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-  </svg>
-)
-
-const IconGauge = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8531a" strokeWidth="2">
-    <path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/>
-    <path d="M12 6v2"/>
-    <path d="M6.34 7.34l2.12 2.12"/>
-    <path d="M4 13h2"/>
-    <path d="M12 12l3-3"/>
-    <circle cx="12" cy="13" r="1" fill="#e8531a"/>
-  </svg>
-)
-
-const IconFuel = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8531a" strokeWidth="2">
-    <path d="M3 22V6a2 2 0 012-2h8a2 2 0 012 2v16"/>
-    <path d="M3 22h12"/>
-    <path d="M15 8h2a2 2 0 012 2v3a1 1 0 001 1h0a1 1 0 001-1V9l-3-3"/>
-    <line x1="7" y1="10" x2="11" y2="10"/>
-  </svg>
-)
-
-const IconSettings = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8531a" strokeWidth="2">
-    <circle cx="12" cy="12" r="3"/>
-    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
-  </svg>
-)
-
-const IconUsers = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8531a" strokeWidth="2">
-    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-    <circle cx="9" cy="7" r="4"/>
-    <path d="M23 21v-2a4 4 0 00-3-3.87"/>
-    <path d="M16 3.13a4 4 0 010 7.75"/>
-  </svg>
-)
-
-const IconWhatsApp = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-  </svg>
-)
-
-const IconArrow = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-  </svg>
-)
-
-const CarDetail = () => {
-  const { slug } = useParams();
-  const navigate = useNavigate();
-  const { addToCompare, clearCompare } = useCompare();
-  const [car, setCar] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [isSaved, setIsSaved] = useState(false);
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [showEmiModal, setShowEmiModal] = useState(false);
-  const [similarCars, setSimilarCars] = useState<any[]>([]);
-  const [showrooms, setShowrooms] = useState<any[]>([]);
-  const [offers, setOffers] = useState<any[]>([]);
-  const [expandedOnRoad, setExpandedOnRoad] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [activeTab, setActiveTab] = useState('specs');
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    if (slug) {
-      fetchCar();
-    }
-  }, [slug]);
-
-  useEffect(() => {
-    if (car) {
-      trackCarView(car.name, car.id);
-      fetchSimilarCars();
-      fetchShowrooms();
-      fetchOffers();
-    }
-  }, [car]);
-
-  const fetchCar = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('cars')
-        .select('*')
-        .eq('slug', slug)
-        .single();
-
-      if (error) throw error;
-      
-      setCar(data);
-      console.log('Car details fetched:', data);
-    } catch (err) {
-      console.error('Error fetching car:', err);
-      setError('Unable to load car details. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchSimilarCars = async () => {
-    if (!car) return;
-    
-    try {
-      const { data, error } = await supabase
-        .from('cars')
-        .select('*')
-        .eq('category', car.category)
-        .neq('id', car.id)
-        .limit(4);
-
-      if (!error) {
-        setSimilarCars(data || []);
-      }
-    } catch (err) {
-      console.error('Error fetching similar cars:', err);
-    }
-  };
-
-  const fetchShowrooms = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('showrooms')
-        .select('*')
-        .eq('brand', car?.brand)
-        .limit(4);
-
-      if (!error) {
-        setShowrooms(data || []);
-      }
-    } catch (err) {
-      console.error('Error fetching showrooms:', err);
-    }
-  };
-
-  const fetchOffers = async () => {
-    if (!car) return;
-    
-    try {
-      const { data, error } = await supabase
-        .from('offers')
-        .select('*')
-        .eq('car_id', car.id)
-        .limit(3);
-
-      if (!error) {
-        setOffers(data || []);
-      }
-    } catch (err) {
-      console.error('Error fetching offers:', err);
-    }
-  };
-
-  // Calculate on-road price breakdown
-  const calculateOnRoadPrice = () => {
-    if (!car) return null;
-    
-    const exShowroom = car.ex_showroom_price;
-    const registration = Math.round(exShowroom * 0.1); // 10% registration
-    const insurance = Math.round(exShowroom * 0.02); // 2% insurance
-    const roadTax = Math.round(exShowroom * 0.01); // 1% road tax
-    
-    return {
-      exShowroom,
-      registration,
-      insurance,
-      roadTax,
-      total: exShowroom + registration + insurance + roadTax
-    };
-  };
-
-  const onRoadBreakdown = calculateOnRoadPrice();
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long'
-    });
-  };
-
-  if (loading) {
-    return (
-      <div style={{
-        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
-        background: 'white',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '60vh'
-      }}>
-        <style>{'@keyframes spin { to { transform: rotate(360deg) } }'}</style>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{
-            width: '36px',
-            height: '36px',
-            border: '3px solid #f0f0f0',
-            borderTop: '3px solid #e8531a',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite',
-            margin: '0 auto'
-          }}></div>
-          <p style={{ fontSize: '13px', color: '#6e6e73', marginTop: '12px' }}>Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div style={{
-        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
-        background: 'white',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '24px'
-      }}>
-        <div style={{
-          background: 'white',
-          borderRadius: '16px',
-          padding: '40px 24px',
-          textAlign: 'center',
-          border: '1px solid #e5e5e5',
-          maxWidth: '400px',
-          width: '100%'
-        }}>
-          <p style={{ color: '#ef4444', fontSize: '14px', marginBottom: '16px' }}>
-            {error}
-          </p>
-          <button
-            onClick={fetchCar}
-            style={{
               background: '#e8531a',
               color: 'white',
               border: 'none',
               borderRadius: '10px',
-              padding: '12px 24px',
+              padding: '0 20px',
               fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               fontFamily: 'inherit',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = '#c94415';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = '#e8531a';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!car) {
-    return (
-      <div style={{
-        fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
-        background: 'white',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '24px'
-      }}>
-        <div style={{
-          background: 'white',
-          borderRadius: '16px',
-          padding: '40px 24px',
-          textAlign: 'center',
-          border: '1px solid #e5e5e5',
-          maxWidth: '400px',
-          width: '100%'
-        }}>
-          <h2 style={{
-            fontSize: '22px',
-            fontWeight: '800',
-            color: '#1d1d1f',
-            margin: '0 0 8px'
-          }}>
-            Car Not Found
-          </h2>
-          <p style={{
-            fontSize: '14px',
-            color: '#6e6e73',
-            margin: '0 0 24px'
-          }}>
-            The car you're looking for doesn't exist or has been removed.
-          </p>
-          <button
-            onClick={() => navigate('/cars')}
-            style={{
-              background: '#e8531a',
-              color: 'white',
-              border: 'none',
-              borderRadius: '10px',
-              padding: '12px 24px',
-              fontSize: '14px',
-              fontWeight: '700',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.background = '#c94415';
-              e.currentTarget.style.transform = 'translateY(-1px)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.background = '#e8531a';
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-          >
-            Browse Cars
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // Calculate EMI (10% down payment, 5 year loan, 10% interest)
-  const calculateEMI = () => {
-    const loanAmount = car.ex_showroom_price * 0.9; // 10% down payment
-    const interestRate = 10; // 10% annual interest
-    const loanTerm = 5; // 5 years
-    const monthlyInterestRate = interestRate / 12 / 100;
-    const numberOfPayments = loanTerm * 12;
-    
-    const emi = (loanAmount * monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) / 
-                (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
-    
-    return Math.round(emi);
-  };
-
-  const emi = calculateEMI();
-
-  // SEO Meta tags
-  const metaTitle = `${car.name} Price in Nepal 2025 — ${formatNPR(car.ex_showroom_price)} | CarKinne`;
-  const metaDescription = `${car.name} price in Nepal starts at ${formatNPR(car.ex_showroom_price)}. Check full specs, EMI, colors, variants and find nearest showroom. Updated ${formatDate(car.updated_at || new Date().toISOString())}.`;
-
-  return (
-    <div style={{
-      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
-      background: 'white',
-      minHeight: '100vh'
-    }}>
-      {/* SEO Meta */}
-      <div className="hidden">
-        <title>{metaTitle}</title>
-        <meta name="description" content={metaDescription} />
-      </div>
-
-      {/* BREADCRUMB */}
-      <div style={{
-        padding: isMobile ? '12px 16px 0' : '16px 24px 0',
-        maxWidth: '1000px',
-        margin: '0 auto'
-      }}>
-        <div style={{ fontSize: '12px' }}>
-          <a 
-            href="/" 
-            style={{ 
-              color: '#6e6e73', 
-              textDecoration: 'none',
-              transition: 'color 0.2s'
-            }}
-            onMouseEnter={e => e.currentTarget.style.color = '#e8531a'}
-            onMouseLeave={e => e.currentTarget.style.color = '#6e6e73'}
-          >
-            Home
-          </a>
-          <span style={{ color: '#d2d2d7', margin: '0 6px' }}>/</span>
-          <a 
-            href="/cars" 
-            style={{ 
-              color: '#6e6e73', 
-              textDecoration: 'none',
-              transition: 'color 0.2s'
-            }}
-            onMouseEnter={e => e.currentTarget.style.color = '#e8531a'}
-            onMouseLeave={e => e.currentTarget.style.color = '#6e6e73'}
-          >
-            Cars
-          </a>
-          <span style={{ color: '#d2d2d7', margin: '0 6px' }}>/</span>
-          <a 
-            href={`/cars?brand=${car.brand}`} 
-            style={{ 
-              color: '#6e6e73', 
-              textDecoration: 'none',
-              transition: 'color 0.2s'
-            }}
-            onMouseEnter={e => e.currentTarget.style.color = '#e8531a'}
-            onMouseLeave={e => e.currentTarget.style.color = '#6e6e73'}
-          >
-            {car.brand}
-          </a>
-          <span style={{ color: '#d2d2d7', margin: '0 6px' }}>/</span>
-          <span style={{ color: '#1d1d1f', fontWeight: '600' }}>
-            {car.name}
-          </span>
-        </div>
-        <div style={{
-          fontSize: '11px',
-          color: '#6e6e73',
-          marginTop: '6px'
-        }}>
-          Price updated: {formatDate(car.updated_at || new Date().toISOString())}
-        </div>
-      </div>
-
-      {/* MAIN CONTENT WRAPPER */}
-      <div style={{
-        maxWidth: '1000px',
-        margin: '0 auto',
-        padding: isMobile ? '16px' : '24px'
-      }}>
-        {/* TOP SECTION - Image + Price Card */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : '1fr 380px',
-          gap: '24px'
-        }}>
-          {/* IMAGE GALLERY */}
-          <div>
-            {/* Main image */}
-            <div style={{
-              borderRadius: '16px',
-              overflow: 'hidden',
-              border: '1px solid #e5e5e5',
-              background: '#f5f5f7',
-              position: 'relative',
-              marginBottom: '10px'
             }}>
-              <img 
-                src={car.images[activeImageIndex] || 'https://placehold.co/800x600/cccccc/ffffff?text=Car+Image'} 
-                alt={`${car.brand} ${car.name}`} 
-                style={{
-                  width: '100%',
-                  height: isMobile ? '260px' : '380px',
-                  objectFit: 'contain'
-                }}
-              />
-              
-              {/* Top-right buttons */}
-              <div style={{
-                position: 'absolute',
-                top: '12px',
-                right: '12px',
-                display: 'flex',
-                gap: '8px'
-              }}>
-                <button
-                  onClick={() => setIsSaved(!isSaved)}
-                  style={{
-                    background: 'white',
-                    border: '1px solid #e5e5e5',
-                    borderRadius: '8px',
-                    padding: '8px',
-                    cursor: 'pointer',
-                    transition: 'border-color 0.2s'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
-                >
-                  <IconHeart filled={isSaved} />
-                </button>
-                <button
-                  style={{
-                    background: 'white',
-                    border: '1px solid #e5e5e5',
-                    borderRadius: '8px',
-                    padding: '8px',
-                    cursor: 'pointer',
-                    transition: 'border-color 0.2s'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
-                >
-                  <IconShare />
-                </button>
-              </div>
-            </div>
-            
-            {/* Thumbnail strip */}
-            <div style={{
-              display: 'flex',
-              gap: '8px',
-              overflowX: 'auto',
-              paddingBottom: '4px'
-            }}>
-              {car.images.map((image: string, index: number) => (
-                <button
-                  key={index}
-                  onClick={() => setActiveImageIndex(index)}
-                  style={{
-                    width: isMobile ? '64px' : '80px',
-                    height: isMobile ? '48px' : '60px',
-                    borderRadius: '8px',
-                    overflow: 'hidden',
-                    border: '2px solid',
-                    borderColor: activeImageIndex === index ? '#e8531a' : '#e5e5e5',
-                    cursor: 'pointer',
-                    flexShrink: 0
-                  }}
-                >
-                  <img 
-                    src={image} 
-                    alt={`${car.brand} ${car.name} ${index + 1}`} 
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover'
-                    }}
-                  />
-                </button>
-              ))}
-            </div>
-          </div>
+              Search
+            </button>
+          </form>
+        </div>
+      </section>
 
-          {/* PRICE CARD */}
+      {/* ━━━━━━━━━━ QUICK FILTERS ━━━━━━━━━━ */}
+      <section style={{ padding: isMobile ? '24px 16px' : '40px 24px', background: '#f5f5f7' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div style={{
-            border: '1px solid #e5e5e5',
-            borderRadius: '16px',
-            padding: isMobile ? '20px' : '24px',
-            background: 'white',
-            position: isMobile ? 'static' : 'sticky',
-            top: '88px'
+            display: 'flex', alignItems: 'center',
+            gap: '12px', marginBottom: '16px',
           }}>
-            <h1 style={{
-              fontSize: isMobile ? '18px' : '22px',
-              fontWeight: '800',
-              color: '#1d1d1f',
-              letterSpacing: '-0.5px',
-              margin: '0 0 4px'
-            }}>
-              {car.name} {car.variant}
-            </h1>
-            <p style={{
-              fontSize: '13px',
-              color: '#6e6e73',
-              margin: '0 0 16px'
-            }}>
-              {car.brand} • {car.year}
-            </p>
-            
-            {/* Ex-showroom price */}
-            <div style={{
-              fontSize: '11px',
-              fontWeight: '700',
-              color: '#6e6e73',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              marginBottom: '4px'
-            }}>
-              Ex-showroom Price
-            </div>
-            <p style={{
-              fontSize: isMobile ? '28px' : '34px',
-              fontWeight: '800',
+            <div style={{ width: '24px', height: '2px', background: '#e8531a' }} />
+            <span style={{
               color: '#e8531a',
-              letterSpacing: '-1px',
-              margin: '0 0 16px'
+              fontSize: '11px', fontWeight: '600',
+              textTransform: 'uppercase', letterSpacing: '1px',
             }}>
-              {formatNPR(car.ex_showroom_price)}
-            </p>
-            
-            {/* Estimated On-Road Price */}
-            <div
-              onClick={() => setExpandedOnRoad(!expandedOnRoad)}
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                border: '1px solid #e5e5e5',
-                borderRadius: '10px',
-                padding: '12px 14px',
-                cursor: 'pointer',
-                background: 'white',
-                fontFamily: 'inherit',
-                width: '100%'
-              }}
-            >
-              <span style={{
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#1d1d1f'
-              }}>
-                Estimated On-Road Price
-              </span>
-              <IconChevron up={expandedOnRoad} />
-            </div>
-            
-            {expandedOnRoad && onRoadBreakdown && (
-              <div style={{
-                padding: '12px 14px',
-                borderTop: '1px solid #f0f0f0',
-                background: '#fafafa',
-                borderRadius: '0 0 10px 10px'
-              }}>
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  fontSize: '13px',
-                  padding: '4px 0',
-                  borderBottom: '1px solid #f5f5f5'
-                }}>
-                  <span>Ex-showroom</span>
-                  <span>{formatNPR(onRoadBreakdown.exShowroom)}</span>
-                </div>
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  fontSize: '13px',
-                  padding: '4px 0',
-                  borderBottom: '1px solid #f5f5f5'
-                }}>
-                  <span>Registration</span>
-                  <span>~{formatNPR(onRoadBreakdown.registration)}</span>
-                </div>
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  fontSize: '13px',
-                  padding: '4px 0',
-                  borderBottom: '1px solid #f5f5f5'
-                }}>
-                  <span>Insurance (1yr)</span>
-                  <span>~{formatNPR(onRoadBreakdown.insurance)}</span>
-                </div>
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  fontSize: '13px',
-                  padding: '4px 0',
-                  borderBottom: '1px solid #f5f5f5'
-                }}>
-                  <span>Road tax</span>
-                  <span>~{formatNPR(onRoadBreakdown.roadTax)}</span>
-                </div>
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  fontSize: '13px',
-                  fontWeight: '700',
-                  color: '#e8531a',
-                  borderTop: '1px solid #e5e5e5',
-                  paddingTop: '8px',
-                  marginTop: '4px'
-                }}>
-                  <span>Total On-Road</span>
-                  <span>{formatNPR(onRoadBreakdown.total)}</span>
-                </div>
-                <p style={{
-                  fontSize: '11px',
-                  color: '#6e6e73',
-                  marginTop: '8px'
-                }}>
-                  Note: On-road price is estimated and may vary
-                </p>
-              </div>
-            )}
-            
-            {/* Action Buttons */}
-            <div style={{
-              marginTop: '16px',
-              display: 'flex',
-              flexDirection: 'column' as const,
-              gap: '10px'
-            }}>
-              <button 
-                onClick={() => setShowEmiModal(true)}
-                style={{
-                  background: '#e8531a',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '10px',
-                  padding: '13px',
-                  fontSize: '14px',
-                  fontWeight: '700',
-                  width: '100%',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  transition: 'all 0.2s'
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = '#c94415';
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = '#e8531a';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                Calculate EMI
-              </button>
-              <button 
-                onClick={() => {
-                  trackEnquiry(car.name, car.id);
-                  window.open(`https://wa.me/97798XXXXXXXX?text=I'm interested in ${car.name} ${car.variant}`, '_blank')
-                }}
+              Quick Filters
+            </span>
+          </div>
+
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '12px',
+          }}>
+            {quickFilters.map((filter, i) => (
+              <Link
+                key={i}
+                to={filter.path}
                 style={{
                   background: 'white',
-                  color: '#1d1d1f',
-                  border: '1.5px solid #e5e5e5',
-                  borderRadius: '10px',
-                  padding: '12px',
-                  fontSize: '14px',
+                  border: '1px solid #e5e5e5',
+                  borderRadius: '20px',
+                  padding: '8px 20px',
+                  fontSize: '13px',
                   fontWeight: '600',
-                  width: '100%',
-                  cursor: 'pointer',
+                  color: '#1d1d1f',
+                  textDecoration: 'none',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = '#e8531a'
+                  e.currentTarget.style.color = '#e8531a'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = '#e5e5e5'
+                  e.currentTarget.style.color = '#1d1d1f'
+                }}
+              >
+                {filter.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━━━━━━━━ FEATURED CARS ━━━━━━━━━━ */}
+      <section style={{ padding: isMobile ? '32px 16px' : '60px 24px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            marginBottom: isMobile ? '24px' : '32px',
+          }}>
+            <div>
+              <div style={{
+                display: 'flex', alignItems: 'center',
+                gap: '12px', marginBottom: '8px',
+              }}>
+                <div style={{ width: '24px', height: '2px', background: '#e8531a' }} />
+                <span style={{
+                  color: '#e8531a',
+                  fontSize: '11px', fontWeight: '600',
+                  textTransform: 'uppercase', letterSpacing: '1px',
+                }}>
+                  Featured Cars
+                </span>
+              </div>
+              <h2 style={{
+                fontSize: isMobile ? '24px' : '32px',
+                fontWeight: '800',
+                color: '#1d1d1f',
+                margin: 0,
+                letterSpacing: '-1px',
+              }}>
+                Popular in Nepal
+              </h2>
+            </div>
+            <Link to="/cars" style={{
+              fontSize: '14px',
+              fontWeight: '700',
+              color: '#e8531a',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}>
+              View All <IconArrow />
+            </Link>
+          </div>
+
+          {loading ? (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+              gap: '20px',
+            }}>
+              {[...Array(3)].map((_, i) => (
+                <div key={i} style={{
+                  background: 'white',
+                  borderRadius: '16px',
+                  border: '1px solid #e5e5e5',
+                  overflow: 'hidden',
+                }}>
+                  <div style={{
+                    height: '180px',
+                    background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+                    backgroundSize: '200% 100%',
+                    animation: 'shimmer 1.5s infinite',
+                  }} />
+                  <div style={{ padding: '16px' }}>
+                    <div style={{ height: '16px', background: '#f0f0f0', borderRadius: '4px', marginBottom: '8px', width: '70%' }} />
+                    <div style={{ height: '12px', background: '#f0f0f0', borderRadius: '4px', marginBottom: '16px', width: '40%' }} />
+                    <div style={{ height: '24px', background: '#f0f0f0', borderRadius: '4px', width: '60%' }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+              gap: '20px',
+            }}>
+              {featuredCars.map(car => (
+                <CarCard key={car.id} {...car} />
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* ━━━━━━━━━━ EMI CALCULATOR ━━━━━━━━━━ */}
+      <section style={{
+        background: '#fff8f5',
+        padding: isMobile ? '32px 16px' : '60px 24px',
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center',
+            gap: '12px', marginBottom: '16px',
+          }}>
+            <div style={{ width: '24px', height: '2px', background: '#e8531a' }} />
+            <span style={{
+              color: '#e8531a',
+              fontSize: '11px', fontWeight: '600',
+              textTransform: 'uppercase', letterSpacing: '1px',
+            }}>
+              EMI Calculator
+            </span>
+          </div>
+
+          <h2 style={{
+            fontSize: isMobile ? '24px' : '32px',
+            fontWeight: '800',
+            color: '#1d1d1f',
+            margin: '0 0 8px',
+            letterSpacing: '-1px',
+          }}>
+            Calculate Your Monthly Payment
+          </h2>
+          <p style={{
+            fontSize: '15px',
+            color: '#6e6e73',
+            margin: '0 0 32px',
+          }}>
+            See how much your monthly car payment would be with real Nepal bank rates
+          </p>
+
+          <div style={{
+            background: 'white',
+            border: '1px solid #e5e5e5',
+            borderRadius: '20px',
+            padding: isMobile ? '20px' : '32px',
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+            gap: '32px',
+          }}>
+            {/* Inputs */}
+            <div>
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  color: '#6e6e73',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  marginBottom: '8px',
+                }}>
+                  Car Price
+                </label>
+                <input
+                  type="number"
+                  value={carPrice}
+                  onChange={e => setCarPrice(Number(e.target.value))}
+                  style={{
+                    width: '100%',
+                    border: '1px solid #d2d2d7',
+                    borderRadius: '10px',
+                    padding: '12px 16px',
+                    fontSize: '16px',
+                    outline: 'none',
+                    boxSizing: 'border-box' as const,
+                  }}
+                  onFocus={e => e.target.style.borderColor = '#e8531a'}
+                  onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                />
+                <p style={{ fontSize: '13px', color: '#6e6e73', marginTop: '6px' }}>
+                  {carPrice > 0 ? formatNPR(carPrice) : 'Enter amount above'}
+                </p>
+              </div>
+
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  color: '#6e6e73',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  marginBottom: '8px',
+                }}>
+                  Down Payment
+                </label>
+                <div style={{ display: 'flex', gap: '12px', marginBottom: '8px' }}>
+                  <input
+                    type="number"
+                    value={Math.round(carPrice * downPct / 100)}
+                    onChange={e => {
+                      const amount = Number(e.target.value)
+                      if (carPrice > 0) setDownPct(Math.round((amount / carPrice) * 100))
+                    }}
+                    style={{
+                      flex: 1,
+                      border: '1px solid #d2d2d7',
+                      borderRadius: '10px',
+                      padding: '12px 16px',
+                      fontSize: '16px',
+                      outline: 'none',
+                      boxSizing: 'border-box' as const,
+                    }}
+                    onFocus={e => e.target.style.borderColor = '#e8531a'}
+                    onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                  />
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type="number"
+                      min={10} max={50}
+                      value={downPct}
+                      onChange={e => setDownPct(Number(e.target.value))}
+                      style={{
+                        width: '80px',
+                        border: '1px solid #d2d2d7',
+                        borderRadius: '10px',
+                        padding: '12px 16px',
+                        fontSize: '16px',
+                        outline: 'none',
+                        boxSizing: 'border-box' as const,
+                      }}
+                      onFocus={e => e.target.style.borderColor = '#e8531a'}
+                      onBlur={e => e.target.style.borderColor = '#d2d2d7'}
+                    />
+                    <span style={{
+                      position: 'absolute', right: '12px', top: '50%',
+                      transform: 'translateY(-50%)', color: '#6e6e73',
+                    }}>
+                      %
+                    </span>
+                  </div>
+                </div>
+                <input
+                  type="range" min={10} max={50} value={downPct}
+                  onChange={e => setDownPct(Number(e.target.value))}
+                  style={{ width: '100%', accentColor: '#e8531a' }}
+                />
+                <div style={{
+                  display: 'flex', justifyContent: 'space-between',
+                  fontSize: '12px', color: '#6e6e73', marginTop: '4px',
+                }}>
+                  <span>10%</span><span>50%</span>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  color: '#6e6e73',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  marginBottom: '8px',
+                }}>
+                  Loan Tenure
+                </label>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {[1, 2, 3, 4, 5, 6, 7].map(yr => (
+                    <button
+                      key={yr}
+                      onClick={() => setTenure(yr)}
+                      style={{
+                        padding: '8px 20px',
+                        borderRadius: '100px',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        border: '1px solid',
+                        borderColor: tenure === yr ? '#e8531a' : '#d2d2d7',
+                        background: tenure === yr ? '#e8531a' : '#fff',
+                        color: tenure === yr ? '#fff' : '#1d1d1f',
+                        transition: 'all 0.2s',
+                        fontFamily: 'inherit',
+                      }}
+                    >
+                      {yr}yr
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '12px',
+                  fontWeight: '700',
+                  color: '#6e6e73',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  marginBottom: '8px',
+                }}>
+                  Interest Rate
+                </label>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <button
+                    onClick={() => setRate(r => Math.max(8, Math.round((r - 0.25) * 100) / 100))}
+                    style={{
+                      width: '40px', height: '44px',
+                      border: '1px solid #d2d2d7',
+                      borderRadius: '8px 0 0 8px',
+                      background: '#fff',
+                      fontSize: '18px',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                    }}
+                  >−</button>
+                  <div style={{
+                    padding: '10px 24px',
+                    border: '1px solid #d2d2d7',
+                    borderLeft: 'none', borderRight: 'none',
+                    fontSize: '16px',
+                    fontWeight: '500',
+                    minWidth: '90px',
+                    textAlign: 'center',
+                  }}>
+                    {rate}%
+                  </div>
+                  <button
+                    onClick={() => setRate(r => Math.min(18, Math.round((r + 0.25) * 100) / 100))}
+                    style={{
+                      width: '40px', height: '44px',
+                      border: '1px solid #d2d2d7',
+                      borderRadius: '0 8px 8px 0',
+                      background: '#fff',
+                      fontSize: '18px',
+                      cursor: 'pointer',
+                      fontFamily: 'inherit',
+                    }}
+                  >+</button>
+                </div>
+                <p style={{ fontSize: '13px', color: '#6e6e73', marginTop: '6px' }}>
+                  Average Nepal bank car loan rate: 10–11%
+                </p>
+              </div>
+            </div>
+
+            {/* Results */}
+            <div style={{
+              background: '#fff8f5',
+              border: '1.5px solid #e8531a',
+              borderRadius: '16px',
+              padding: '28px',
+            }}>
+              <p style={{
+                fontSize: '12px',
+                fontWeight: '700',
+                color: '#6e6e73',
+                textTransform: 'uppercase',
+                letterSpacing: '1px',
+                marginBottom: '8px',
+              }}>
+                Monthly Payment
+              </p>
+              <div style={{
+                fontSize: isMobile ? '32px' : '42px',
+                fontWeight: '800',
+                color: '#e8531a',
+                letterSpacing: '-1px',
+                margin: '0 0 16px',
+              }}>
+                {formatNPR(Math.round(emi))}
+              </div>
+              <p style={{ fontSize: '14px', color: '#6e6e73', marginBottom: '24px' }}>
+                per month for {tenure} years
+              </p>
+
+              <div style={{ height: '1px', background: '#fde8da', margin: '16px 0' }} />
+
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '16px',
+              }}>
+                <div>
+                  <p style={{ fontSize: '13px', color: '#6e6e73', marginBottom: '4px' }}>
+                    Car Price
+                  </p>
+                  <p style={{ fontSize: '15px', fontWeight: '700', color: '#1d1d1f', margin: 0 }}>
+                    {formatNPR(carPrice)}
+                  </p>
+                </div>
+                <div>
+                  <p style={{ fontSize: '13px', color: '#6e6e73', marginBottom: '4px' }}>
+                    Down Payment
+                  </p>
+                  <p style={{ fontSize: '15px', fontWeight: '700', color: '#1d1d1f', margin: 0 }}>
+                    {formatNPR(Math.round(carPrice * downPct / 100))}
+                  </p>
+                </div>
+                <div>
+                  <p style={{ fontSize: '13px', color: '#6e6e73', marginBottom: '4px' }}>
+                    Loan Amount
+                  </p>
+                  <p style={{ fontSize: '15px', fontWeight: '700', color: '#1d1d1f', margin: 0 }}>
+                    {formatNPR(Math.round(carPrice * (1 - downPct / 100)))}
+                  </p>
+                </div>
+                <div>
+                  <p style={{ fontSize: '13px', color: '#6e6e73', marginBottom: '4px' }}>
+                    Interest Rate
+                  </p>
+                  <p style={{ fontSize: '15px', fontWeight: '700', color: '#1d1d1f', margin: 0 }}>
+                    {rate}%
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ height: '1px', background: '#fde8da', margin: '16px 0' }} />
+
+              <Link to="/emi-calculator"
+                style={{
+                  display: 'inline-block',
+                  background: 'white',
+                  color: '#e8531a',
+                  border: '1px solid #e8531a',
+                  borderRadius: '10px',
+                  padding: '12px 24px',
+                  fontSize: '14px',
+                  fontWeight: '700',
+                  textDecoration: 'none',
+                  transition: 'all 0.2s',
+                  fontFamily: 'inherit',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = '#e8531a'
+                  e.currentTarget.style.color = 'white'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'white'
+                  e.currentTarget.style.color = '#e8531a'
+                }}
+              >
+                Advanced Calculator
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━━━━━━━━ POPULAR BRANDS ━━━━━━━━━━ */}
+      <section style={{ padding: isMobile ? '32px 16px' : '60px 24px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center',
+            gap: '12px', marginBottom: '16px',
+          }}>
+            <div style={{ width: '24px', height: '2px', background: '#e8531a' }} />
+            <span style={{
+              color: '#e8531a',
+              fontSize: '11px', fontWeight: '600',
+              textTransform: 'uppercase', letterSpacing: '1px',
+            }}>
+              Popular Brands
+            </span>
+          </div>
+
+          <h2 style={{
+            fontSize: isMobile ? '24px' : '32px',
+            fontWeight: '800',
+            color: '#1d1d1f',
+            margin: '0 0 32px',
+            letterSpacing: '-1px',
+          }}>
+            Browse by Brand
+          </h2>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? 'repeat(4, 1fr)' : 'repeat(8, 1fr)',
+            gap: '20px',
+          }}>
+            {popularBrands.map((brand, i) => (
+              <Link
+                key={i}
+                to={brand.link}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column' as const,
+                  alignItems: 'center',
+                  textDecoration: 'none',
+                }}
+              >
+                <img
+                  src={brand.logo}
+                  alt={brand.name}
+                  style={{
+                    width: isMobile ? '50px' : '70px',
+                    height: isMobile ? '50px' : '70px',
+                    objectFit: 'contain',
+                    marginBottom: '8px',
+                  }}
+                />
+                <span style={{
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  color: '#1d1d1f',
+                }}>
+                  {brand.name}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━━━━━━━━ TOP SHOWROOMS ━━━━━━━━━━ */}
+      <section style={{
+        background: '#f5f5f7',
+        padding: isMobile ? '32px 16px' : '60px 24px',
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            marginBottom: isMobile ? '24px' : '32px',
+          }}>
+            <div>
+              <div style={{
+                display: 'flex', alignItems: 'center',
+                gap: '12px', marginBottom: '8px',
+              }}>
+                <div style={{ width: '24px', height: '2px', background: '#e8531a' }} />
+                <span style={{
+                  color: '#e8531a',
+                  fontSize: '11px', fontWeight: '600',
+                  textTransform: 'uppercase', letterSpacing: '1px',
+                }}>
+                  Showrooms
+                </span>
+              </div>
+              <h2 style={{
+                fontSize: isMobile ? '24px' : '32px',
+                fontWeight: '800',
+                color: '#1d1d1f',
+                margin: 0,
+                letterSpacing: '-1px',
+              }}>
+                Top Dealers in Nepal
+              </h2>
+            </div>
+            <Link to="/showrooms" style={{
+              fontSize: '14px',
+              fontWeight: '700',
+              color: '#e8531a',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}>
+              View All <IconArrow />
+            </Link>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)',
+            gap: '20px',
+          }}>
+            {topShowrooms.map(showroom => (
+              <div
+                key={showroom.id}
+                style={{
+                  background: 'white',
+                  border: '1px solid #e5e5e5',
+                  borderRadius: '16px',
+                  padding: '20px',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = '#e8531a'
+                  e.currentTarget.style.transform = 'translateY(-2px)'
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,83,26,0.12)'
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = '#e5e5e5'
+                  e.currentTarget.style.transform = 'translateY(0)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
+              >
+                <div style={{
+                  display: 'flex', alignItems: 'center',
+                  marginBottom: '16px',
+                }}>
+                  <div style={{
+                    width: '40px', height: '40px',
+                    background: '#e8531a',
+                    borderRadius: '10px',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: 'white', fontSize: '20px', fontWeight: '700',
+                    marginRight: '12px',
+                  }}>
+                    {showroom.name.charAt(0)}
+                  </div>
+                  <div>
+                    <div style={{
+                      fontSize: '14px',
+                      fontWeight: '700',
+                      color: '#1d1d1f',
+                    }}>
+                      {showroom.name}
+                    </div>
+                    <div style={{
+                      fontSize: '12px',
+                      color: '#e8531a',
+                      fontWeight: '600',
+                    }}>
+                      {showroom.brand}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{
+                  fontSize: '12px',
+                  color: '#6e6e73',
+                  marginBottom: '8px',
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  fontFamily: 'inherit',
-                  transition: 'all 0.2s'
+                  gap: '6px',
+                }}>
+                  <IconMap />
+                  {showroom.city}
+                </div>
+
+                {showroom.phone && (
+                  <div style={{
+                    fontSize: '12px',
+                    color: '#6e6e73',
+                    marginBottom: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}>
+                    <IconPhone />
+                    {showroom.phone}
+                  </div>
+                )}
+
+                {showroom.working_hours && (
+                  <div style={{
+                    fontSize: '12px',
+                    color: '#6e6e73',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                  }}>
+                    <IconCalendar />
+                    {showroom.working_hours}
+                  </div>
+                )}
+
+                <div style={{ marginTop: '16px' }}>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${showroom.lat},${showroom.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-block',
+                      background: '#e8531a',
+                      color: 'white',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      textDecoration: 'none',
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.background = '#c94415'}
+                    onMouseLeave={e => e.currentTarget.style.background = '#e8531a'}
+                  >
+                    Get Directions
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━━━━━━━━ LATEST OFFERS ━━━━━━━━━━ */}
+      <section style={{ padding: isMobile ? '32px 16px' : '60px 24px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            marginBottom: isMobile ? '24px' : '32px',
+          }}>
+            <div>
+              <div style={{
+                display: 'flex', alignItems: 'center',
+                gap: '12px', marginBottom: '8px',
+              }}>
+                <div style={{ width: '24px', height: '2px', background: '#e8531a' }} />
+                <span style={{
+                  color: '#e8531a',
+                  fontSize: '11px', fontWeight: '600',
+                  textTransform: 'uppercase', letterSpacing: '1px',
+                }}>
+                  Special Offers
+                </span>
+              </div>
+              <h2 style={{
+                fontSize: isMobile ? '24px' : '32px',
+                fontWeight: '800',
+                color: '#1d1d1f',
+                margin: 0,
+                letterSpacing: '-1px',
+              }}>
+                Latest Deals
+              </h2>
+            </div>
+            <Link to="/offers" style={{
+              fontSize: '14px',
+              fontWeight: '700',
+              color: '#e8531a',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}>
+              View All <IconArrow />
+            </Link>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+            gap: '24px',
+          }}>
+            {offers.map(offer => (
+              <div
+                key={offer.id}
+                style={{
+                  background: 'white',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  border: '1px solid #e5e5e5',
+                  transition: 'all 0.2s',
                 }}
                 onMouseEnter={e => {
                   e.currentTarget.style.borderColor = '#e8531a';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,83,26,0.15)';
                 }}
                 onMouseLeave={e => {
                   e.currentTarget.style.borderColor = '#e5e5e5';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
                 }}
               >
-                <IconWhatsApp />
-                Enquire on WhatsApp
-              </button>
-              <button 
-                onClick={() => document.getElementById('showrooms-section')?.scrollIntoView({ behavior: 'smooth' })}
-                style={{
-                  background: '#f5f5f7',
-                  color: '#1d1d1f',
-                  border: '1px solid #e5e5e5',
-                  borderRadius: '10px',
-                  padding: '12px',
-                  fontSize: '13px',
-                  fontWeight: '600',
-                  width: '100%',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  transition: 'all 0.2s'
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.background = '#e8531a';
-                  e.currentTarget.style.color = 'white';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.background = '#f5f5f7';
-                  e.currentTarget.style.color = '#1d1d1f';
-                }}
-              >
-                Find Showroom
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* KEY SPECS STRIP */}
-        <div style={{
-          margin: '24px 0',
-          display: 'grid',
-          gridTemplateColumns: isMobile ? 'repeat(3, 1fr)' : 'repeat(5, 1fr)',
-          gap: isMobile ? '8px' : '12px'
-        }}>
-          <div
-            style={{
-              background: 'white',
-              border: '1px solid #e5e5e5',
-              borderRadius: '12px',
-              padding: isMobile ? '12px 8px' : '16px 12px',
-              textAlign: 'center',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
-          >
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-              <IconGauge />
-            </div>
-            <div style={{
-              fontSize: isMobile ? '12px' : '13px',
-              fontWeight: '700',
-              color: '#1d1d1f'
-            }}>
-              {car.engine_cc} cc
-            </div>
-            <div style={{
-              fontSize: isMobile ? '10px' : '11px',
-              color: '#6e6e73',
-              marginTop: '2px'
-            }}>
-              Engine
-            </div>
-          </div>
-          <div
-            style={{
-              background: 'white',
-              border: '1px solid #e5e5e5',
-              borderRadius: '12px',
-              padding: isMobile ? '12px 8px' : '16px 12px',
-              textAlign: 'center',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
-          >
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-              <IconFuel />
-            </div>
-            <div style={{
-              fontSize: isMobile ? '12px' : '13px',
-              fontWeight: '700',
-              color: '#1d1d1f'
-            }}>
-              {car.mileage_kmpl ? `${car.mileage_kmpl} kmpl` : 'N/A'}
-            </div>
-            <div style={{
-              fontSize: isMobile ? '10px' : '11px',
-              color: '#6e6e73',
-              marginTop: '2px'
-            }}>
-              Mileage
-            </div>
-          </div>
-          <div
-            style={{
-              background: 'white',
-              border: '1px solid #e5e5e5',
-              borderRadius: '12px',
-              padding: isMobile ? '12px 8px' : '16px 12px',
-              textAlign: 'center',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
-          >
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-              <IconFuel />
-            </div>
-            <div style={{
-              fontSize: isMobile ? '12px' : '13px',
-              fontWeight: '700',
-              color: '#1d1d1f'
-            }}>
-              {car.fuel_type}
-            </div>
-            <div style={{
-              fontSize: isMobile ? '10px' : '11px',
-              color: '#6e6e73',
-              marginTop: '2px'
-            }}>
-              Fuel
-            </div>
-          </div>
-          <div
-            style={{
-              background: 'white',
-              border: '1px solid #e5e5e5',
-              borderRadius: '12px',
-              padding: isMobile ? '12px 8px' : '16px 12px',
-              textAlign: 'center',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
-          >
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-              <IconSettings />
-            </div>
-            <div style={{
-              fontSize: isMobile ? '12px' : '13px',
-              fontWeight: '700',
-              color: '#1d1d1f'
-            }}>
-              {car.transmission}
-            </div>
-            <div style={{
-              fontSize: isMobile ? '10px' : '11px',
-              color: '#6e6e73',
-              marginTop: '2px'
-            }}>
-              Transmission
-            </div>
-          </div>
-          <div
-            style={{
-              background: 'white',
-              border: '1px solid #e5e5e5',
-              borderRadius: '12px',
-              padding: isMobile ? '12px 8px' : '16px 12px',
-              textAlign: 'center',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
-          >
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-              <IconUsers />
-            </div>
-            <div style={{
-              fontSize: isMobile ? '12px' : '13px',
-              fontWeight: '700',
-              color: '#1d1d1f'
-            }}>
-              {car.seating} Seats
-            </div>
-            <div style={{
-              fontSize: isMobile ? '10px' : '11px',
-              color: '#6e6e73',
-              marginTop: '2px'
-            }}>
-              Seating
-            </div>
-          </div>
-        </div>
-
-        {/* TABS SECTION */}
-        <div style={{ marginTop: '24px' }}>
-          {/* Tab bar */}
-          <div style={{
-            display: 'flex',
-            borderBottom: '2px solid #f0f0f0',
-            gap: '0',
-            overflowX: 'auto',
-            marginBottom: '24px'
-          }}>
-            {[
-              { id: 'specs', label: 'Specifications' },
-              { id: 'features', label: 'Features' },
-              { id: 'colors', label: 'Colors' },
-              { id: 'variants', label: 'Variants' },
-              { id: 'emi', label: 'EMI Calculator' }
-            ].map(tab => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                style={{
-                  padding: isMobile ? '10px 14px' : '12px 20px',
-                  fontSize: isMobile ? '13px' : '14px',
-                  fontWeight: '600',
-                  border: 'none',
-                  background: 'transparent',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  whiteSpace: 'nowrap',
-                  color: activeTab === tab.id ? '#e8531a' : '#6e6e73',
-                  borderBottom: '2px solid',
-                  borderColor: activeTab === tab.id ? '#e8531a' : 'transparent',
-                  marginBottom: activeTab === tab.id ? '-2px' : '0'
-                }}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Tab: Specifications */}
-          {activeTab === 'specs' && (
-            <div style={{
-              background: 'white',
-              border: '1px solid #e5e5e5',
-              borderRadius: '16px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                padding: '16px 20px',
-                borderBottom: '1px solid #f0f0f0'
-              }}>
-                <h3 style={{
-                  fontSize: '16px',
-                  fontWeight: '800',
-                  margin: '0'
-                }}>
-                  Full Specifications
-                </h3>
-              </div>
-              <div style={{
-                padding: '20px',
-                display: 'grid',
-                gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-                gap: '24px'
-              }}>
-                <div>
-                  <h4 style={{
-                    fontSize: '13px',
-                    fontWeight: '700',
-                    color: '#6e6e73',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                    marginBottom: '12px'
-                  }}>
-                    Engine & Performance
-                  </h4>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Engine Type</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>Turbocharged</span>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Engine Size</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>{car.engine_cc} cc</span>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Max Power</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>150 bhp</span>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Max Torque</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>250 Nm</span>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Fuel System</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>Direct Injection</span>
-                  </div>
-                  
-                  <h4 style={{
-                    fontSize: '13px',
-                    fontWeight: '700',
-                    color: '#6e6e73',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                    marginBottom: '12px',
-                    marginTop: '24px'
-                  }}>
-                    Dimensions & Weight
-                  </h4>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Length</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>4795 mm</span>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Width</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>1855 mm</span>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Height</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>1835 mm</span>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Wheelbase</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>2745 mm</span>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Kerb Weight</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>2180 kg</span>
-                  </div>
-                </div>
-                
-                <div>
-                  <h4 style={{
-                    fontSize: '13px',
-                    fontWeight: '700',
-                    color: '#6e6e73',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                    marginBottom: '12px'
-                  }}>
-                    Suspension & Brakes
-                  </h4>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Front Suspension</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>MacPherson Strut</span>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Rear Suspension</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>Multi-link</span>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Front Brakes</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>Ventilated Disc</span>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Rear Brakes</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>Disc</span>
-                  </div>
-                  
-                  <h4 style={{
-                    fontSize: '13px',
-                    fontWeight: '700',
-                    color: '#6e6e73',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                    marginBottom: '12px',
-                    marginTop: '24px'
-                  }}>
-                    Fuel & Tyres
-                  </h4>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Fuel Tank Capacity</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>80 L</span>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Tyre Size</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>265/60 R18</span>
-                  </div>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    padding: '8px 0',
-                    borderBottom: '1px solid #f5f5f5',
-                    fontSize: '13px'
-                  }}>
-                    <span style={{ color: '#6e6e73' }}>Spare Wheel</span>
-                    <span style={{ color: '#1d1d1f', fontWeight: '600', textAlign: 'right' }}>Full Size</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Tab: Features */}
-          {activeTab === 'features' && (
-            <div style={{
-              background: 'white',
-              border: '1px solid #e5e5e5',
-              borderRadius: '16px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                padding: '16px 20px',
-                borderBottom: '1px solid #f0f0f0'
-              }}>
-                <h3 style={{
-                  fontSize: '16px',
-                  fontWeight: '800',
-                  margin: '0'
-                }}>
-                  Key Features
-                </h3>
-              </div>
-              <div style={{
-                padding: '20px',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
-                gap: '10px'
-              }}>
-                {[
-                  'ABS', 'Airbags (6)', 'Sunroof', 'LED Headlights',
-                  'Automatic Climate Control', 'Touchscreen Infotainment',
-                  'Bluetooth Connectivity', 'Cruise Control',
-                  'Parking Sensors', 'Keyless Entry',
-                  'Push Button Start', 'Electric Folding Mirrors'
-                ].map((feature, index) => (
-                  <div 
-                    key={index}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      fontSize: '13px',
-                      color: '#1d1d1f'
-                    }}
-                  >
-                    <IconCheck />
-                    <span>{feature}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Tab: Colors */}
-          {activeTab === 'colors' && (
-            <div style={{
-              background: 'white',
-              border: '1px solid #e5e5e5',
-              borderRadius: '16px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                padding: '16px 20px',
-                borderBottom: '1px solid #f0f0f0'
-              }}>
-                <h3 style={{
-                  fontSize: '16px',
-                  fontWeight: '800',
-                  margin: '0'
-                }}>
-                  Available Colors
-                </h3>
-              </div>
-              <div style={{
-                padding: '20px',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))',
-                gap: '12px'
-              }}>
-                {['White Pearl', 'Silver', 'Black', 'Red', 'Blue', 'Bronze'].map((color, index) => (
-                  <div 
-                    key={index}
-                    onClick={() => setActiveImageIndex(index % car.images.length)}
-                    style={{
-                      border: '1px solid #e5e5e5',
-                      borderRadius: '12px',
-                      padding: '16px 12px',
-                      textAlign: 'center',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s'
-                    }}
-                    onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
-                    onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
-                  >
-                    <div 
-                      style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '50%',
-                        margin: '0 auto 8px',
-                        border: '1px solid #e5e5e5',
-                        background: getColorCode(color)
-                      }}
-                    ></div>
-                    <div style={{
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      color: '#1d1d1f'
-                    }}>
-                      {color}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Tab: Variants */}
-          {activeTab === 'variants' && (
-            <div style={{
-              background: 'white',
-              border: '1px solid #e5e5e5',
-              borderRadius: '16px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                padding: '16px 20px',
-                borderBottom: '1px solid #f0f0f0'
-              }}>
-                <h3 style={{
-                  fontSize: '16px',
-                  fontWeight: '800',
-                  margin: '0'
-                }}>
-                  {car.name} Variants
-                </h3>
-              </div>
-              {isMobile ? (
-                <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{
-                    padding: '16px',
-                    border: '1px solid #e5e5e5',
-                    borderRadius: '12px',
-                    background: '#fff8f5'
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <div>
-                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#1d1d1f' }}>
-                          {car.name} {car.variant}
-                        </div>
-                        <div style={{ fontSize: '12px', color: '#6e6e73' }}>
-                          Automatic
-                        </div>
-                      </div>
-                      <div style={{ fontSize: '14px', fontWeight: '700', color: '#e8531a' }}>
-                        {formatNPR(car.ex_showroom_price)}
-                      </div>
-                    </div>
-                    <div style={{ fontSize: '12px', color: '#6e6e73', marginBottom: '12px' }}>
-                      +Cruise control, Premium sound
-                    </div>
-                    <button style={{
-                      width: '100%',
-                      background: '#e8531a',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '8px',
-                      padding: '8px',
-                      fontSize: '12px',
-                      fontWeight: '700',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit'
-                    }}>
-                      Selected
-                    </button>
-                  </div>
-                  <div style={{
-                    padding: '16px',
-                    border: '1px solid #e5e5e5',
-                    borderRadius: '12px'
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <div>
-                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#1d1d1f' }}>
-                          {car.name} Base
-                        </div>
-                        <div style={{ fontSize: '12px', color: '#6e6e73' }}>
-                          Manual
-                        </div>
-                      </div>
-                      <div style={{ fontSize: '14px', fontWeight: '700', color: '#1d1d1f' }}>
-                        {formatNPR(4500000)}
-                      </div>
-                    </div>
-                    <div style={{ fontSize: '12px', color: '#6e6e73', marginBottom: '12px' }}>
-                      Basic features
-                    </div>
-                    <button style={{
-                      width: '100%',
-                      background: 'white',
-                      color: '#1d1d1f',
-                      border: '1px solid #d2d2d7',
-                      borderRadius: '8px',
-                      padding: '8px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit'
-                    }}>
-                      Enquire
-                    </button>
-                  </div>
-                  <div style={{
-                    padding: '16px',
-                    border: '1px solid #e5e5e5',
-                    borderRadius: '12px'
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <div>
-                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#1d1d1f' }}>
-                          {car.name} Mid
-                        </div>
-                        <div style={{ fontSize: '12px', color: '#6e6e73' }}>
-                          Manual
-                        </div>
-                      </div>
-                      <div style={{ fontSize: '14px', fontWeight: '700', color: '#1d1d1f' }}>
-                        {formatNPR(4850000)}
-                      </div>
-                    </div>
-                    <div style={{ fontSize: '12px', color: '#6e6e73', marginBottom: '12px' }}>
-                      +Sunroof, Leather seats
-                    </div>
-                    <button style={{
-                      width: '100%',
-                      background: 'white',
-                      color: '#1d1d1f',
-                      border: '1px solid #d2d2d7',
-                      borderRadius: '8px',
-                      padding: '8px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit'
-                    }}>
-                      Enquire
-                    </button>
-                  </div>
-                  <div style={{
-                    padding: '16px',
-                    border: '1px solid #e5e5e5',
-                    borderRadius: '12px'
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <div>
-                        <div style={{ fontSize: '14px', fontWeight: '700', color: '#1d1d1f' }}>
-                          {car.name} Top
-                        </div>
-                        <div style={{ fontSize: '12px', color: '#6e6e73' }}>
-                          Automatic
-                        </div>
-                      </div>
-                      <div style={{ fontSize: '14px', fontWeight: '700', color: '#1d1d1f' }}>
-                        {formatNPR(5500000)}
-                      </div>
-                    </div>
-                    <div style={{ fontSize: '12px', color: '#6e6e73', marginBottom: '12px' }}>
-                      +360 camera, Massage seats
-                    </div>
-                    <button style={{
-                      width: '100%',
-                      background: 'white',
-                      color: '#1d1d1f',
-                      border: '1px solid #d2d2d7',
-                      borderRadius: '8px',
-                      padding: '8px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      fontFamily: 'inherit'
-                    }}>
-                      Enquire
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
-                    <thead>
-                      <tr style={{ background: '#f5f5f7' }}>
-                        <th style={{ fontSize: '11px', fontWeight: '700', color: '#6e6e73', textTransform: 'uppercase', letterSpacing: '1px', padding: '10px 14px', textAlign: 'left' }}>Variant</th>
-                        <th style={{ fontSize: '11px', fontWeight: '700', color: '#6e6e73', textTransform: 'uppercase', letterSpacing: '1px', padding: '10px 14px', textAlign: 'left' }}>Price</th>
-                        <th style={{ fontSize: '11px', fontWeight: '700', color: '#6e6e73', textTransform: 'uppercase', letterSpacing: '1px', padding: '10px 14px', textAlign: 'left' }}>Key Difference</th>
-                        <th style={{ fontSize: '11px', fontWeight: '700', color: '#6e6e73', textTransform: 'uppercase', letterSpacing: '1px', padding: '10px 14px', textAlign: 'left' }}>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr style={{ borderBottom: '1px solid #f0f0f0' }}>
-                        <td style={{ padding: '12px 14px' }}>
-                          <div>
-                            <div style={{ fontWeight: '600' }}>{car.name} Base</div>
-                            <div style={{ fontSize: '12px', color: '#6e6e73' }}>Manual</div>
-                          </div>
-                        </td>
-                        <td style={{ padding: '12px 14px', fontWeight: '600' }}>{formatNPR(4500000)}</td>
-                        <td style={{ padding: '12px 14px', fontSize: '12px', color: '#6e6e73' }}>Basic features</td>
-                        <td style={{ padding: '12px 14px' }}>
-                          <button style={{
-                            border: '1px solid #d2d2d7',
-                            borderRadius: '8px',
-                            padding: '6px 14px',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                            background: 'white',
-                            cursor: 'pointer',
-                            fontFamily: 'inherit'
-                          }}
-                          onMouseEnter={e => {
-                            e.currentTarget.style.borderColor = '#e8531a';
-                            e.currentTarget.style.color = '#e8531a';
-                          }}
-                          onMouseLeave={e => {
-                            e.currentTarget.style.borderColor = '#d2d2d7';
-                            e.currentTarget.style.color = '#1d1d1f';
-                          }}>
-                            Enquire
-                          </button>
-                        </td>
-                      </tr>
-                      <tr style={{ borderBottom: '1px solid #f0f0f0' }}>
-                        <td style={{ padding: '12px 14px' }}>
-                          <div>
-                            <div style={{ fontWeight: '600' }}>{car.name} Mid</div>
-                            <div style={{ fontSize: '12px', color: '#6e6e73' }}>Manual</div>
-                          </div>
-                        </td>
-                        <td style={{ padding: '12px 14px', fontWeight: '600' }}>{formatNPR(4850000)}</td>
-                        <td style={{ padding: '12px 14px', fontSize: '12px', color: '#6e6e73' }}>+Sunroof, Leather seats</td>
-                        <td style={{ padding: '12px 14px' }}>
-                          <button style={{
-                            border: '1px solid #d2d2d7',
-                            borderRadius: '8px',
-                            padding: '6px 14px',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                            background: 'white',
-                            cursor: 'pointer',
-                            fontFamily: 'inherit'
-                          }}
-                          onMouseEnter={e => {
-                            e.currentTarget.style.borderColor = '#e8531a';
-                            e.currentTarget.style.color = '#e8531a';
-                          }}
-                          onMouseLeave={e => {
-                            e.currentTarget.style.borderColor = '#d2d2d7';
-                            e.currentTarget.style.color = '#1d1d1f';
-                          }}>
-                            Enquire
-                          </button>
-                        </td>
-                      </tr>
-                      <tr style={{ borderBottom: '1px solid #f0f0f0', background: '#fff8f5' }}>
-                        <td style={{ padding: '12px 14px' }}>
-                          <div>
-                            <div style={{ fontWeight: '600' }}>{car.name} {car.variant}</div>
-                            <div style={{ fontSize: '12px', color: '#6e6e73' }}>Automatic</div>
-                          </div>
-                        </td>
-                        <td style={{ padding: '12px 14px', fontWeight: '700', color: '#e8531a' }}>
-                          {formatNPR(car.ex_showroom_price)}
-                        </td>
-                        <td style={{ padding: '12px 14px', fontSize: '12px', color: '#6e6e73' }}>+Cruise control, Premium sound</td>
-                        <td style={{ padding: '12px 14px' }}>
-                          <button style={{
-                            background: '#e8531a',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '8px',
-                            padding: '6px 14px',
-                            fontSize: '12px',
-                            fontWeight: '700',
-                            cursor: 'pointer',
-                            fontFamily: 'inherit'
-                          }}>
-                            Selected
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style={{ padding: '12px 14px' }}>
-                          <div>
-                            <div style={{ fontWeight: '600' }}>{car.name} Top</div>
-                            <div style={{ fontSize: '12px', color: '#6e6e73' }}>Automatic</div>
-                          </div>
-                        </td>
-                        <td style={{ padding: '12px 14px', fontWeight: '600' }}>{formatNPR(5500000)}</td>
-                        <td style={{ padding: '12px 14px', fontSize: '12px', color: '#6e6e73' }}>+360 camera, Massage seats</td>
-                        <td style={{ padding: '12px 14px' }}>
-                          <button style={{
-                            border: '1px solid #d2d2d7',
-                            borderRadius: '8px',
-                            padding: '6px 14px',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                            background: 'white',
-                            cursor: 'pointer',
-                            fontFamily: 'inherit'
-                          }}
-                          onMouseEnter={e => {
-                            e.currentTarget.style.borderColor = '#e8531a';
-                            e.currentTarget.style.color = '#e8531a';
-                          }}
-                          onMouseLeave={e => {
-                            e.currentTarget.style.borderColor = '#d2d2d7';
-                            e.currentTarget.style.color = '#1d1d1f';
-                          }}>
-                            Enquire
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Tab: EMI Calculator */}
-          {activeTab === 'emi' && (
-            <div style={{
-              background: 'white',
-              border: '1px solid #e5e5e5',
-              borderRadius: '16px',
-              padding: '20px'
-            }}>
-              {isMobile ? (
-                <div style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr',
-                  gap: '24px'
-                }}>
-                  <InlineEmiCalculator price={car.ex_showroom_price} carName={car.name} />
-                </div>
-              ) : (
-                <InlineEmiCalculator price={car.ex_showroom_price} carName={car.name} />
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* CURRENT OFFERS SECTION */}
-        {offers.length > 0 && (
-          <div style={{ marginTop: '32px' }}>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              marginBottom: '16px'
-            }}>
-              <div style={{
-                display: 'inline-block',
-                background: '#fff8f5',
-                border: '1px solid #e8531a',
-                borderRadius: '6px',
-                padding: '4px 12px',
-                fontSize: '12px',
-                fontWeight: '700',
-                color: '#e8531a',
-                textTransform: 'uppercase',
-                letterSpacing: '1px'
-              }}>
-                OFFERS
-              </div>
-              <h2 style={{
-                fontSize: isMobile ? '18px' : '22px',
-                fontWeight: '800',
-                color: '#1d1d1f',
-                margin: 0,
-                letterSpacing: '-0.5px'
-              }}>
-                Current Offers
-              </h2>
-            </div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '100%' : '280px'}, 1fr))`,
-              gap: '16px'
-            }}>
-              {offers.map(offer => (
-                <div
-                  key={offer.id}
-                  style={{
-                    background: 'white',
-                    border: '1px solid #e5e5e5',
-                    borderRadius: '14px',
-                    overflow: 'hidden',
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = '#e8531a';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = '#e5e5e5';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                  }}
-                >
+                <div style={{ position: 'relative' }}>
                   <img 
-                    src={offer.image_url || 'https://placehold.co/600x400/f59e0b/ffffff?text=Special+Offer'} 
+                    src={offer.image_url} 
                     alt={offer.title} 
                     style={{
                       width: '100%',
-                      height: '120px',
-                      objectFit: 'cover'
+                      height: isMobile ? '160px' : '200px',
+                      objectFit: 'cover',
                     }}
                   />
-                  <div style={{ padding: '14px' }}>
-                    <h3 style={{
-                      fontSize: '14px',
-                      fontWeight: '800',
-                      color: '#1d1d1f',
-                      margin: '0 0 4px'
-                    }}>
-                      {offer.title}
-                    </h3>
+                  <div style={{
+                    position: 'absolute',
+                    top: '16px',
+                    right: '16px',
+                    background: '#22c55e',
+                    color: 'white',
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    padding: '4px 10px',
+                    borderRadius: '20px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                  }}>
+                    Active
+                  </div>
+                </div>
+                
+                <div style={{ padding: '20px' }}>
+                  <div style={{
+                    display: 'inline-block',
+                    background: '#fff8f5',
+                    border: '1px solid #e8531a',
+                    borderRadius: '6px',
+                    padding: '3px 10px',
+                    fontSize: '10px',
+                    fontWeight: '700',
+                    color: '#e8531a',
+                    textTransform: 'uppercase',
+                    letterSpacing: '1px',
+                    marginBottom: '10px',
+                  }}>
+                    {offer.tag}
+                  </div>
+                  
+                  <h3 style={{
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    color: '#1d1d1f',
+                    margin: '0 0 10px',
+                    lineHeight: 1.4,
+                  }}>
+                    {offer.title}
+                  </h3>
+                  <p style={{
+                    fontSize: '13px',
+                    color: '#6e6e73',
+                    margin: '0 0 16px',
+                    lineHeight: 1.6,
+                  }}>
+                    {offer.description}
+                  </p>
+                  
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    marginBottom: '16px',
+                  }}>
+                    <div style={{ color: '#e8531a' }}>
+                      <IconZap />
+                    </div>
                     <p style={{
-                      fontSize: '12px',
-                      color: '#6e6e73',
-                      margin: '0 0 10px'
+                      fontSize: '14px',
+                      fontWeight: '700',
+                      color: '#e8531a',
+                      margin: 0,
                     }}>
-                      {offer.description}
+                      Worth Rs.15,000
                     </p>
-                    <button
+                  </div>
+                  
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    marginBottom: '8px',
+                    fontSize: '12px',
+                    color: '#6e6e73',
+                  }}>
+                    <IconCalendar />
+                    <span>Valid until: {new Date(offer.valid_until).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })}</span>
+                  </div>
+                  
+                  <div style={{
+                    display: 'flex',
+                    gap: '12px',
+                    marginTop: '16px',
+                  }}>
+                    <Link to="/advertise"
                       style={{
+                        flex: 1,
                         background: '#e8531a',
                         color: 'white',
                         border: 'none',
-                        borderRadius: '8px',
-                        padding: '8px 16px',
-                        fontSize: '12px',
+                        borderRadius: '10px',
+                        padding: '10px 16px',
+                        fontSize: '13px',
                         fontWeight: '700',
-                        cursor: 'pointer',
-                        width: '100%',
-                        fontFamily: 'inherit'
+                        textDecoration: 'none',
+                        textAlign: 'center',
+                        transition: 'all 0.2s',
                       }}
-                      onMouseEnter={e => e.currentTarget.style.background = '#c94415'}
-                      onMouseLeave={e => e.currentTarget.style.background = '#e8531a'}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.background = '#c94415';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.35)';
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.background = '#e8531a';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
                     >
-                      View Details
+                      Claim Offer
+                    </Link>
+                    <button
+                      onClick={() => {
+                        const url = `${window.location.origin}/offers/${offer.id}`;
+                        if (navigator.clipboard) {
+                          navigator.clipboard.writeText(url);
+                          alert('Link copied to clipboard!');
+                        } else {
+                          const textArea = document.createElement("textarea");
+                          textArea.value = url;
+                          document.body.appendChild(textArea);
+                          textArea.select();
+                          document.execCommand('copy');
+                          document.body.removeChild(textArea);
+                          alert('Link copied to clipboard!');
+                        }
+                      }}
+                      style={{
+                        background: 'white',
+                        color: '#1d1d1f',
+                        border: '1.5px solid #d2d2d7',
+                        borderRadius: '10px',
+                        padding: '10px 16px',
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        fontFamily: 'inherit',
+                        transition: 'all 0.2s',
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.borderColor = '#e8531a';
+                        e.currentTarget.style.color = '#e8531a';
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.08)';
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.borderColor = '#d2d2d7';
+                        e.currentTarget.style.color = '#1d1d1f';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
+                    >
+                      Share
                     </button>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
-        )}
+        </div>
+      </section>
 
-        {/* SHOWROOMS SECTION */}
-        <div id="showrooms-section" style={{ marginTop: '32px' }}>
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              background: '#fff8f5',
-              border: '1px solid #e8531a',
-              borderRadius: '6px',
-              padding: '3px 10px',
-              fontSize: '11px',
+      {/* ━━━━━━━━━━ LATEST BLOG ━━━━━━━━━━ */}
+      <section style={{
+        background: '#f5f5f7',
+        padding: isMobile ? '32px 16px' : '60px 24px',
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            marginBottom: isMobile ? '24px' : '32px',
+          }}>
+            <div>
+              <div style={{
+                display: 'flex', alignItems: 'center',
+                gap: '12px', marginBottom: '8px',
+              }}>
+                <div style={{ width: '24px', height: '2px', background: '#e8531a' }} />
+                <span style={{
+                  color: '#e8531a',
+                  fontSize: '11px', fontWeight: '600',
+                  textTransform: 'uppercase', letterSpacing: '1px',
+                }}>
+                  Blog
+                </span>
+              </div>
+              <h2 style={{
+                fontSize: isMobile ? '24px' : '32px',
+                fontWeight: '800',
+                color: '#1d1d1f',
+                margin: 0,
+                letterSpacing: '-1px',
+              }}>
+                Latest Articles
+              </h2>
+            </div>
+            <Link to="/blog" style={{
+              fontSize: '14px',
               fontWeight: '700',
               color: '#e8531a',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              marginBottom: '8px',
+              textDecoration: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
             }}>
-              Showrooms
-            </div>
-            <h2 style={{
-              fontSize: isMobile ? '18px' : '22px',
-              fontWeight: '800',
-              color: '#1d1d1f',
-              letterSpacing: '-0.5px',
-              margin: 0,
-            }}>
-              Where to Buy {car.name}
-            </h2>
+              View All <IconArrow />
+            </Link>
           </div>
-          <div style={{
-            display: isMobile ? 'flex' : 'grid',
-            flexDirection: 'column',
-            gridTemplateColumns: '1fr 320px',
-            gap: '16px'
-          }}>
-            <div style={{
-              background: 'white',
-              border: '1px solid #e5e5e5',
-              borderRadius: '16px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                padding: '14px 16px',
-                borderBottom: '1px solid #f0f0f0'
-              }}>
-                <div style={{
-                  fontSize: '14px',
-                  fontWeight: '700',
-                  color: '#1d1d1f'
-                }}>
-                  Map
-                </div>
-              </div>
-              <ShowroomsMap showrooms={showrooms} />
-            </div>
-            <div style={{
-              background: 'white',
-              border: '1px solid #e5e5e5',
-              borderRadius: '16px',
-              overflow: 'hidden'
-            }}>
-              <div style={{
-                padding: '14px 16px',
-                borderBottom: '1px solid #f0f0f0'
-              }}>
-                <div style={{
-                  fontSize: '14px',
-                  fontWeight: '700',
-                  color: '#1d1d1f'
-                }}>
-                  {showrooms.length} Showrooms
-                </div>
-              </div>
-              <div style={{
-                maxHeight: '320px',
-                overflowY: 'auto',
-                padding: '12px'
-              }}>
-                {showrooms.length > 0 ? (
-                  showrooms.map(showroom => (
-                    <div
-                      key={showroom.id}
-                      style={{
-                        border: '1px solid #e5e5e5',
-                        borderRadius: '12px',
-                        padding: '14px',
-                        marginBottom: '10px',
-                        transition: 'all 0.2s'
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
-                      onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
-                    >
-                      <div style={{
-                        fontSize: '13px',
-                        fontWeight: '700',
-                        color: '#1d1d1f',
-                        marginBottom: '4px'
-                      }}>
-                        {showroom.name}
-                        {showroom.is_authorized && (
-                          <span style={{
-                            display: 'inline-block',
-                            background: '#fff8f5',
-                            border: '1px solid #fde8da',
-                            color: '#e8531a',
-                            fontSize: '10px',
-                            fontWeight: '700',
-                            borderRadius: '4px',
-                            padding: '2px 6px',
-                            marginLeft: '8px'
-                          }}>
-                            Authorized
-                          </span>
-                        )}
-                      </div>
-                      <div style={{
-                        fontSize: '12px',
-                        color: '#6e6e73',
-                        marginBottom: '6px'
-                      }}>
-                        {showroom.address}
-                      </div>
-                      <div style={{
-                        display: 'flex',
-                        gap: '6px',
-                        alignItems: 'center',
-                        fontSize: '12px',
-                        color: '#6e6e73',
-                        marginBottom: '3px'
-                      }}>
-                        <IconMap />
-                        <span>{showroom.city}</span>
-                      </div>
-                      {showroom.phone && (
-                        <div style={{
-                          display: 'flex',
-                          gap: '6px',
-                          alignItems: 'center',
-                          fontSize: '12px',
-                          color: '#6e6e73',
-                          marginBottom: '3px'
-                        }}>
-                          <IconPhone />
-                          <span>{showroom.phone}</span>
-                        </div>
-                      )}
-                      {showroom.working_hours && (
-                        <div style={{
-                          display: 'flex',
-                          gap: '6px',
-                          alignItems: 'center',
-                          fontSize: '12px',
-                          color: '#6e6e73',
-                          marginBottom: '3px'
-                        }}>
-                          <IconClock />
-                          <span>{showroom.working_hours}</span>
-                        </div>
-                      )}
-                      <div style={{
-                        display: 'flex',
-                        gap: '8px',
-                        marginTop: '10px'
-                      }}>
-                        <a
-                          href={`https://www.google.com/maps/dir/?api=1&destination=${showroom.lat},${showroom.lng}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            border: '1px solid #d2d2d7',
-                            borderRadius: '8px',
-                            padding: '7px 14px',
-                            fontSize: '12px',
-                            fontWeight: '600',
-                            background: 'white',
-                            cursor: 'pointer',
-                            flex: '1',
-                            textAlign: 'center',
-                            textDecoration: 'none',
-                            color: '#1d1d1f',
-                            fontFamily: 'inherit'
-                          }}
-                          onMouseEnter={e => {
-                            e.currentTarget.style.borderColor = '#e8531a';
-                            e.currentTarget.style.color = '#e8531a';
-                          }}
-                          onMouseLeave={e => {
-                            e.currentTarget.style.borderColor = '#d2d2d7';
-                            e.currentTarget.style.color = '#1d1d1f';
-                          }}
-                        >
-                          Directions
-                        </a>
-                        {showroom.phone && (
-                          <button
-                            onClick={() => {
-                              trackEnquiry(car.name, car.id);
-                              window.open('tel:'+showroom.phone)
-                            }}
-                            style={{
-                              background: '#e8531a',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: '8px',
-                              padding: '7px 14px',
-                              fontSize: '12px',
-                              fontWeight: '700',
-                              cursor: 'pointer',
-                              flex: '1',
-                              fontFamily: 'inherit'
-                            }}
-                            onMouseEnter={e => e.currentTarget.style.background = '#c94415'}
-                            onMouseLeave={e => e.currentTarget.style.background = '#e8531a'}
-                          >
-                            Call
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div style={{
-                    padding: '24px',
-                    textAlign: 'center',
-                    fontSize: '13px',
-                    color: '#6e6e73'
-                  }}>
-                    No showrooms found for this brand
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {/* SIMILAR CARS SECTION */}
-        {similarCars.length > 0 && (
-          <div style={{ marginTop: '32px' }}>
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                background: '#fff8f5',
-                border: '1px solid #e8531a',
-                borderRadius: '6px',
-                padding: '3px 10px',
-                fontSize: '11px',
-                fontWeight: '700',
-                color: '#e8531a',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                marginBottom: '8px',
-              }}>
-                Similar Cars
-              </div>
-              <h2 style={{
-                fontSize: isMobile ? '18px' : '22px',
-                fontWeight: '800',
-                color: '#1d1d1f',
-                letterSpacing: '-0.5px',
-                margin: 0,
-              }}>
-                You Might Also Like
-              </h2>
-            </div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '160px' : '200px'}, 1fr))`,
-              gap: '16px'
-            }}>
-              {similarCars.map(similarCar => (
-                <div
-                  key={similarCar.id}
-                  onClick={() => navigate(`/cars/${similarCar.slug}`)}
-                  style={{
-                    background: 'white',
-                    border: '1px solid #e5e5e5',
-                    borderRadius: '14px',
-                    overflow: 'hidden',
-                    transition: 'all 0.2s',
-                    cursor: 'pointer'
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = '#e8531a';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                    e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,83,26,0.1)';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = '#e5e5e5';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+            gap: '24px',
+          }}>
+            {latestBlogPosts.map(post => (
+              <div
+                key={post.id}
+                style={{
+                  background: 'white',
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  border: '1px solid #e5e5e5',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = '#e8531a';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 24px rgba(232,83,26,0.12)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = '#e5e5e5';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }}
+              >
+                {post.cover_image && (
                   <img 
-                    src={similarCar.images?.[0] || 'https://placehold.co/300x200/f5f5f7/6e6e73?text=Car'} 
-                    alt={`${similarCar.brand} ${similarCar.name}`} 
+                    src={post.cover_image} 
+                    alt={post.title} 
                     style={{
                       width: '100%',
-                      height: isMobile ? '110px' : '140px',
+                      height: '180px',
                       objectFit: 'cover',
-                      background: '#f5f5f7'
                     }}
                   />
-                  <div style={{ padding: isMobile ? '10px' : '14px' }}>
-                    <div style={{
+                )}
+                
+                <div style={{ padding: '20px' }}>
+                  {post.category && (
+                    <span style={{
+                      display: 'inline-block',
+                      background: '#fff8f5',
+                      border: '1px solid #fde8da',
+                      color: '#e8531a',
                       fontSize: '10px',
                       fontWeight: '700',
-                      color: '#e8531a',
                       textTransform: 'uppercase',
-                      letterSpacing: '1px',
-                      marginBottom: '2px'
+                      borderRadius: '4px',
+                      padding: '2px 8px',
+                      marginBottom: '10px',
                     }}>
-                      {similarCar.brand}
-                    </div>
+                      {post.category}
+                    </span>
+                  )}
+                  
+                  <h3 style={{
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    color: '#1d1d1f',
+                    margin: '0 0 10px',
+                    lineHeight: 1.4,
+                  }}>
+                    {post.title}
+                  </h3>
+                  
+                  <p style={{
+                    fontSize: '13px',
+                    color: '#6e6e73',
+                    lineHeight: 1.6,
+                    margin: '0 0 16px',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 3,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                  }}>
+                    {post.excerpt}
+                  </p>
+                  
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
                     <div style={{
-                      fontSize: isMobile ? '12px' : '13px',
-                      fontWeight: '800',
-                      color: '#1d1d1f',
-                      marginBottom: '4px',
-                      lineHeight: '1.3'
+                      fontSize: '11px',
+                      color: '#6e6e73',
                     }}>
-                      {similarCar.name}
+                      {new Date(post.published_at).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
                     </div>
-                    <div style={{
-                      fontSize: isMobile ? '13px' : '14px',
-                      fontWeight: '800',
-                      color: '#e8531a'
-                    }}>
-                      {formatNPR(similarCar.ex_showroom_price)}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* COMPARE SECTION */}
-        {similarCars.length > 0 && (
-          <div style={{ marginTop: '32px', marginBottom: '40px' }}>
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                background: '#fff8f5',
-                border: '1px solid #e8531a',
-                borderRadius: '6px',
-                padding: '3px 10px',
-                fontSize: '11px',
-                fontWeight: '700',
-                color: '#e8531a',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                marginBottom: '8px',
-              }}>
-                Compare
-              </div>
-              <h2 style={{
-                fontSize: isMobile ? '18px' : '22px',
-                fontWeight: '800',
-                color: '#1d1d1f',
-                letterSpacing: '-0.5px',
-                margin: 0,
-              }}>
-                Compare with Similar
-              </h2>
-            </div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? '100%' : '280px'}, 1fr))`,
-              gap: '16px'
-            }}>
-              {similarCars.slice(0, 3).map(similarCar => (
-                <div
-                  key={similarCar.id}
-                  style={{
-                    background: 'white',
-                    border: '1px solid #e5e5e5',
-                    borderRadius: '14px',
-                    padding: '16px',
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
-                >
-                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <img 
-                      src={similarCar.images?.[0] || 'https://placehold.co/100x100/f5f5f7/6e6e73?text=Car'} 
-                      alt={`${similarCar.brand} ${similarCar.name}`} 
+                    
+                    <Link 
+                      to={`/blog/${post.slug}`}
                       style={{
-                        width: '56px',
-                        height: '56px',
-                        objectFit: 'cover',
-                        borderRadius: '8px'
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        color: '#e8531a',
+                        textDecoration: 'none',
                       }}
-                    />
-                    <div>
-                      <div style={{
-                        fontSize: '13px',
-                        fontWeight: '800',
-                        color: '#1d1d1f'
-                      }}>
-                        {similarCar.name}
-                      </div>
-                      <div style={{
-                        fontSize: '11px',
-                        color: '#6e6e73'
-                      }}>
-                        {similarCar.brand}
-                      </div>
-                    </div>
+                      onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
+                      onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
+                    >
+                      Read More
+                    </Link>
                   </div>
-                  <div style={{ marginTop: '12px' }}>
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      fontSize: '12px',
-                      padding: '5px 0',
-                      borderBottom: '1px solid #f5f5f5'
-                    }}>
-                      <span style={{ color: '#6e6e73' }}>Price</span>
-                      <span style={{ color: '#1d1d1f', fontWeight: '600' }}>{formatNPR(similarCar.ex_showroom_price)}</span>
-                    </div>
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      fontSize: '12px',
-                      padding: '5px 0',
-                      borderBottom: '1px solid #f5f5f5'
-                    }}>
-                      <span style={{ color: '#6e6e73' }}>Engine</span>
-                      <span style={{ color: '#1d1d1f', fontWeight: '600' }}>{similarCar.engine_cc} cc</span>
-                    </div>
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      fontSize: '12px',
-                      padding: '5px 0',
-                      borderBottom: '1px solid #f5f5f5'
-                    }}>
-                      <span style={{ color: '#6e6e73' }}>Fuel</span>
-                      <span style={{ color: '#1d1d1f', fontWeight: '600' }}>{similarCar.fuel_type}</span>
-                    </div>
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      fontSize: '12px',
-                      padding: '5px 0'
-                    }}>
-                      <span style={{ color: '#6e6e73' }}>Transmission</span>
-                      <span style={{ color: '#1d1d1f', fontWeight: '600' }}>{similarCar.transmission}</span>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      trackCompareAdd(similarCar.name);
-                      clearCompare()
-                      addToCompare(car)
-                      addToCompare(similarCar)
-                      navigate('/compare')
-                    }}
-                    style={{
-                      marginTop: '12px',
-                      border: '1px solid #d2d2d7',
-                      borderRadius: '8px',
-                      padding: '8px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      background: 'white',
-                      cursor: 'pointer',
-                      width: '100%',
-                      fontFamily: 'inherit'
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.borderColor = '#e8531a';
-                      e.currentTarget.style.color = '#e8531a';
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.borderColor = '#d2d2d7';
-                      e.currentTarget.style.color = '#1d1d1f';
-                    }}
-                  >
-                    Compare
-                  </button>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* EMI MODAL */}
-      {showEmiModal && (
-        <div 
-          style={{
-            position: 'fixed',
-            inset: '0',
-            background: 'rgba(0,0,0,0.5)',
-            zIndex: '100',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '16px'
-          }}
-          onClick={() => setShowEmiModal(false)}
-        >
-          <div 
-            style={{
-              background: 'white',
-              borderRadius: '20px',
-              padding: isMobile ? '20px' : '32px',
-              width: '100%',
-              maxWidth: '640px',
-              maxHeight: '90vh',
-              overflowY: 'auto'
-            }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '20px'
-            }}>
-              <div style={{
-                fontSize: '18px',
-                fontWeight: '800',
-                color: '#1d1d1f'
-              }}>
-                EMI Calculator for {car.name}
               </div>
-              <button
-                onClick={() => setShowEmiModal(false)}
-                style={{
-                  border: '1px solid #e5e5e5',
-                  borderRadius: '8px',
-                  padding: '6px 10px',
-                  background: 'white',
-                  cursor: 'pointer',
-                  fontSize: '18px',
-                  color: '#6e6e73',
-                  fontFamily: 'inherit'
-                }}
-                onMouseEnter={e => e.currentTarget.style.borderColor = '#e8531a'}
-                onMouseLeave={e => e.currentTarget.style.borderColor = '#e5e5e5'}
-              >
-                ×
-              </button>
-            </div>
-            <div style={{ padding: '4px 0' }}>
-              <InlineEmiCalculator price={car.ex_showroom_price} carName={car.name} />
-            </div>
+            ))}
           </div>
         </div>
-      )}
+      </section>
+
+      {/* ━━━━━━━━━━ CTA ━━━━━━━━━━ */}
+      <section style={{
+        background: 'white',
+        padding: isMobile ? '40px 16px' : '80px 24px',
+        textAlign: 'center',
+      }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+          <h2 style={{
+            fontSize: isMobile ? '28px' : '36px',
+            fontWeight: '800',
+            color: '#1d1d1f',
+            margin: '0 0 16px',
+            letterSpacing: '-1px',
+          }}>
+            Ready to Find Your Perfect Car?
+          </h2>
+          <p style={{
+            fontSize: '16px',
+            color: '#6e6e73',
+            margin: '0 0 32px',
+            lineHeight: 1.7,
+          }}>
+            Compare prices, calculate EMI, find showrooms — all in one place
+          </p>
+          
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '16px',
+            flexWrap: 'wrap',
+          }}>
+            <Link to="/cars"
+              style={{
+                background: '#e8531a',
+                color: 'white',
+                padding: '14px 32px',
+                borderRadius: '12px',
+                fontWeight: '700',
+                fontSize: '15px',
+                textDecoration: 'none',
+                transition: 'all 0.2s',
+                boxSizing: 'border-box' as const,
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = '#c94415'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(232,83,26,0.35)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = '#e8531a'
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            >
+              Browse Cars
+            </Link>
+            
+            <Link to="/budget-finder"
+              style={{
+                background: 'white',
+                color: '#1d1d1f',
+                padding: '14px 32px',
+                borderRadius: '12px',
+                fontWeight: '600',
+                fontSize: '15px',
+                textDecoration: 'none',
+                border: '1px solid #d2d2d7',
+                transition: 'all 0.2s',
+                boxSizing: 'border-box' as const,
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = '#e8531a'
+                e.currentTarget.style.color = '#e8531a'
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.08)'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = '#d2d2d7'
+                e.currentTarget.style.color = '#1d1d1f'
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            >
+              Budget Finder
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
 
-// Helper function to get color codes
-const getColorCode = (color: string) => {
-  const colors: Record<string, string> = {
-    'White Pearl': '#f8f9fa',
-    'Silver': '#c0c0c0',
-    'Black': '#000000',
-    'Red': '#dc2626',
-    'Blue': '#2563eb',
-    'Bronze': '#d97706'
-  };
-  return colors[color] || '#cccccc';
-};
-
-export default CarDetail;
+export default Index;
