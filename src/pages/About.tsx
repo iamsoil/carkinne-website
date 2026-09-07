@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import SEO from '@/components/SEO';
 
 const IconCar = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -117,6 +118,11 @@ const About = () => {
       background: 'white',
       fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif',
     }}>
+      <SEO
+        title="About CarKinne"
+        description="Learn about CarKinne, Nepal's smartest car buying guide built to provide transparent car pricing, vehicle specs, and showroom information."
+        canonicalPath="/about"
+      />
 
       {/* HERO */}
       <div style={{

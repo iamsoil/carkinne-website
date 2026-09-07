@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import SEO from "@/components/SEO";
 
 const BANKS = [
   { name: "NMB Bank", rate: 10.5, tenure: 7, finance: 80, fee: 0.5, best: false },
@@ -159,6 +160,11 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
       color: '#1d1d1f',
       background: '#fff',
     }}>
+      <SEO
+        title="Car EMI Calculator Nepal"
+        description="Calculate your monthly car loan EMI in Nepal with current auto loan interest rates from top commercial banks, down payment options, and tenure."
+        canonicalPath="/emi-calculator"
+      />
 
       {/* HERO */}
       <div style={{

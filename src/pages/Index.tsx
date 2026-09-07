@@ -5,6 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { formatNPR } from '@/utils/format';
 import CarCard from '@/components/CarCard';
+import SEO from '@/components/SEO';
 
 const IconSearch = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -165,6 +166,11 @@ const Index = () => {
       minHeight: '100vh',
       background: 'white',
     }}>
+      <SEO
+        title="Nepal's Smartest Car Buying Guide"
+        description="Compare car prices in Nepal, calculate monthly EMI, and explore 150+ car models and 50+ showrooms across Kathmandu and Nepal."
+        canonicalPath="/"
+      />
       <style>{`
         @keyframes marquee {
           0% { transform: translateX(0); }

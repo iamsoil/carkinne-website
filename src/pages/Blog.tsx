@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import SEO from '@/components/SEO';
 
 const IconSearch = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -123,6 +124,12 @@ const Blog = () => {
       minHeight: '100vh',
       background: 'white',
     }}>
+      <SEO
+        title="Car Buying Guides & News"
+        description="Expert car buying guides, vehicle comparisons, automotive news, and maintenance tips for car buyers in Nepal."
+        canonicalPath="/blog"
+      />
+
       {/* HERO SECTION */}
       <div style={{
         background: 'white',

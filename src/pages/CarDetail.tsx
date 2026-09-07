@@ -5,6 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { formatNPR } from '@/utils/format';
 import { useCompare } from '@/contexts/CompareContext';
+import SEO from '@/components/SEO';
 
 function useMapEffect(effect: () => void | (() => void), deps: any[]) {
   const isInitialMount = useRef(true);
@@ -641,11 +642,10 @@ const CarDetail = () => {
       <div style={{
         fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
         background: 'white',
-        minHeight: '100vh',
+        minHeight: '60vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: '60vh'
       }}>
         <style>{'@keyframes spin { to { transform: rotate(360deg) } }'}</style>
         <div style={{ textAlign: 'center' }}>
@@ -799,8 +799,10 @@ const CarDetail = () => {
   const emi = calculateEMI();
 
   // SEO Meta tags
-  const metaTitle = `${car.name} Price in Nepal 2025 — ${formatNPR(car.ex_showroom_price)} | CarKinne`;
-  const metaDescription = `${car.name} price in Nepal starts at ${formatNPR(car.ex_showroom_price)}. Check full specs, EMI, colors, variants and find nearest showroom. Updated ${formatDate(car.updated_at || new Date().toISOString())}.`;
+  const seoTitle = `${car.brand} ${car.name} Price in Nepal`;
+  const seoDescription = car.description || `${car.brand} ${car.name} price in Nepal starts at ${formatNPR(car.ex_showroom_price)}. Check full specs, EMI, colors, variants and find nearest showroom.`;
+  const seoCanonical = `/cars/${car.slug || slug}`;
+  const seoOgImage = car.images?.[0] || car.image_url;
 
   return (
     <div style={{
@@ -808,11 +810,12 @@ const CarDetail = () => {
       background: 'white',
       minHeight: '100vh'
     }}>
-      {/* SEO Meta */}
-      <div className="hidden">
-        <title>{metaTitle}</title>
-        <meta name="description" content={metaDescription} />
-      </div>
+      <SEO
+        title={seoTitle}
+        description={seoDescription}
+        canonicalPath={seoCanonical}
+        ogImage={seoOgImage}
+      />
 
       {/* BREADCRUMB */}
       <div style={{

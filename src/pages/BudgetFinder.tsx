@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import SEO from '@/components/SEO';
 
 const IconCity = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -356,6 +357,11 @@ const BudgetFinder = () => {
       background: 'white',
       fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
     }}>
+      <SEO
+        title="Find Cars by Budget"
+        description="Use CarKinne's interactive budget finder to discover the best cars in Nepal tailored to your price range and driving needs."
+        canonicalPath="/budget-finder"
+      />
       <div style={{
         maxWidth: '1000px',
         margin: '0 auto',
@@ -662,7 +668,7 @@ const BudgetFinder = () => {
             padding: isMobile ? '24px 20px' : '40px',
           }}>
             <div>
-              <h1 style={{
+              <h2 style={{
                 fontSize: isMobile ? '22px' : '28px',
                 fontWeight: '800',
                 letterSpacing: '-0.5px',
@@ -670,7 +676,7 @@ const BudgetFinder = () => {
                 margin: 0,
               }}>
                 How will you use it?
-              </h1>
+              </h2>
               <p style={{
                 fontSize: '13px',
                 color: '#6e6e73',
@@ -791,7 +797,7 @@ const BudgetFinder = () => {
             padding: isMobile ? '24px 20px' : '40px',
           }}>
             <div>
-              <h1 style={{
+              <h2 style={{
                 fontSize: isMobile ? '22px' : '28px',
                 fontWeight: '800',
                 letterSpacing: '-0.5px',
@@ -799,7 +805,7 @@ const BudgetFinder = () => {
                 margin: 0,
               }}>
                 Your preferences
-              </h1>
+              </h2>
               <p style={{
                 fontSize: '13px',
                 color: '#6e6e73',
@@ -1010,7 +1016,7 @@ const BudgetFinder = () => {
             padding: isMobile ? '24px 20px' : '40px',
           }}>
             <div>
-              <h1 style={{
+              <h2 style={{
                 fontSize: isMobile ? '22px' : '28px',
                 fontWeight: '800',
                 letterSpacing: '-0.5px',
@@ -1018,7 +1024,7 @@ const BudgetFinder = () => {
                 margin: 0,
               }}>
                 What matters most?
-              </h1>
+              </h2>
               <p style={{
                 fontSize: '13px',
                 color: '#6e6e73',
@@ -1140,7 +1146,7 @@ const BudgetFinder = () => {
             padding: isMobile ? '24px 20px' : '40px',
           }}>
             <div>
-              <h1 style={{
+              <h2 style={{
                 fontSize: isMobile ? '22px' : '28px',
                 fontWeight: '800',
                 letterSpacing: '-0.5px',
@@ -1148,7 +1154,7 @@ const BudgetFinder = () => {
                 margin: 0,
               }}>
                 Your Perfect Matches
-              </h1>
+              </h2>
               <p style={{
                 fontSize: '13px',
                 color: '#6e6e73',

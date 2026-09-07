@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { X, ArrowLeft } from 'lucide-react'
+import SEO from '@/components/SEO'
 
 const Compare = () => {
   const { compareList, clearCompare, removeFromCompare } = useCompare()
@@ -58,6 +59,11 @@ const Compare = () => {
       background: '#f5f5f7',
       paddingBottom: '40px',
     }}>
+      <SEO
+        title="Compare Cars"
+        description="Compare car specifications, prices, mileage, features, and dimensions side by side to make an informed car buying decision in Nepal."
+        canonicalPath="/compare"
+      />
 
       {/* Header */}
       <div style={{

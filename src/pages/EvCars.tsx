@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import CarCard from '@/components/CarCard';
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
+import SEO from '@/components/SEO';
 
 const EvCars = () => {
   const [evCars, setEvCars] = useState<any[]>([]);
@@ -53,6 +54,11 @@ const EvCars = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO
+        title="Electric Cars in Nepal"
+        description="Go electric in Nepal. Compare available EV models, prices, range, and charging specifications."
+        canonicalPath="/ev-cars"
+      />
       {/* Hero Section */}
       <div className="py-16 text-center">
         <h1 className="text-4xl font-semibold text-[#1d1d1f] mb-3">Electric Cars in Nepal</h1>

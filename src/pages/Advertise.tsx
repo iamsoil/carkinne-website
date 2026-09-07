@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase';
+import SEO from '@/components/SEO';
 
 const IconTarget = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -205,6 +206,11 @@ const Advertise = () => {
       background: 'white',
       fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
     }}>
+      <SEO
+        title="Advertise With CarKinne"
+        description="Reach high-intent car buyers in Nepal. Partner with CarKinne for targeted banner advertising, showroom listings, and brand promotions."
+        canonicalPath="/advertise"
+      />
 
       {/* HERO - left aligned clean */}
       <div style={{

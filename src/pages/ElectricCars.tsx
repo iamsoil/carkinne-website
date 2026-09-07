@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import CarCard from '@/components/CarCard';
+import SEO from '@/components/SEO';
 
 const IconLeaf = () => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -143,6 +144,11 @@ const ElectricCars = () => {
       background: 'white',
       minHeight: '100vh',
     }}>
+      <SEO
+        title="Electric Cars in Nepal"
+        description="Explore all electric cars (EVs) available in Nepal. Compare EV models, battery range, charging times, prices, and government tax subsidies."
+        canonicalPath="/electric-cars"
+      />
 
       {/* HERO */}
       <div style={{

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import SEO from '@/components/SEO'
 
 const Privacy = () => {
   const navigate = useNavigate()
@@ -25,9 +26,14 @@ const Privacy = () => {
 
   return (
     <div style={{
-      fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif',
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
       background: 'white', minHeight: '100vh',
     }}>
+      <SEO
+        title="Privacy Policy"
+        description="Learn how CarKinne collects, uses, and safeguards your information."
+        canonicalPath="/privacy"
+      />
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: isMobile ? '32px 16px 64px' : '56px 24px 80px' }}>
         <div style={{
           display: 'inline-block', background: '#fff8f5',

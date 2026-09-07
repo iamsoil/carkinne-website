@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { useCompare } from '@/contexts/CompareContext';
 import CarCard from '@/components/CarCard';
+import SEO from '@/components/SEO';
 
 const IconSearch = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -418,6 +419,11 @@ const Cars = () => {
       minHeight: '100vh',
       background: '#f5f5f7',
     }}>
+      <SEO
+        title="Browse Cars in Nepal"
+        description="Filter and compare cars in Nepal by brand, price, body type, and fuel type. Find the latest car prices, specs, and deals."
+        canonicalPath="/cars"
+      />
 
       {/* HEADER */}
       <div style={{

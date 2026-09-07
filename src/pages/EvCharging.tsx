@@ -3,6 +3,7 @@
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { useState, useEffect, useRef } from 'react'
+import SEO from '@/components/SEO'
 
 delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({
@@ -283,6 +284,11 @@ const EvCharging = () => {
       overflow: 'hidden',
       background: 'white',
     }}>
+      <SEO
+        title="EV Charging Stations in Nepal"
+        description="Find EV charging stations across Nepal. Locate fast DC and AC charging points in Kathmandu, Pokhara, Chitwan, and major highway routes."
+        canonicalPath="/ev-charging"
+      />
 
       {/* MAP */}
       <div style={{
@@ -338,77 +344,46 @@ const EvCharging = () => {
             EV Charging
           </div>
           
-          {isMobile ? (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-              <h1 style={{
-                fontSize: '17px',
-                fontWeight: '800',
-                color: '#1d1d1f',
-                margin: 0,
-                letterSpacing: '-0.5px',
-              }}>
-                Charging Stations in Nepal
-              </h1>
-              <button
-                onClick={() => setShowContributeForm(true)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: '#e8531a',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '10px',
-                  padding: '8px 14px',
-                  fontSize: '13px',
-                  fontWeight: '700',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  transition: 'all 0.2s',
-                  flexShrink: 0,
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = '#c94415'}
-                onMouseLeave={e => e.currentTarget.style.background = '#e8531a'}
-              >
-                + Add
-              </button>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '4px' }}>
-              <h1 style={{
-                fontSize: '20px',
-                fontWeight: '800',
-                color: '#1d1d1f',
-                margin: 0,
-                letterSpacing: '-0.5px',
-              }}>
-                Charging Stations in Nepal
-              </h1>
-              <button
-                onClick={() => setShowContributeForm(true)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: '#e8531a',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '10px',
-                  padding: '10px 16px',
-                  fontSize: '13px',
-                  fontWeight: '700',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
-                  transition: 'all 0.2s',
-                  flexShrink: 0,
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = '#c94415'}
-                onMouseLeave={e => e.currentTarget.style.background = '#e8531a'}
-              >
-                + Add Station
-              </button>
-            </div>
-          )}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: isMobile ? '0' : '16px',
+            marginBottom: '4px',
+          }}>
+            <h1 style={{
+              fontSize: isMobile ? '17px' : '20px',
+              fontWeight: '800',
+              color: '#1d1d1f',
+              margin: 0,
+              letterSpacing: '-0.5px',
+            }}>
+              Charging Stations in Nepal
+            </h1>
+            <button
+              onClick={() => setShowContributeForm(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                background: '#e8531a',
+                color: 'white',
+                border: 'none',
+                borderRadius: '10px',
+                padding: isMobile ? '8px 14px' : '10px 16px',
+                fontSize: '13px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                fontFamily: 'inherit',
+                transition: 'all 0.2s',
+                flexShrink: 0,
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#c94415'}
+              onMouseLeave={e => e.currentTarget.style.background = '#e8531a'}
+            >
+              {isMobile ? '+ Add' : '+ Add Station'}
+            </button>
+          </div>
           
           <p style={{
             fontSize: '13px',

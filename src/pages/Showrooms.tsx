@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css'
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
+import SEO from '@/components/SEO'
 
 delete (L.Icon.Default.prototype as any)._getIconUrl
 L.Icon.Default.mergeOptions({
@@ -243,6 +244,11 @@ const Showrooms = () => {
       height: 'calc(100vh - 64px)',
       overflow: 'hidden',
     }}>
+      <SEO
+        title="Car Showrooms Directory Nepal"
+        description="Find official car dealerships, authorized brand showrooms, and service centers across Nepal with contact details, locations, and directions."
+        canonicalPath="/showrooms"
+      />
 
       {/* MAP - top on mobile, right on desktop */}
       <div style={{
@@ -303,58 +309,39 @@ const Showrooms = () => {
             Showrooms
           </div>
           
-          {isMobile ? (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-              <h1 style={{
-                fontSize: '22px',
-                fontWeight: 800,
-                color: '#111',
-                margin: 0,
-              }}>
-                Showrooms in Nepal
-              </h1>
-              <button
-                onClick={() => navigate('/advertise')}
-                style={{
-                  background: 'white',
-                  color: '#e8531a',
-                  border: '1.5px solid #e8531a',
-                  borderRadius: '10px',
-                  padding: '8px 14px',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  flexShrink: 0,
-                }}
-              >
-                + List Showroom
-              </button>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginBottom: '4px' }}>
-              <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#111', margin: 0 }}>
-                Showrooms in Nepal
-              </h1>
-              <button
-                onClick={() => navigate('/advertise')}
-                style={{
-                  background: 'white',
-                  color: '#e8531a',
-                  border: '1.5px solid #e8531a',
-                  borderRadius: '10px',
-                  padding: '10px 20px',
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  flexShrink: 0,
-                }}
-              >
-                + List Showroom
-              </button>
-            </div>
-          )}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: isMobile ? '0' : '16px',
+            marginBottom: '4px',
+          }}>
+            <h1 style={{
+              fontSize: isMobile ? '22px' : '28px',
+              fontWeight: 800,
+              color: '#111',
+              margin: 0,
+            }}>
+              Showrooms in Nepal
+            </h1>
+            <button
+              onClick={() => navigate('/advertise')}
+              style={{
+                background: 'white',
+                color: '#e8531a',
+                border: '1.5px solid #e8531a',
+                borderRadius: '10px',
+                padding: isMobile ? '8px 14px' : '10px 20px',
+                fontSize: isMobile ? '13px' : '14px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+              }}
+            >
+              + List Showroom
+            </button>
+          </div>
           
           <p style={{
             fontSize: '13px',

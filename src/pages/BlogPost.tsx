@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabase'
-import { Helmet } from 'react-helmet-async'
+import SEO from '@/components/SEO'
 import { Share2 } from 'lucide-react'
 
 const IconArrowLeft = () => (
@@ -125,19 +125,12 @@ const BlogPost = () => {
 
   return (
     <>
-      <Helmet>
-        <title>{post.title} | CarKinne</title>
-        <meta name="description" content={post.excerpt || post.content?.slice(0, 150)} />
-        <meta property="og:title" content={post.title} />
-        <meta property="og:description" content={post.excerpt || post.content?.slice(0, 150)} />
-        <meta property="og:image" content={post.cover_image} />
-        <meta property="og:url" content={shareUrl} />
-        <meta property="og:type" content="article" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={post.title} />
-        <meta name="twitter:description" content={post.excerpt || post.content?.slice(0, 150)} />
-        <meta name="twitter:image" content={post.cover_image} />
-      </Helmet>
+      <SEO
+        title={post.title}
+        description={post.excerpt || (post.content ? post.content.replace(/<[^>]*>/g, '').slice(0, 160) : '')}
+        canonicalPath={`/blog/${post.slug || slug}`}
+        ogImage={post.cover_image}
+      />
 
       <div style={{
         fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif',

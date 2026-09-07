@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import SEO from '@/components/SEO'
 
 const Terms = () => {
   const navigate = useNavigate()
@@ -28,6 +29,11 @@ const Terms = () => {
       fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif',
       background: 'white', minHeight: '100vh',
     }}>
+      <SEO
+        title="Terms and Conditions"
+        description="Read the terms and conditions for using CarKinne, Nepal's smartest car buying guide."
+        canonicalPath="/terms"
+      />
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: isMobile ? '32px 16px 64px' : '56px 24px 80px' }}>
         <div style={{
           display: 'inline-block', background: '#fff8f5',

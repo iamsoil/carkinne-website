@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '@/components/SEO';
 
 // SVG Icons
 const IconTag = () => (
@@ -110,6 +111,12 @@ const Offers = () => {
       minHeight: '100vh',
       background: 'white',
     }}>
+      <SEO
+        title="Latest Car Offers & Deals in Nepal"
+        description="Discover the latest car discounts, festive offers, cash discounts, exchange bonuses, and financing deals available in Nepal."
+        canonicalPath="/offers"
+      />
+
       {/* HERO SECTION */}
       <div style={{
         background: 'white',
