@@ -5,12 +5,12 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 const banks = [
-  { name: 'NMB Bank',           rate: 10.50, tenure: 7, financing: 80, fee: 0.5, lowest: false },
-  { name: 'Nabil Bank',         rate: 10.75, tenure: 7, financing: 85, fee: 0.5, lowest: false },
-  { name: 'Everest Bank',       rate: 10.25, tenure: 7, financing: 80, fee: 0.5, lowest: true  },
-  { name: 'Sanima Bank',        rate: 10.50, tenure: 6, financing: 80, fee: 0.5, lowest: false },
-  { name: 'Global IME Bank',    rate: 11.00, tenure: 7, financing: 85, fee: 1.0, lowest: false },
-  { name: 'Laxmi Sunrise Bank', rate: 10.50, tenure: 7, financing: 80, fee: 0.5, lowest: false },
+  { name: 'NMB Bank',           rate: 10.50, tenure: 7, financing: 60, fee: 0.5, lowest: false },
+  { name: 'Nabil Bank',         rate: 10.75, tenure: 7, financing: 60, fee: 0.5, lowest: false },
+  { name: 'Everest Bank',       rate: 10.25, tenure: 7, financing: 60, fee: 0.5, lowest: true  },
+  { name: 'Sanima Bank',        rate: 10.50, tenure: 6, financing: 60, fee: 0.5, lowest: false },
+  { name: 'Global IME Bank',    rate: 11.00, tenure: 7, financing: 60, fee: 1.0, lowest: false },
+  { name: 'Laxmi Sunrise Bank', rate: 10.50, tenure: 7, financing: 60, fee: 0.5, lowest: false },
 ];
 
 // Nepali number format: 3000000 -> Rs. 30,00,000
@@ -32,7 +32,7 @@ function calcEMI(principal: number, rate: number, months: number): number {
 
 const EmiCalculatorPage = () => {
   const [carPrice,     setCarPrice]     = useState(3000000);
-  const [downPct,      setDownPct]      = useState(10);
+  const [downPct,      setDownPct]      = useState(40);
   const [tenure,       setTenure]       = useState(5);
   const [interestRate, setInterestRate] = useState(10.5);
   const [showAmort,    setShowAmort]    = useState(false);
@@ -47,7 +47,7 @@ const EmiCalculatorPage = () => {
 
   // When user types in amount box — convert to percent
   const handleDownAmount = (val: number) => {
-    if (carPrice > 0) setDownPct(Math.min(50, Math.max(10, Math.round((val / carPrice) * 100))));
+    if (carPrice > 0) setDownPct(Math.min(90, Math.max(40, Math.round((val / carPrice) * 100))));
   };
 
   // Amortization rows
@@ -134,23 +134,26 @@ const EmiCalculatorPage = () => {
               <div className="relative">
                 <input
                   type="number"
-                  min={10} max={50}
+                  min={40} max={90}
                   value={downPct}
-                  onChange={e => setDownPct(Math.min(50, Math.max(10, Number(e.target.value))))}
+                  onChange={e => setDownPct(Math.min(90, Math.max(40, Number(e.target.value))))}
                   className="w-full px-4 py-3 pr-8 rounded-xl border border-[#d2d2d7] text-base outline-none focus:border-[#e8531a] transition-colors"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6e6e73]">%</span>
               </div>
             </div>
             <input
-              type="range" min={10} max={50} step={1}
+              type="range" min={40} max={90} step={1}
               value={downPct}
               onChange={e => setDownPct(Number(e.target.value))}
               className="w-full accent-[#e8531a]"
             />
             <div className="flex justify-between text-xs text-[#6e6e73] mt-1">
-              <span>10%</span><span>50%</span>
+              <span>40% (NRB Min)</span><span>90%</span>
             </div>
+            <p className="text-xs text-[#6e6e73] mt-2">
+              NRB caps vehicle financing at 60% of the price — minimum 40% down (ICE & EV alike).
+            </p>
           </div>
 
           {/* Loan Tenure */}

@@ -3,12 +3,12 @@
 import { useState } from "react";
 
 const BANKS = [
-  { name: "NMB Bank", rate: 10.5, tenure: 7, finance: 80, fee: 0.5, best: false },
-  { name: "Nabil Bank", rate: 10.75, tenure: 7, finance: 85, fee: 0.5, best: false },
-  { name: "Everest Bank", rate: 10.25, tenure: 7, finance: 80, fee: 0.5, best: true },
-  { name: "Sanima Bank", rate: 10.5, tenure: 6, finance: 80, fee: 0.5, best: false },
-  { name: "Global IME Bank", rate: 11.0, tenure: 7, finance: 85, fee: 1.0, best: false },
-  { name: "Laxmi Sunrise Bank", rate: 10.5, tenure: 7, finance: 80, fee: 0.5, best: false },
+  { name: "NMB Bank", rate: 10.5, tenure: 7, finance: 60, fee: 0.5, best: false },
+  { name: "Nabil Bank", rate: 10.75, tenure: 7, finance: 60, fee: 0.5, best: false },
+  { name: "Everest Bank", rate: 10.25, tenure: 7, finance: 60, fee: 0.5, best: true },
+  { name: "Sanima Bank", rate: 10.5, tenure: 6, finance: 60, fee: 0.5, best: false },
+  { name: "Global IME Bank", rate: 11.0, tenure: 7, finance: 60, fee: 1.0, best: false },
+  { name: "Laxmi Sunrise Bank", rate: 10.5, tenure: 7, finance: 60, fee: 0.5, best: false },
 ];
 
 function formatNPR(amount: number): string {
@@ -35,7 +35,7 @@ interface EmiCalculatorProps {
 export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
   const [carPrice, setCarPrice] = useState(prefillPrice || 3000000);
   const [carPriceInput, setCarPriceInput] = useState(prefillPrice?.toString() || "3000000");
-  const [downPct, setDownPct] = useState(10);
+  const [downPct, setDownPct] = useState(40);
   const [tenure, setTenure] = useState(5);
   const [rate, setRate] = useState(10.5);
   const [showAmort, setShowAmort] = useState(false);
@@ -170,7 +170,7 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
                   value={downPct}
                   onChange={(e) => {
                     const v = parseInt(e.target.value);
-                    if (!isNaN(v)) setDownPct(Math.min(50, Math.max(10, v)));
+                    if (!isNaN(v)) setDownPct(Math.min(90, Math.max(40, v)));
                   }}
                   style={{
                     padding: "12px 16px", fontSize: 15,
@@ -190,8 +190,8 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
             </div>
             <input
               type="range"
-              min={10}
-              max={50}
+              min={40}
+              max={90}
               value={downPct}
               onChange={(e) => setDownPct(parseInt(e.target.value))}
               style={{ width: "100%", marginTop: 12, accentColor: "#e8531a" }}
@@ -199,9 +199,12 @@ export const EmiCalculator = ({ prefillPrice }: EmiCalculatorProps) => {
             <div
               style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#6e6e73" }}
             >
-              <span>10%</span>
-              <span>50%</span>
+              <span>40% (NRB Min)</span>
+              <span>90%</span>
             </div>
+            <p style={{ fontSize: 12, color: "#6e6e73", marginTop: 6 }}>
+              NRB caps vehicle financing at 60% of the price — minimum 40% down (ICE & EV alike).
+            </p>
           </div>
 
           {/* Loan Tenure */}
